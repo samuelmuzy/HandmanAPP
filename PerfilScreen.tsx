@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Dimensions, Image, Switch } from 'react-native';
-import BarraDeNavegacao from './BarraDeNavegacao';
+import BarraDeNavegacao from '../BarraDeNavegacao';
 
 const { width, height } = Dimensions.get('window');
 

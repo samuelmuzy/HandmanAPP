@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Dimensions, ImageBackground } from 'react-native';
+import {
+  ScrollView,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ImageBackground,
+  Alert,
+} from 'react-native';
 import BarraDeNavegacao from './BarraDeNavegacao';
+import dbPromise from './db';
 
 const { width, height } = Dimensions.get('window');
 const backgroundImage = require('./assets/handman.jpg');
@@ -9,12 +20,46 @@ interface LoginScreenProps {
   onBack: () => void;
 }
 
+// Define a estrutura esperada do usuário no banco
+type User = {
+  id: number;
+  nome: string;
+  sobrenome: string;
+  email: string;
+  senha: string;
+  isPrestador: number;
+  // você pode adicionar mais campos conforme necessário
+};
+
 const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
   const [currentScreen, setCurrentScreen] = useState('Home');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
   const handleNavigate = (screen: string) => {
     setCurrentScreen(screen);
   };
+
+  const handleLogin = async () => {
+  try {
+    const db = await dbPromise;
+
+    const result = await db.getFirstAsync<User>(
+      `SELECT * FROM users WHERE email = ? AND senha = ?`,
+      [email, senha]
+    );
+
+    if (result) {
+      Alert.alert('Login realizado com sucesso!', `Bem-vindo(a), ${result.nome}!`);
+      onBack(); // Volta para a tela inicial
+    } else {
+      Alert.alert('Erro de login', 'Email ou senha incorretos.');
+    }
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+    Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login.');
+  }
+};
 
   return (
     <View style={{ flex: 1 }}>
@@ -31,10 +76,24 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
         <ImageBackground source={backgroundImage} style={styles.background}>
           <View style={styles.main}>
             <Text style={styles.title}>Login</Text>
-            <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" placeholderTextColor="#333" />
-            <TextInput style={styles.input} placeholder="Senha" secureTextEntry placeholderTextColor="#333" />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              keyboardType="email-address"
+              placeholderTextColor="#333"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              secureTextEntry
+              placeholderTextColor="#333"
+              value={senha}
+              onChangeText={setSenha}
+            />
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={() => console.log('Botão Entrar pressionado')}>
+              <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Entrar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.backButton} onPress={onBack}>
@@ -49,7 +108,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

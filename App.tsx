@@ -1,9 +1,23 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, ScrollView, Dimensions, ImageBackground, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Dimensions,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from './LoginScreen';
 import CadastroScreen from './CadastroScreen';
+import SobreNosScreen from './SobreNósScreen';
+import AjudaScreen from './AjudaScreen';
+import HeaderNavigation from './HeaderNavigation';
 import BarraDeNavegacao from './BarraDeNavegacao';
-import { runMigrations } from './migrations'; 
+import { runMigrations } from './migrations';
 
 const { width, height } = Dimensions.get('window');
 declare function require(path: string): any;
@@ -45,14 +59,28 @@ const HandyManApp = () => {
 
   const handleNavigate = (screen: string) => {
     setCurrentScreen(screen);
+    setShowLogin(false);
+    setShowCadastro(false);
   };
 
   if (showLogin) {
-    return <LoginScreen onBack={() => setShowLogin(false)} />;
+    return (
+      <LoginScreen
+        onBack={() => setShowLogin(false)}
+        onNavigate={handleNavigate}
+        currentScreen={currentScreen}
+      />
+    );
   }
 
   if (showCadastro) {
-    return <CadastroScreen onBack={() => setShowCadastro(false)} />;
+    return (
+      <CadastroScreen
+        onBack={() => setShowCadastro(false)}
+        onNavigate={handleNavigate}
+        currentScreen={currentScreen}
+      />
+    );
   }
 
   const renderScreen = () => {
@@ -60,26 +88,20 @@ const HandyManApp = () => {
       case 'Home':
         return (
           <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-              <Text style={styles.logo}>HANDMAN</Text>
-              <View style={styles.nav}>
-                <Text style={styles.navItem}>Serviços</Text>
-                <Text style={styles.navItem}>Sobre Nós</Text>
-                <Text style={styles.navItem}>Ajuda</Text>
-              </View>
-            </View>
-
+            <HeaderNavigation onNavigate={handleNavigate} activeScreen={currentScreen} />
             <ImageBackground source={backgroundImage} style={styles.background}>
               <View style={styles.main}>
                 <Text style={styles.mainText}>Não faça você mesmo, encontre um profissional</Text>
                 <TextInput style={styles.searchInput} placeholder="O que procura?" />
                 <View style={styles.services}>
-                  {['Mudança', 'Carpintaria', 'Elétrica', 'Limpeza', 'Jardinagem', 'Encanamento'].map((service) => (
-                    <View key={service} style={styles.serviceItem}>
-                      <Image source={images[service]} style={styles.serviceIcon} />
-                      <Text style={styles.serviceText}>{service}</Text>
-                    </View>
-                  ))}
+                  {['Mudança', 'Carpintaria', 'Elétrica', 'Limpeza', 'Jardinagem', 'Encanamento'].map(
+                    (service) => (
+                      <View key={service} style={styles.serviceItem}>
+                        <Image source={images[service]} style={styles.serviceIcon} />
+                        <Text style={styles.serviceText}>{service}</Text>
+                      </View>
+                    )
+                  )}
                 </View>
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity style={styles.loginButton} onPress={() => setShowLogin(true)}>
@@ -91,18 +113,19 @@ const HandyManApp = () => {
                 </View>
               </View>
             </ImageBackground>
-
             <View style={styles.howItWorks}>
               <Text style={styles.sectionTitle}>Como o HandyMan funciona?</Text>
               <View style={styles.textSection}>
                 <Text style={styles.textPoint}>• Trabalho de qualidade - eficiente e confiável</Text>
-                <Text style={styles.textPoint}>• Receba entregas pontuais e de alta qualidade, seja um trabalho de curto prazo ou um projeto complexo.</Text>
+                <Text style={styles.textPoint}>
+                  • Receba entregas pontuais e de alta qualidade, seja um trabalho de curto prazo ou um
+                  projeto complexo.
+                </Text>
                 <Text style={styles.textPoint}>• Segurança em cada pedido</Text>
                 <Text style={styles.textPoint}>• Trabalhe com especialistas que falam português</Text>
                 <Text style={styles.textPoint}>• Suporte 24 horas por dia</Text>
               </View>
             </View>
-
             <View style={styles.testimonials}>
               <Text style={styles.sectionTitle}>O que estão dizendo sobre nós?</Text>
               <ScrollView
@@ -114,19 +137,25 @@ const HandyManApp = () => {
                 <View style={styles.testimonial}>
                   <Text style={styles.testimonialAuthor}>Jana T.</Text>
                   <Text style={styles.testimonialContent}>
-                    Contratei o serviço para instalar algumas prateleiras e o profissional fez tudo de forma rápida e eficiente. Em menos de 40 minutos, tudo estava instalado e perfeitamente nivelado. A experiência foi ótima e vou com certeza usar novamente.
+                    Contratei o serviço para instalar algumas prateleiras e o profissional fez tudo de forma
+                    rápida e eficiente. Em menos de 40 minutos, tudo estava instalado e perfeitamente
+                    nivelado. A experiência foi ótima e vou com certeza usar novamente.
                   </Text>
                 </View>
                 <View style={styles.testimonial}>
                   <Text style={styles.testimonialAuthor}>Elizabeth P.</Text>
                   <Text style={styles.testimonialContent}>
-                    Precisei de ajuda para montar móveis e o profissional foi super rápido e cuidadoso. Ele montou dois armários e ainda ajustou uma porta que estava desalinhada, tudo em menos de 1 hora. Serviço excelente e recomendo demais.
+                    Precisei de ajuda para montar móveis e o profissional foi super rápido e cuidadoso. Ele
+                    montou dois armários e ainda ajustou uma porta que estava desalinhada, tudo em menos de
+                    1 hora. Serviço excelente e recomendo demais.
                   </Text>
                 </View>
                 <View style={styles.testimonial}>
                   <Text style={styles.testimonialAuthor}>Amanda L.</Text>
                   <Text style={styles.testimonialContent}>
-                    Solicitei o serviço para pequenos reparos e o profissional chegou rápido e resolveu tudo rapidamente. Ele consertou uma torneira vazando e ainda montou um móvel para mim em tempo recorde. Muito satisfeita com o resultado.
+                    Solicitei o serviço para pequenos reparos e o profissional chegou rápido e resolveu tudo
+                    rapidamente. Ele consertou uma torneira vazando e ainda montou um móvel para mim em tempo
+                    recorde. Muito satisfeita com o resultado.
                   </Text>
                 </View>
               </ScrollView>
@@ -134,34 +163,38 @@ const HandyManApp = () => {
           </ScrollView>
         );
       case 'Serviços':
-        return <Text>Tela de Serviços</Text>;
-      case 'Agenda':
-        return <Text>Tela de Agenda</Text>;
-      case 'Perfil':
-        return <Text>Tela de Perfil</Text>;
+        return (
+          <View style={styles.container}>
+            <HeaderNavigation onNavigate={handleNavigate} activeScreen={currentScreen} />
+            <Text style={styles.sectionTitle}>Tela de Serviços</Text>
+            {/* Add your Serviços screen content here */}
+          </View>
+        );
+      case 'Sobre Nós':
+        return (
+          <SobreNosScreen onNavigate={handleNavigate} activeScreen={currentScreen} />
+        );
+      case 'Ajuda':
+        return (
+          <AjudaScreen onNavigate={handleNavigate} activeScreen={currentScreen} />
+        );
       default:
         return (
           <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-              <Text style={styles.logo}>HANDMAN</Text>
-              <View style={styles.nav}>
-                <Text style={styles.navItem}>Serviços</Text>
-                <Text style={styles.navItem}>Sobre Nós</Text>
-                <Text style={styles.navItem}>Ajuda</Text>
-              </View>
-            </View>
-
+            <HeaderNavigation onNavigate={handleNavigate} activeScreen={currentScreen} />
             <ImageBackground source={backgroundImage} style={styles.background}>
               <View style={styles.main}>
                 <Text style={styles.mainText}>Não faça você mesmo, encontre um profissional</Text>
                 <TextInput style={styles.searchInput} placeholder="O que procura?" />
                 <View style={styles.services}>
-                  {['Mudança', 'Carpintaria', 'Elétrica', 'Limpeza', 'Jardinagem', 'Encanamento'].map((service) => (
-                    <View key={service} style={styles.serviceItem}>
-                      <Image source={images[service]} style={styles.serviceIcon} />
-                      <Text style={styles.serviceText}>{service}</Text>
-                    </View>
-                  ))}
+                  {['Mudança', 'Carpintaria', 'Elétrica', 'Limpeza', 'Jardinagem', 'Encanamento'].map(
+                    (service) => (
+                      <View key={service} style={styles.serviceItem}>
+                        <Image source={images[service]} style={styles.serviceIcon} />
+                        <Text style={styles.serviceText}>{service}</Text>
+                      </View>
+                    )
+                  )}
                 </View>
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity style={styles.loginButton} onPress={() => setShowLogin(true)}>
@@ -173,18 +206,19 @@ const HandyManApp = () => {
                 </View>
               </View>
             </ImageBackground>
-
             <View style={styles.howItWorks}>
               <Text style={styles.sectionTitle}>Como o HandyMan funciona?</Text>
               <View style={styles.textSection}>
                 <Text style={styles.textPoint}>• Trabalho de qualidade - eficiente e confiável</Text>
-                <Text style={styles.textPoint}>• Receba entregas pontuais e de alta qualidade, seja um trabalho de curto prazo ou um projeto complexo.</Text>
+                <Text style={styles.textPoint}>
+                  • Receba entregas pontuais e de alta qualidade, seja um trabalho de curto prazo ou um
+                  projeto complexo.
+                </Text>
                 <Text style={styles.textPoint}>• Segurança em cada pedido</Text>
                 <Text style={styles.textPoint}>• Trabalhe com especialistas que falam português</Text>
                 <Text style={styles.textPoint}>• Suporte 24 horas por dia</Text>
               </View>
             </View>
-
             <View style={styles.testimonials}>
               <Text style={styles.sectionTitle}>O que estão dizendo sobre nós?</Text>
               <ScrollView
@@ -196,19 +230,25 @@ const HandyManApp = () => {
                 <View style={styles.testimonial}>
                   <Text style={styles.testimonialAuthor}>Jana T.</Text>
                   <Text style={styles.testimonialContent}>
-                    Contratei o serviço para instalar algumas prateleiras e o profissional fez tudo de forma rápida e eficiente. Em menos de 40 minutos, tudo estava instalado e perfeitamente nivelado. A experiência foi ótima e vou com certeza usar novamente.
+                    Contratei o serviço para instalar algumas prateleiras e o profissional fez tudo de forma
+                    rápida e eficiente. Em menos de 40 minutos, tudo estava instalado e perfeitamente
+                    nivelado. A experiência foi ótima e vou com certeza usar novamente.
                   </Text>
                 </View>
                 <View style={styles.testimonial}>
                   <Text style={styles.testimonialAuthor}>Elizabeth P.</Text>
                   <Text style={styles.testimonialContent}>
-                    Precisei de ajuda para montar móveis e o profissional foi super rápido e cuidadoso. Ele montou dois armários e ainda ajustou uma porta que estava desalinhada, tudo em menos de 1 hora. Serviço excelente e recomendo demais.
+                    Precisei de ajuda para montar móveis e o profissional foi super rápido e cuidadoso. Ele
+                    montou dois armários e ainda ajustou uma porta que estava desalinhada, tudo em menos de
+                    1 hora. Serviço excelente e recomendo demais.
                   </Text>
                 </View>
                 <View style={styles.testimonial}>
                   <Text style={styles.testimonialAuthor}>Amanda L.</Text>
                   <Text style={styles.testimonialContent}>
-                    Solicitei o serviço para pequenos reparos e o profissional chegou rápido e resolveu tudo rapidamente. Ele consertou uma torneira vazando e ainda montou um móvel para mim em tempo recorde. Muito satisfeita com o resultado.
+                    Solicitei o serviço para pequenos reparos e o profissional chegou rápido e resolveu tudo
+                    rapidamente. Ele consertou uma torneira vazando e ainda montou um móvel para mim em tempo
+                    recorde. Muito satisfeita com o resultado.
                   </Text>
                 </View>
               </ScrollView>
@@ -219,44 +259,21 @@ const HandyManApp = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      {renderScreen()}
-      <BarraDeNavegacao onNavigate={handleNavigate} activeScreen={currentScreen} />
-    </View>
+    <SafeAreaProvider>
+      <View style={{ flex: 1 }}>
+        {renderScreen()}
+        <BarraDeNavegacao onNavigate={handleNavigate} activeScreen={currentScreen} />
+      </View>
+    </SafeAreaProvider>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: width * 0.05,
     backgroundColor: '#EEB16C',
-    paddingBottom: height * 0.1, 
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#AD5700',
-    padding: width * 0.03,
-    borderRadius: 8,
-    marginTop: height * 0.05,
-  },
-  logo: {
-    fontSize: width * 0.05,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  nav: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  navItem: {
-    marginHorizontal: width * 0.02,
-    fontSize: width * 0.035,
-    color: 'white',
-    fontWeight: '600',
+    paddingBottom: height * 0.1,
   },
   background: {
     flex: 1,

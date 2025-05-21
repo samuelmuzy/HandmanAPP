@@ -1,22 +1,107 @@
-import React, { useState } from 'react';
-import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Dimensions, Image, Switch } from 'react-native';
-import BarraDeNavegacao from '../BarraDeNavegacao';
+import React, { useEffect, useState } from 'react';
+import {
+  ScrollView,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+  Switch,
+  Alert,
+} from 'react-native';
+import BarraDeNavegacao from './BarraDeNavegacao';
+import dbPromise from './db';
 
 const { width, height } = Dimensions.get('window');
 
 interface PerfilScreenProps {
+  userId: number;
 }
 
-const PerfilScreen: React.FC<PerfilScreenProps> = () => {
-  const [isPrestador, setIsPrestador] = useState(false);
-  const [currentScreen, setCurrentScreen] = useState('Perfil');
+interface UserData {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  endereco: string;
+  isPrestador: number; // 0 ou 1
+  areaAtuacao?: string;
+  descricaoServicos?: string;
+}
+
+const PerfilScreen: React.FC<PerfilScreenProps> = ({ userId }) => {
+  const [currentScreen, setCurrentScreen] = useState<string>('Perfil');
+  const [isPrestador, setIsPrestador] = useState<boolean>(false);
+
+  const [nome, setNome] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [telefone, setTelefone] = useState<string>('');
+  const [endereco, setEndereco] = useState<string>('');
+  const [areaAtuacao, setAreaAtuacao] = useState<string>('');
+  const [descricaoServicos, setDescricaoServicos] = useState<string>('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const db = await dbPromise;
+        const result = await db.getFirstAsync<UserData>(
+          `SELECT * FROM users WHERE id = ?`,
+          [userId]
+        );
+
+        if (result) {
+          setNome(result.nome);
+          setEmail(result.email);
+          setTelefone(result.telefone);
+          setEndereco(result.endereco);
+          setIsPrestador(result.isPrestador === 1);
+          setAreaAtuacao(result.areaAtuacao || '');
+          setDescricaoServicos(result.descricaoServicos || '');
+        } else {
+          Alert.alert('Erro', 'Usuário não encontrado.');
+        }
+      } catch (error) {
+        console.error('Erro ao buscar usuário:', error);
+        Alert.alert('Erro', 'Falha ao carregar dados do perfil.');
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
 
   const handleNavigate = (screen: string) => {
     setCurrentScreen(screen);
   };
 
-  const togglePrestador = () => {
-    setIsPrestador(previousState => !previousState);
+  const handleSave = async () => {
+    try {
+      const db = await dbPromise;
+
+      await db.runAsync(
+        `UPDATE users SET 
+          telefone = ?, 
+          endereco = ?, 
+          areaAtuacao = ?, 
+          descricaoServicos = ?, 
+          isPrestador = ?
+        WHERE id = ?`,
+        [
+          telefone,
+          endereco,
+          isPrestador ? areaAtuacao : null,
+          isPrestador ? descricaoServicos : null,
+          isPrestador ? 1 : 0,
+          userId
+        ]
+      );
+
+      Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      Alert.alert('Erro', 'Não foi possível salvar as alterações.');
+    }
   };
 
   return (
@@ -28,8 +113,8 @@ const PerfilScreen: React.FC<PerfilScreenProps> = () => {
 
         <View style={styles.profileInfo}>
           <Image source={require('./assets/handman.jpg')} style={styles.avatar} />
-          <Text style={styles.name}>Nome do Usuário</Text>
-          <Text style={styles.email}>email@exemplo.com</Text>
+          <Text style={styles.name}>{nome}</Text>
+          <Text style={styles.email}>{email}</Text>
 
           <View style={styles.prestadorSwitch}>
             <Text>Prestador de Serviço?</Text>
@@ -37,7 +122,7 @@ const PerfilScreen: React.FC<PerfilScreenProps> = () => {
               trackColor={{ false: "#767577", true: "#81b0ff" }}
               thumbColor={isPrestador ? "#f5dd4b" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
-              onValueChange={togglePrestador}
+              onValueChange={() => setIsPrestador(!isPrestador)}
               value={isPrestador}
             />
           </View>
@@ -46,116 +131,126 @@ const PerfilScreen: React.FC<PerfilScreenProps> = () => {
         {isPrestador ? (
           <View style={styles.prestadorDetails}>
             <Text style={styles.sectionTitle}>Detalhes do Prestador</Text>
-            <TextInput style={styles.input} placeholder="Área de Atuação" />
-            <TextInput style={styles.input} placeholder="Descrição dos Serviços" multiline />
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Salvar Detalhes</Text>
-            </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Área de Atuação"
+              value={areaAtuacao}
+              onChangeText={setAreaAtuacao}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Descrição dos Serviços"
+              multiline
+              value={descricaoServicos}
+              onChangeText={setDescricaoServicos}
+            />
           </View>
         ) : (
           <View style={styles.clienteDetails}>
             <Text style={styles.sectionTitle}>Detalhes do Cliente</Text>
-            <TextInput style={styles.input} placeholder="Endereço" />
-            <TextInput style={styles.input} placeholder="Telefone" />
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Salvar Detalhes</Text>
-            </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Endereço"
+              value={endereco}
+              onChangeText={setEndereco}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Telefone"
+              value={telefone}
+              onChangeText={setTelefone}
+            />
           </View>
         )}
+
+        <TouchableOpacity style={styles.button} onPress={handleSave}>
+          <Text style={styles.buttonText}>Salvar Detalhes</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutButton}>
           <Text style={styles.logoutButtonText}>Sair</Text>
         </TouchableOpacity>
       </ScrollView>
+
       <BarraDeNavegacao onNavigate={handleNavigate} activeScreen={currentScreen} />
     </View>
   );
 };
 
+export default PerfilScreen;
+
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: width * 0.05,
-    backgroundColor: '#f5f5f5',
-    paddingBottom: height * 0.1,
+    padding: 20,
+    backgroundColor: '#fff',
+    minHeight: height,
   },
   header: {
-    alignItems: 'center',
-    marginBottom: height * 0.03,
+    marginBottom: 20,
   },
   title: {
-    fontSize: width * 0.06,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#333',
+    textAlign: 'center',
   },
   profileInfo: {
     alignItems: 'center',
-    marginBottom: height * 0.03,
+    marginBottom: 20,
   },
   avatar: {
-    width: width * 0.2,
-    height: width * 0.2,
-    borderRadius: width * 0.1,
-    marginBottom: height * 0.01,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 10,
   },
   name: {
-    fontSize: width * 0.05,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
   },
   email: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: '#666',
   },
   prestadorSwitch: {
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '80%',
-    marginTop: height * 0.02,
-  },
-  prestadorDetails: {
-    marginBottom: height * 0.03,
-  },
-  clienteDetails: {
-    marginBottom: height * 0.03,
+    gap: 10,
   },
   sectionTitle: {
-    fontSize: width * 0.05,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: height * 0.02,
+    marginTop: 20,
   },
   input: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: '#f1f1f1',
     borderRadius: 8,
-    padding: width * 0.03,
-    marginBottom: height * 0.02,
-    backgroundColor: 'white',
+    padding: 10,
+    marginTop: 10,
   },
   button: {
-    backgroundColor: '#AD5700',
-    padding: width * 0.03,
+    backgroundColor: '#007bff',
     borderRadius: 8,
+    padding: 12,
+    marginTop: 20,
     alignItems: 'center',
   },
   buttonText: {
-    color: 'white',
+    color: '#fff',
     fontWeight: 'bold',
   },
   logoutButton: {
-    backgroundColor: '#AD5700',
-    padding: width * 0.03,
-    borderRadius: 8,
+    marginTop: 20,
     alignItems: 'center',
-    marginTop: height * 0.02,
   },
   logoutButtonText: {
-    color: 'white',
+    color: '#ff4444',
     fontWeight: 'bold',
   },
+  prestadorDetails: {
+    marginTop: 10,
+  },
+  clienteDetails: {
+    marginTop: 10,
+  },
 });
-
-export default PerfilScreen;

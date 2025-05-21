@@ -10,6 +10,7 @@ import {
   ImageBackground,
   Alert,
 } from 'react-native';
+import HeaderNavigation from './HeaderNavigation';
 import BarraDeNavegacao from './BarraDeNavegacao';
 import dbPromise from './db';
 
@@ -18,9 +19,10 @@ const backgroundImage = require('./assets/handman.jpg');
 
 interface LoginScreenProps {
   onBack: () => void;
+  onNavigate: (screen: string) => void;
+  currentScreen: string;
 }
 
-// Define a estrutura esperada do usuário no banco
 type User = {
   id: number;
   nome: string;
@@ -28,51 +30,37 @@ type User = {
   email: string;
   senha: string;
   isPrestador: number;
-  // você pode adicionar mais campos conforme necessário
 };
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
-  const [currentScreen, setCurrentScreen] = useState('Home');
+const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }) => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  const handleNavigate = (screen: string) => {
-    setCurrentScreen(screen);
-  };
-
   const handleLogin = async () => {
-  try {
-    const db = await dbPromise;
+    try {
+      const db = await dbPromise;
 
-    const result = await db.getFirstAsync<User>(
-      `SELECT * FROM users WHERE email = ? AND senha = ?`,
-      [email, senha]
-    );
+      const result = await db.getFirstAsync<User>(
+        `SELECT * FROM users WHERE email = ? AND senha = ?`,
+        [email, senha]
+      );
 
-    if (result) {
-      Alert.alert('Login realizado com sucesso!', `Bem-vindo(a), ${result.nome}!`);
-      onBack(); // Volta para a tela inicial
-    } else {
-      Alert.alert('Erro de login', 'Email ou senha incorretos.');
+      if (result) {
+        Alert.alert('Login realizado com sucesso!', `Bem-vindo(a), ${result.nome}!`);
+        onBack(); // Return to main app after successful login
+      } else {
+        Alert.alert('Erro de login', 'Email ou senha incorretos.');
+      }
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login.');
     }
-  } catch (error) {
-    console.error('Erro ao fazer login:', error);
-    Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login.');
-  }
-};
+  };
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.logo}>HANDMAN</Text>
-          <View style={styles.nav}>
-            <Text style={styles.navItem}>Serviços</Text>
-            <Text style={styles.navItem}>Sobre Nós</Text>
-            <Text style={styles.navItem}>Ajuda</Text>
-          </View>
-        </View>
-
+        <HeaderNavigation onNavigate={onNavigate} activeScreen={currentScreen} />
         <ImageBackground source={backgroundImage} style={styles.background}>
           <View style={styles.main}>
             <Text style={styles.title}>Login</Text>
@@ -100,44 +88,23 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
                 <Text style={styles.backButtonText}>Voltar</Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.signupText}>Não possui conta? <Text style={styles.signupLink}>Cadastrar-se</Text></Text>
+            <Text style={styles.signupText}>
+              Não possui conta? <Text style={styles.signupLink}>Cadastrar-se</Text>
+            </Text>
           </View>
         </ImageBackground>
       </ScrollView>
-      <BarraDeNavegacao onNavigate={handleNavigate} activeScreen={currentScreen} />
+      <BarraDeNavegacao onNavigate={onNavigate} activeScreen={currentScreen} />
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: width * 0.05,
     backgroundColor: '#EEB16C',
     paddingBottom: height * 0.1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#AD5700',
-    padding: width * 0.03,
-    borderRadius: 8,
-    marginTop: height * 0.05,
-  },
-  logo: {
-    fontSize: width * 0.05,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  nav: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  navItem: {
-    marginHorizontal: width * 0.02,
-    fontSize: width * 0.035,
-    color: 'white',
-    fontWeight: '600',
   },
   background: {
     flex: 1,

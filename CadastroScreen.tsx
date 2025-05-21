@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Dimensions, ImageBackground, Switch } from 'react-native';
+import {
+  ScrollView,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ImageBackground,
+  Switch,
+} from 'react-native';
+import HeaderNavigation from './HeaderNavigation';
 import BarraDeNavegacao from './BarraDeNavegacao';
 import dbPromise from './db';
 
@@ -8,13 +19,13 @@ const backgroundImage = require('./assets/handman.jpg');
 
 interface CadastroScreenProps {
   onBack: () => void;
+  onNavigate: (screen: string) => void;
+  currentScreen: string;
 }
 
-const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack }) => {
+const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentScreen }) => {
   const [step, setStep] = useState(1);
   const [isPrestador, setIsPrestador] = useState(false);
-  const [currentScreen, setCurrentScreen] = useState('Cadastro');
-
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [genero, setGenero] = useState('');
@@ -29,46 +40,39 @@ const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack }) => {
   const [descricaoServicos, setDescricaoServicos] = useState('');
 
   const handleCadastroPress = async () => {
-  try {
-    if (senha !== confirmarSenha) {
-      alert('As senhas não coincidem!');
-      return;
-    }
+    try {
+      if (senha !== confirmarSenha) {
+        alert('As senhas não coincidem!');
+        return;
+      }
 
-    const db = await dbPromise;
+      const db = await dbPromise;
 
-    await db.runAsync(
-      `INSERT INTO users 
-        (nome, sobrenome, genero, aniversario, usuario, email, telefone, endereco, senha, isPrestador, areaAtuacao, descricaoServicos)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        nome,
-        sobrenome,
-        genero,
-        aniversario,
-        usuario,
-        email,
-        telefone,
-        endereco,
-        senha,
-        isPrestador ? 1 : 0,
-        isPrestador ? areaAtuacao : null,
-        isPrestador ? descricaoServicos : null,
-      ]
-    );
+      await db.runAsync(
+        `INSERT INTO users 
+          (nome, sobrenome, genero, aniversario, usuario, email, telefone, endereco, senha, isPrestador, areaAtuacao, descricaoServicos)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          nome,
+          sobrenome,
+          genero,
+          aniversario,
+          usuario,
+          email,
+          telefone,
+          endereco,
+          senha,
+          isPrestador ? 1 : 0,
+          isPrestador ? areaAtuacao : null,
+          isPrestador ? descricaoServicos : null,
+        ]
+      );
 
-    alert('Cadastro realizado com sucesso!');
-    onBack(); // volta para tela anterior (login, provavelmente)
-  } catch (error) {
-    console.error('Erro ao cadastrar:', error);
-    alert('Erro ao cadastrar. Verifique os dados e tente novamente.');
-  }
-};
-
-  const handleNavigate = (screen: string) => {
-    setCurrentScreen(screen);
-    if (screen === 'Home') {
-      onBack(); 
+      alert('Cadastro realizado com sucesso!');
+      onBack(); // Return to main app
+    } catch (error) {
+      console.error('Erro ao cadastrar:', error);
+      alert('Erro ao cadastrar. Verifique os dados e tente novamente.');
     }
   };
 
@@ -92,8 +96,8 @@ const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack }) => {
             <View style={styles.prestadorSwitch}>
               <Text>Prestador de Serviço?</Text>
               <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={isPrestador ? "#f5dd4b" : "#f4f3f4"}
+                trackColor={{ false: '#767577', true: '#81b0ff' }}
+                thumbColor={isPrestador ? '#f5dd4b' : '#f4f3f4'}
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={() => setIsPrestador(!isPrestador)}
                 value={isPrestador}
@@ -146,15 +150,7 @@ const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack }) => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.logo}>HANDMAN</Text>
-          <View style={styles.nav}>
-            <Text style={styles.navItem}>Serviços</Text>
-            <Text style={styles.navItem}>Sobre Nós</Text>
-            <Text style={styles.navItem}>Ajuda</Text>
-          </View>
-        </View>
-
+        <HeaderNavigation onNavigate={onNavigate} activeScreen={currentScreen} />
         <ImageBackground source={backgroundImage} style={styles.background}>
           <View style={styles.main}>
             <Text style={styles.title}>Crie sua conta</Text>
@@ -162,7 +158,7 @@ const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack }) => {
           </View>
         </ImageBackground>
       </ScrollView>
-      <BarraDeNavegacao onNavigate={handleNavigate} activeScreen={currentScreen} />
+      <BarraDeNavegacao onNavigate={onNavigate} activeScreen={currentScreen} />
     </View>
   );
 };
@@ -173,30 +169,6 @@ const styles = StyleSheet.create({
     padding: width * 0.05,
     backgroundColor: '#EEB16C',
     paddingBottom: height * 0.1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#AD5700',
-    padding: width * 0.03,
-    borderRadius: 8,
-    marginTop: height * 0.05,
-  },
-  logo: {
-    fontSize: width * 0.05,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  nav: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  navItem: {
-    marginHorizontal: width * 0.02,
-    fontSize: width * 0.035,
-    color: 'white',
-    fontWeight: '600',
   },
   background: {
     flex: 1,
@@ -221,14 +193,14 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.02,
   },
   input: {
-    height: height * 0.06, 
+    height: height * 0.06,
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 10,
     padding: width * 0.03,
     backgroundColor: 'white',
     marginBottom: height * 0.02,
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   button: {
     backgroundColor: '#AD5700',

@@ -10,12 +10,12 @@ import {
   ImageBackground,
   Switch,
 } from 'react-native';
-import HeaderNavigation from './HeaderNavigation';
-import BarraDeNavegacao from './BarraDeNavegacao';
-import dbPromise from './db';
+import HeaderNavigation from '../HeaderNavigation';
+import BarraDeNavegacao from '../BarraDeNavegacao';
+import dbPromise from '../db';
 
 const { width, height } = Dimensions.get('window');
-const backgroundImage = require('./assets/handman.jpg');
+const backgroundImage = require('../assets/handman.jpg');
 
 interface CadastroScreenProps {
   onBack: () => void;
@@ -23,7 +23,7 @@ interface CadastroScreenProps {
   currentScreen: string;
 }
 
-const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentScreen }) => {
+const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentScreen }) => {
   const [step, setStep] = useState(1);
   const [isPrestador, setIsPrestador] = useState(false);
   const [nome, setNome] = useState('');
@@ -69,7 +69,7 @@ const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, cur
       );
 
       alert('Cadastro realizado com sucesso!');
-      onBack(); // Return to main app
+      onNavigate('MainApp'); // Return to main app
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
       alert('Erro ao cadastrar. Verifique os dados e tente novamente.');
@@ -158,7 +158,7 @@ const CadastroScreen: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, cur
           </View>
         </ImageBackground>
       </ScrollView>
-      <BarraDeNavegacao onNavigate={onNavigate} activeScreen={currentScreen} />
+      
     </View>
   );
 };
@@ -237,4 +237,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CadastroScreen;
+export default Cadastro;

@@ -11,8 +11,8 @@ import {
   Switch,
   Alert,
 } from 'react-native';
-import BarraDeNavegacao from './BarraDeNavegacao';
-import dbPromise from './db';
+import BarraDeNavegacao from '../BarraDeNavegacao';
+import dbPromise from '../db';
 
 const { width, height } = Dimensions.get('window');
 

@@ -3,6 +3,10 @@ import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HandyManApp } from '../pages/HomeScrenn';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import PerfilScreen from '../pages/PerfilScreen';
+import { useGetToken } from '../hooks/useGetToken';
+import { ServicoScreen } from '../pages/ServicoScreen';
+
 
 
 export type RootTabParamList = {
@@ -15,6 +19,8 @@ export type RootTabParamList = {
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export const TabNavigation = () => {
+    
+
     return (
         <Tab.Navigator 
             screenOptions={{
@@ -50,7 +56,7 @@ export const TabNavigation = () => {
             />
             <Tab.Screen 
                 name='Serviços' 
-                component={HandyManApp}
+                component={ServicoScreen}
                 options={{
                     tabBarIcon: ({color, size}) => (
                         <Icon name="tools" size={size} color={color} />
@@ -68,7 +74,7 @@ export const TabNavigation = () => {
             />
             <Tab.Screen 
                 name='Perfil' 
-                component={HandyManApp}
+                component={PerfilScreen}
                 options={{
                     tabBarIcon: ({color, size}) => (
                         <Icon name="account" size={size} color={color} />

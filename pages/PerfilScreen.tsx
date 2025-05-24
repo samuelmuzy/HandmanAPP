@@ -11,30 +11,24 @@ import {
   Switch,
   Alert,
 } from 'react-native';
-import BarraDeNavegacao from '../BarraDeNavegacao';
-import dbPromise from '../db';
+import { useGetToken } from '../hooks/useGetToken';
+import { useAuth } from '../context/AuthContext';
+import { useNavigation, CommonActions } from '@react-navigation/native';
+import { User } from '../model/User';
+import { UserService } from '../services/UserService';
 
 const { width, height } = Dimensions.get('window');
 
-interface PerfilScreenProps {
-  userId: number;
-}
+const PerfilScreen = () => {
+  const navigation = useNavigation();
+  const token = useGetToken();
+  const { logout } = useAuth();
 
-interface UserData {
-  id: number;
-  nome: string;
-  email: string;
-  telefone: string;
-  endereco: string;
-  isPrestador: number; // 0 ou 1
-  areaAtuacao?: string;
-  descricaoServicos?: string;
-}
-
-const PerfilScreen: React.FC<PerfilScreenProps> = ({ userId }) => {
+  const userId = token?.id;
+  
   const [currentScreen, setCurrentScreen] = useState<string>('Perfil');
+  const [usuario, setUsuario] = useState<User | undefined>(undefined);
   const [isPrestador, setIsPrestador] = useState<boolean>(false);
-
   const [nome, setNome] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [telefone, setTelefone] = useState<string>('');
@@ -42,33 +36,39 @@ const PerfilScreen: React.FC<PerfilScreenProps> = ({ userId }) => {
   const [areaAtuacao, setAreaAtuacao] = useState<string>('');
   const [descricaoServicos, setDescricaoServicos] = useState<string>('');
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const db = await dbPromise;
-        const result = await db.getFirstAsync<UserData>(
-          `SELECT * FROM users WHERE id = ?`,
-          [userId]
-        );
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        })
+      );
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      Alert.alert('Erro', 'Não foi possível fazer logout.');
+    }
+  };
 
-        if (result) {
-          setNome(result.nome);
-          setEmail(result.email);
-          setTelefone(result.telefone);
-          setEndereco(result.endereco);
-          setIsPrestador(result.isPrestador === 1);
-          setAreaAtuacao(result.areaAtuacao || '');
-          setDescricaoServicos(result.descricaoServicos || '');
-        } else {
-          Alert.alert('Erro', 'Usuário não encontrado.');
-        }
-      } catch (error) {
-        console.error('Erro ao buscar usuário:', error);
-        Alert.alert('Erro', 'Falha ao carregar dados do perfil.');
+  const handleGetUsuario = async () => {
+    try {
+      if (!userId) {
+        console.log('Aguardando token...');
+        return;
       }
-    };
+      const usuario = await UserService.getUsers(userId);
+      setUsuario(usuario);
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
+    }
+  };
 
-    fetchUserData();
+  useEffect(() => {
+    if (userId) {
+      handleGetUsuario();
+    }
   }, [userId]);
 
   const handleNavigate = (screen: string) => {
@@ -77,27 +77,7 @@ const PerfilScreen: React.FC<PerfilScreenProps> = ({ userId }) => {
 
   const handleSave = async () => {
     try {
-      const db = await dbPromise;
-
-      await db.runAsync(
-        `UPDATE users SET 
-          telefone = ?, 
-          endereco = ?, 
-          areaAtuacao = ?, 
-          descricaoServicos = ?, 
-          isPrestador = ?
-        WHERE id = ?`,
-        [
-          telefone,
-          endereco,
-          isPrestador ? areaAtuacao : null,
-          isPrestador ? descricaoServicos : null,
-          isPrestador ? 1 : 0,
-          userId
-        ]
-      );
-
-      Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
+      
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
       Alert.alert('Erro', 'Não foi possível salvar as alterações.');
@@ -112,9 +92,16 @@ const PerfilScreen: React.FC<PerfilScreenProps> = ({ userId }) => {
         </View>
 
         <View style={styles.profileInfo}>
-          <Image source={require('./assets/handman.jpg')} style={styles.avatar} />
-          <Text style={styles.name}>{nome}</Text>
-          <Text style={styles.email}>{email}</Text>
+          <Image 
+            source={usuario?.picture ? { uri: usuario.picture } : require('../assets/handman.jpg')} 
+            style={styles.avatar}
+            onError={(e) => {
+              console.log('Erro ao carregar imagem:', e.nativeEvent.error);
+            }}
+            defaultSource={require('../assets/handman.jpg')}
+          />
+          <Text style={styles.name}>{usuario?.nome}</Text>
+          <Text style={styles.email}>{usuario?.email}</Text>
 
           <View style={styles.prestadorSwitch}>
             <Text>Prestador de Serviço?</Text>
@@ -167,12 +154,10 @@ const PerfilScreen: React.FC<PerfilScreenProps> = ({ userId }) => {
           <Text style={styles.buttonText}>Salvar Detalhes</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Sair</Text>
         </TouchableOpacity>
       </ScrollView>
-
-      <BarraDeNavegacao onNavigate={handleNavigate} activeScreen={currentScreen} />
     </View>
   );
 };

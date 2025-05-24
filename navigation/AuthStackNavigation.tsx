@@ -13,7 +13,7 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export const StackNavigation = () => {
+export const AuthStackNavigation = () => {
     return (
         <Stack.Navigator 
             initialRouteName="Login"

@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { StackNavigation } from "./StackNavigation";
+import { AuthStackNavigation} from "./AuthStackNavigation";
 import { useContext } from "react";
 import { AuthContext, useAuth } from "../context/AuthContext";
 import { TabNavigation } from "./TabNavigation";
@@ -9,7 +9,7 @@ export const RootNavigation = () =>{
     console.log('isAuthenticated:', isAuthenticated);
     return(
         <NavigationContainer>
-            {isAuthenticated ? <TabNavigation /> : <StackNavigation />}
+            {isAuthenticated ? <TabNavigation /> : <AuthStackNavigation />}
         </NavigationContainer>
     )
 }

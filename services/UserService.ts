@@ -3,9 +3,9 @@ import dbPromise from '../db';
 import { checkInternetConnection, handleApiError } from '../utils/networkUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '../model/User';
+import { API_URL } from '../constants/ApiUrl';
 
 // Substitua 192.168.1.100 pelo IP da sua máquina na rede local
-const API_URL = 'http://192.168.3.10:3003';
 
 interface LoginSuccess {
     success: true;

@@ -1,8 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { AuthStackNavigation} from "./AuthStackNavigation";
 import { useContext } from "react";
-import { AuthContext, useAuth } from "../context/AuthContext";
 import { TabNavigation } from "./TabNavigation";
+import { useAuth } from "../context/AuthContext";
 
 export const RootNavigation = () =>{
     const { isAuthenticated } = useAuth();

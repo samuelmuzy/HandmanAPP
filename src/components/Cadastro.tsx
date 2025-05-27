@@ -10,9 +10,9 @@ import {
   ImageBackground,
   Switch,
 } from 'react-native';
-import HeaderNavigation from '../HeaderNavigation';
-import BarraDeNavegacao from '../BarraDeNavegacao';
-import dbPromise from '../db';
+import HeaderNavigation from '../../HeaderNavigation';
+import BarraDeNavegacao from '../../BarraDeNavegacao';
+import dbPromise from '../../db';
 
 const { width, height } = Dimensions.get('window');
 const backgroundImage = require('../assets/handman.jpg');

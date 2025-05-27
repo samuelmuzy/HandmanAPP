@@ -11,10 +11,10 @@ import {
     Alert,
     ActivityIndicator,
 } from 'react-native';
-import HeaderNavigation from '../HeaderNavigation';
+import HeaderNavigation from '../../HeaderNavigation';
 import { authService } from '../services/authService';
 import backgroundImage from '../assets/handman.jpg';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../constants/context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 

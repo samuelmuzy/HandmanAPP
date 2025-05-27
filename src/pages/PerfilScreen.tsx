@@ -12,10 +12,11 @@ import {
   Alert,
 } from 'react-native';
 import { useGetToken } from '../hooks/useGetToken';
-import { useAuth } from '../context/AuthContext';
+
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { User } from '../model/User';
 import { UserService } from '../services/UserService';
+import { useAuth } from '../context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 

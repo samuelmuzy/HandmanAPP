@@ -1,16 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, Dimensions } from 'react-native';
-import HeaderNavigation from '../HeaderNavigation';
-import BarraDeNavegacao from '../BarraDeNavegacao';
+import HeaderNavigation from '../../HeaderNavigation';
+import BarraDeNavegacao from '../../BarraDeNavegacao';
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window'); // Added height here
 
-interface AjudaScreenProps {
+interface SobreNosScreenProps {
   onNavigate: (screen: string) => void;
   activeScreen: string;
 }
 
-const AjudaScreen: React.FC<AjudaScreenProps> = ({ onNavigate, activeScreen }) => {
+const SobreNosScreen: React.FC<SobreNosScreenProps> = ({ onNavigate, activeScreen }) => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -20,7 +20,7 @@ const AjudaScreen: React.FC<AjudaScreenProps> = ({ onNavigate, activeScreen }) =
           <Text style={styles.title}>Handyman</Text>
           <Text style={styles.welcome}>Bem-vindo à Handyman, a sua plataforma confiável para serviços manuais!</Text>
           <Text style={styles.description}>
-            Estamos aqui para ajudar! Se precisar de suporte com algum serviço, nossa equipe está pronta para te auxiliar com praticidade e segurança. Entre em contato e resolva suas dúvidas rapidamente.
+            Somos especializados em conectar você a profissionais qualificados para realizar pequenos reparos, reformas, montagens, instalações e muito mais. Nosso objetivo é proporcionar praticidade, segurança e qualidade em cada serviço, garantindo que sua casa ou empresa esteja sempre em ótimas condições.
           </Text>
         </View>
 
@@ -28,31 +28,32 @@ const AjudaScreen: React.FC<AjudaScreenProps> = ({ onNavigate, activeScreen }) =
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Como o HandyMan Funciona?</Text>
           <Text style={styles.text}>
-            <Text style={styles.bold}>Pesquise profissionais – </Text>
-            Toque para procurar os profissionais de acordo com o tipo de serviço desejado.
+            <Text style={styles.bold}>Profissionais qualificados – </Text>
+            Todos os nossos prestadores são experientes e de confiança.
           </Text>
           <Text style={styles.text}>
-            <Text style={styles.bold}>Escolha um prestador – </Text>
-            Escolha entre uma infinidade de profissionais qualificados e experientes.
+            <Text style={styles.bold}>Agilidade no atendimento – </Text>
+            Solicite um serviço de forma rápida e prática.
           </Text>
           <Text style={styles.text}>
-            <Text style={styles.bold}>Contrate com segurança – </Text>
-            Todos os serviços são garantidos para sua total segurança.
+            <Text style={styles.bold}>Orçamentos justos – </Text>
+            Preços acessíveis e transparência em cada etapa.
           </Text>
           <Text style={styles.text}>
-            <Text style={styles.bold}>Conclua o serviço – </Text>
-            Após a conclusão do serviço, avalie o profissional e deixe seu comentário.
+            <Text style={styles.bold}>Diversidade de serviços – </Text>
+            Desde consertos elétricos até montagem de móveis.
           </Text>
           <Text style={styles.text}>
-            Se precisar de ajuda em qualquer etapa, nosso suporte está disponível 24/7 para te atender!
+            Na Handyman, acreditamos que um bom trabalho manual faz toda a diferença no dia a dia. Conte conosco para facilitar sua vida e deixar tudo do jeito que você precisa!
           </Text>
+          <Text style={styles.text}>🔧 Entre em contato e solicite um serviço agora mesmo!</Text>
         </View>
 
         {/* Seção 3: Nossa Essência */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Nossa Essência</Text>
           <Text style={styles.text}>
-            A Handyman foi criada para simplificar sua vida. Nosso objetivo é conectar você a profissionais confiáveis para resolver qualquer necessidade do dia a dia, com transparência e eficiência. Conte conosco para um suporte rápido e soluções práticas.
+            A Handyman nasceu com a missão de conectar você a profissionais qualificados e confiáveis para resolver demandas do seu dia a dia. Valorizamos a excelência, a transparência e a praticidade. Estamos sempre prontos para atender suas necessidades com soluções eficientes e confiáveis.
           </Text>
           <Image
             source={require('../assets/mesa.png')}
@@ -61,7 +62,6 @@ const AjudaScreen: React.FC<AjudaScreenProps> = ({ onNavigate, activeScreen }) =
           />
         </View>
       </ScrollView>
-      
     </View>
   );
 };
@@ -137,4 +137,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AjudaScreen;
+export default SobreNosScreen;

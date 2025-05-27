@@ -15,9 +15,9 @@ import LoginScreen from './LoginScreen';
 import CadastroScreen from './CadastroScreen';
 import SobreNosScreen from './SobreNósScreen';
 import AjudaScreen from './AjudaScreen';
-import HeaderNavigation from '../HeaderNavigation';
-import BarraDeNavegacao from '../BarraDeNavegacao';
-import { runMigrations } from '../migrations';
+import HeaderNavigation from '../../HeaderNavigation';
+import BarraDeNavegacao from '../../BarraDeNavegacao';
+import { runMigrations } from '../../migrations';
 import Login from '../components/Login';
 import Cadastro from '../components/Cadastro';
 

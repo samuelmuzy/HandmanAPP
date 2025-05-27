@@ -1,5 +1,5 @@
 import axios from 'axios';
-import dbPromise from '../db';
+import dbPromise from '../../db';
 import { checkInternetConnection, handleApiError } from '../utils/networkUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../constants/ApiUrl';

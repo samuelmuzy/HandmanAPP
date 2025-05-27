@@ -14,7 +14,8 @@ import {
 import HeaderNavigation from '../../HeaderNavigation';
 import { authService } from '../services/authService';
 import backgroundImage from '../assets/handman.jpg';
-import { useAuth } from '../constants/context/AuthContext';
+import { useAuth } from '../context/AuthContext';
+
 
 const { width, height } = Dimensions.get('window');
 

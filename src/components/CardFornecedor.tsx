@@ -1,20 +1,41 @@
 import { View, Text, StyleSheet, Image, Button, Dimensions } from "react-native";
 import { typeFornecedor } from "../model/Fornecedor"
 import { Star } from 'lucide-react-native';
+import ImagemPadrao from '../assets/pexels-photo-1216589.webp'
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { RootTabParamList } from '../navigation/TabNavigation';
+
+type FornecedorNavigationProp = CompositeNavigationProp<
+    NativeStackNavigationProp<FornecedorStackParamList>,
+    BottomTabNavigationProp<RootTabParamList>
+>;
 
 interface CardFornecedorProps{
     fornecedor:typeFornecedor,
-    onNavigateExibirFornecedor: (screen: string) => void;
 }
 
 const windowWidth = Dimensions.get('window').width;
 
-export const CardFornecedor = ({fornecedor,onNavigateExibirFornecedor}:CardFornecedorProps) =>{
+export const CardFornecedor = ({fornecedor}:CardFornecedorProps) =>{
+    const navigation = useNavigation<FornecedorNavigationProp>();
+
+    const handleNavigateToDetalhes = (fornecedorId:string | undefined) => {
+        navigation.navigate('FornecedorStack', {
+            screen: 'ExibirFornecedorScreen',
+            params: { fornecedorId: fornecedor.id_fornecedor }
+        });
+    };
+
     return(
         <View style={styles.container}>
             <Image 
-                source={{ uri: fornecedor.imagemIlustrativa }}
+                source={fornecedor.imagemIlustrativa ? { uri: fornecedor.imagemIlustrativa } : ImagemPadrao}
                 style={styles.image}
+                defaultSource={ImagemPadrao}
             />
             <View style={styles.contentContainer}>
                 <View style={styles.infoContainer}>
@@ -25,11 +46,11 @@ export const CardFornecedor = ({fornecedor,onNavigateExibirFornecedor}:CardForne
                             <Star size={16} color="#444" fill="#444"/>
                             <Text style={styles.avaliacao}>{fornecedor.media_avaliacoes}</Text>
                         </View>
-                        <Text style={styles.valor}>{"R$ " + fornecedor.valor}</Text>
+                        <Text style={styles.valor}>R$ {fornecedor.valor}</Text>
                     </View>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button color={'#AC5906'}  title="Contratar" onPress={() => onNavigateExibirFornecedor('DetalhesFornecedor')}/>
+                    <Button color={'#AC5906'}  title="Contratar" onPress={() => handleNavigateToDetalhes(fornecedor.id_fornecedor)}/>
                 </View>
             </View>
         </View>

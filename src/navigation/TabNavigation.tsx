@@ -1,28 +1,29 @@
 import React from 'react';
-import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HandyManApp } from '../pages/HomeScrenn';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PerfilScreen from '../pages/PerfilScreen';
-import { useGetToken } from '../hooks/useGetToken';
 import { ServicoScreen } from '../pages/ServicoScreen';
-
-
+import { FornecedorStackNavigation } from './FornecedorStackNavigation';
+import { FornecedorStackParamList } from './FornecedorStackNavigation';
 
 export type RootTabParamList = {
     Home: undefined;
     Serviços: undefined;
     Agenda: undefined;
     Perfil: undefined;
+    FornecedorStack: {
+        screen: keyof FornecedorStackParamList;
+        params: FornecedorStackParamList[keyof FornecedorStackParamList];
+    };
 };
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export const TabNavigation = () => {
-    
-
     return (
-        <Tab.Navigator 
+        <Tab.Navigator
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
@@ -45,40 +46,49 @@ export const TabNavigation = () => {
                 tabBarInactiveTintColor: 'white',
             }}
         >
-            <Tab.Screen 
-                name='Home' 
+            <Tab.Screen
+                name='Home'
                 component={HandyManApp}
                 options={{
-                    tabBarIcon: ({color, size}) => (
+                    tabBarIcon: ({ color, size }) => (
                         <Icon name="home" size={size} color={color} />
                     ),
                 }}
             />
-            <Tab.Screen 
-                name='Serviços' 
+            <Tab.Screen
+                name='Serviços'
                 component={ServicoScreen}
                 options={{
-                    tabBarIcon: ({color, size}) => (
+                    tabBarIcon: ({ color, size }) => (
                         <Icon name="tools" size={size} color={color} />
                     ),
                 }}
             />
-            <Tab.Screen 
-                name='Agenda' 
+            <Tab.Screen
+                name='Agenda'
                 component={HandyManApp}
                 options={{
-                    tabBarIcon: ({color, size}) => (
+                    tabBarIcon: ({ color, size }) => (
                         <Icon name="calendar" size={size} color={color} />
                     ),
                 }}
             />
-            <Tab.Screen 
-                name='Perfil' 
+            <Tab.Screen
+                name='Perfil'
                 component={PerfilScreen}
                 options={{
-                    tabBarIcon: ({color, size}) => (
+                    tabBarIcon: ({ color, size }) => (
                         <Icon name="account" size={size} color={color} />
                     ),
+                }}
+            />
+            <Tab.Screen
+                name='FornecedorStack'
+                component={FornecedorStackNavigation}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarStyle: { display: 'none' },
+                    tabBarItemStyle: { display: 'none' },
                 }}
             />
         </Tab.Navigator>

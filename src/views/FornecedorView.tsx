@@ -15,13 +15,12 @@ interface FornecedorViewProps {
     setCategoria: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const FornecedorView = ({usuario, fornecedor, onNavigateExibirFornecedor,setCategoria }: FornecedorViewProps) => {
+export const FornecedorView = ({usuario, fornecedor,setCategoria }: FornecedorViewProps) => {
 
     const renderFornecedor = ({ item }: ListRenderItemInfo<typeFornecedor>) => {
         return (
             <CardFornecedor
                 fornecedor={item}
-                onNavigateExibirFornecedor={onNavigateExibirFornecedor}
             />
         )
     }

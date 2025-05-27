@@ -27,7 +27,7 @@ export const CategoryButtons = ({ categories, onSelectCategory }: CategoryButton
               style={[styles.button, isSelected && styles.selectedButton]} // Apply selectedButton style if isSelected is true
               onPress={() => handleSelectCategory(category)}
             >
-              <Text style={[styles.buttonText, isSelected && styles.selectedButtonText]}>{category}</Text> // Apply selectedButtonText style
+              <Text style={[styles.buttonText, isSelected && styles.selectedButtonText]}>{category}</Text> 
             </TouchableOpacity>
           );
         })}

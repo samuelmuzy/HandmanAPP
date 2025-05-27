@@ -36,4 +36,6 @@ export const UserService = {
             console.log(error)
         }
     }
+
+    
 }; 

@@ -37,7 +37,7 @@ export const FornecedorService = {
     },
     async getFornecedorPorId(id_fornecedor:string | undefined):Promise<typeFornecedor | undefined>{
         try{
-            const response = await  axios.get(`${API_URL}/fornecedor/${id_fornecedor}`)
+            const response = await axios.get(`${API_URL}/fornecedor/${id_fornecedor}`)
             
             const user:typeFornecedor = response.data;
             console.log(user)

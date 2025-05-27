@@ -1,20 +1,41 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute, CommonActions } from '@react-navigation/native';
 import { typeFornecedor } from "../model/Fornecedor";
 import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface DetalhesFornecedorProps {
     fornecedor: typeFornecedor | undefined;
 }
 
-export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
-    const navigation = useNavigation();
+type ExibirFornecedorScreenRouteProp = RouteProp<FornecedorStackParamList, 'ExibirFornecedorScreen'>;
+type ExibirFornecedorScreenNavigationProp = NativeStackNavigationProp<FornecedorStackParamList, 'ExibirFornecedorScreen'>;
 
+export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
+    const navigation = useNavigation<ExibirFornecedorScreenNavigationProp>();
+    const route = useRoute<ExibirFornecedorScreenRouteProp>();
+    
     const handleVoltar = () => {
-        navigation.goBack();
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    { name: 'Serviços' }
+                ],
+            })
+        );
+    };
+    
+    const handleAgendar = () => {
+        if (fornecedor?.id_fornecedor) {
+            navigation.navigate('AgendamentoScreen', { 
+                fornecedorId: fornecedor.id_fornecedor 
+            });
+        }
     };
 
     const dadosFornecedor = fornecedor;
@@ -58,7 +79,10 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
                 <Text style={styles.especialidadesText}>{dadosFornecedor?.sub_descricao}</Text>
             </View>
 
-             <TouchableOpacity style={styles.contactButtonBrown}>
+             <TouchableOpacity 
+                style={styles.contactButtonBrown}
+                onPress={handleAgendar}
+            >
                 <Text style={styles.contactButtonBrownText}>Entre em contato</Text>
             </TouchableOpacity>
             

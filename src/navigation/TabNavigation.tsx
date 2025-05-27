@@ -7,6 +7,7 @@ import PerfilScreen from '../pages/PerfilScreen';
 import { ServicoScreen } from '../pages/ServicoScreen';
 import { FornecedorStackNavigation } from './FornecedorStackNavigation';
 import { FornecedorStackParamList } from './FornecedorStackNavigation';
+import { AgendaScreen } from '../pages/AgendaScreen';
 
 export type RootTabParamList = {
     Home: undefined;
@@ -66,7 +67,7 @@ export const TabNavigation = () => {
             />
             <Tab.Screen
                 name='Agenda'
-                component={HandyManApp}
+                component={AgendaScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Icon name="calendar" size={size} color={color} />

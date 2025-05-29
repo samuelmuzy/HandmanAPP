@@ -18,14 +18,17 @@ interface FornecedorHistorico {
     media_avaliacoes: number;
 }
 
-export interface HistoricoAgendamento {
+export type HistoricoAgendamento = {
     id_servico: string;
-    id_usuario: string;
-    categoria: string;
-    data: string;
-    horario: string;
-    status: 'pendente' | 'confirmado' | 'cancelado' | 'concluido';
-    id_pagamento: string;
-    id_avaliacao: string;
-    fornecedor: FornecedorHistorico;
-}
+    id_fornecedor:string
+    data: Date;
+    horario: Date;
+    status: 'pendente' | 'confirmado' | 'cancelado' | 'concluido' | 'Em Andamento';
+    descricao: string;
+    fornecedor: {
+        nome: string;
+        email: string;
+        telefone: string;
+        picture: string;
+    };
+};

@@ -5,10 +5,22 @@ import { HistoricoAgendamento } from '../model/Agendamento';
 import { CardAgendamento } from '../components/CardAgendamento';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGetToken } from '../hooks/useGetToken';
+import { useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootTabParamList } from '../navigation/TabNavigation';
+import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
+
+type NavigationProp = CompositeNavigationProp<
+    BottomTabNavigationProp<RootTabParamList>,
+    NativeStackNavigationProp<FornecedorStackParamList>
+>;
 
 export const AgendaScreen = () => {
     const [agendamentos, setAgendamentos] = useState<HistoricoAgendamento[]>([]);
     const [loading, setLoading] = useState(true);
+    const navigation = useNavigation<NavigationProp>();
 
     const token = useGetToken();
 
@@ -23,6 +35,7 @@ export const AgendaScreen = () => {
                 const id_usuario = token.id;
                 
                 const agendamentos = await AgendamentoService.getAgendamentos(id_usuario);
+                console.log(agendamentos)
                 if (agendamentos) {
                     setAgendamentos(agendamentos);
                 }
@@ -35,6 +48,13 @@ export const AgendaScreen = () => {
 
         fetchAgendamentos();
     }, [token]);
+
+    const handleEntrarEmContato = (idFornecedor: string) => {
+        navigation.navigate('FornecedorStack', {
+            screen: 'ChatScreen',
+            params: { fornecedorId: idFornecedor }
+        });
+    }
 
     if (loading) {
         return (
@@ -55,6 +75,7 @@ export const AgendaScreen = () => {
                         onPress={() => {
                             console.log("Clicado no agendamento:", item.id_servico);
                         }} 
+                        onPressEntrarContato={handleEntrarEmContato}
                     />
                 )}
                 ListEmptyComponent={() => (

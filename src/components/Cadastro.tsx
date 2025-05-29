@@ -96,8 +96,6 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
           <View>
             <TextInput style={styles.input} placeholder="Primeiro Nome" value={nome} onChangeText={setNome} />
             <TextInput style={styles.input} placeholder="Sobrenome" value={sobrenome} onChangeText={setSobrenome} />
-            <TextInput style={styles.input} placeholder="Gênero" value={genero} onChangeText={setGenero} />
-            <TextInput style={styles.input} placeholder="Aniversário" value={aniversario} onChangeText={setAniversario} />
             <View style={styles.prestadorSwitch}>
               <Text>Prestador de Serviço?</Text>
               <Switch
@@ -116,19 +114,12 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
       case 2:
         return (
           <View>
-            <TextInput style={styles.input} placeholder="Usuário" value={usuario} onChangeText={setUsuario} />
             <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
             <TextInput style={styles.input} placeholder="Telefone" keyboardType="phone-pad" value={telefone} onChangeText={setTelefone} />
             <TextInput style={styles.input} placeholder="Endereço" value={endereco} onChangeText={setEndereco} />
             <TextInput style={styles.input} placeholder="Cidade" value={cidade} onChangeText={setCidade} />
             <TextInput style={styles.input} placeholder="Estado" value={estado} onChangeText={setEstado} />
             <TextInput style={styles.input} placeholder="CEP" keyboardType="numeric" value={cep} onChangeText={setCep} />
-            {isPrestador && (
-              <>
-                <TextInput style={styles.input} placeholder="Área de Atuação" value={areaAtuacao} onChangeText={setAreaAtuacao} />
-                <TextInput style={styles.input} placeholder="Descrição dos Serviços" multiline value={descricaoServicos} onChangeText={setDescricaoServicos} />
-              </>
-            )}
             <TouchableOpacity style={styles.button} onPress={nextStep}>
               <Text style={styles.buttonText}>Próxima etapa</Text>
             </TouchableOpacity>
@@ -158,7 +149,6 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <HeaderNavigation onNavigate={onNavigate} activeScreen={currentScreen} />
         <ImageBackground source={backgroundImage} style={styles.background}>
           <View style={styles.main}>
             <Text style={styles.title}>Crie sua conta</Text>

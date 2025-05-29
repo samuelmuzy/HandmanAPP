@@ -5,7 +5,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface CardAgendamentoProps {
     agendamento: HistoricoAgendamento;
-    onPress?: () => void; // Adiciona um onPress opcional para o botão
+    onPress?: () => void;
+    onPressEntrarContato: (idFornecedor: string) => void;
 }
 
 const getStatusConfig = (status: string) => {
@@ -13,44 +14,50 @@ const getStatusConfig = (status: string) => {
         case 'pendente':
             return {
                 color: '#FFA500',
-                icon: 'clock-outline',
+                icon: 'clock-outline' as const,
                 text: 'Pendente'
             };
         case 'confirmado':
             return {
                 color: '#4CAF50',
-                icon: 'check-circle-outline',
+                icon: 'check-circle-outline' as const,
                 text: 'Confirmado'
             };
         case 'cancelado':
             return {
                 color: '#F44336',
-                icon: 'close-circle-outline',
+                icon: 'close-circle-outline' as const,
                 text: 'Cancelado'
             };
         case 'concluido':
             return {
                 color: '#2196F3',
-                icon: 'check-circle',
+                icon: 'check-circle' as const,
                 text: 'Concluído'
+            };
+        case 'Em Andamento':
+            return {
+                color: '#2196F3',
+                icon: 'progress-clock' as const,
+                text: 'Em Andamento'
             };
         default:
             return {
                 color: '#757575',
-                icon: 'help-circle-outline',
+                icon: 'help-circle-outline' as const,
                 text: status
             };
     }
 };
 
-export const CardAgendamento = ({ agendamento, onPress }: CardAgendamentoProps) => {
-    const placeholderImage = require('../assets/agenda.png'); 
+export const CardAgendamento = ({ agendamento, onPress, onPressEntrarContato }: CardAgendamentoProps) => {
+    const placeholderImage = require('../assets/agenda.png');
     const statusConfig = getStatusConfig(agendamento.status);
 
     return (
         <View style={styles.cardContainer}>
             <View style={styles.headerContainer}>
-                <Image 
+                <Image
                     source={placeholderImage} // Usar imagem real do fornecedor se disponível
                     style={styles.providerImage}
                 />
@@ -65,14 +72,14 @@ export const CardAgendamento = ({ agendamento, onPress }: CardAgendamentoProps) 
                 {/* Assumindo um valor fixo ou buscando de outra fonte, já que HistoricoAgendamento não tem valor */}
                 <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Valor:</Text>
-                    <Text style={styles.detailValue}>R$ --,--</Text> 
+                    <Text style={styles.detailValue}>R$ --,--</Text>
                 </View>
                 <View style={styles.statusContainer}>
                     <View style={[styles.statusBadge, { backgroundColor: `${statusConfig.color}20` }]}>
-                        <MaterialCommunityIcons 
-                            name={statusConfig.icon} 
-                            size={16} 
-                            color={statusConfig.color} 
+                        <MaterialCommunityIcons
+                            name={statusConfig.icon}
+                            size={16}
+                            color={statusConfig.color}
                         />
                         <Text style={[styles.statusText, { color: statusConfig.color }]}>
                             {statusConfig.text}
@@ -80,10 +87,20 @@ export const CardAgendamento = ({ agendamento, onPress }: CardAgendamentoProps) 
                     </View>
                 </View>
             </View>
+            {agendamento.status === 'concluido' && (
+                <TouchableOpacity style={styles.button} onPress={onPress}>
+                    <Text style={styles.buttonText}>Avaliar</Text>
+                </TouchableOpacity>
+            )}
+            {agendamento.status === 'Em Andamento' && (
+                <TouchableOpacity 
+                    style={styles.button} 
+                    onPress={() => onPressEntrarContato(agendamento.id_fornecedor)}
+                >
+                    <Text style={styles.buttonText}>Entrar em contato</Text>
+                </TouchableOpacity>
+            )}
 
-            <TouchableOpacity style={styles.button} onPress={onPress}>
-                <Text style={styles.buttonText}>Contratar</Text>
-            </TouchableOpacity>
         </View>
     );
 };

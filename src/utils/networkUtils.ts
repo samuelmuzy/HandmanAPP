@@ -11,18 +11,9 @@ export const checkInternetConnection = async (): Promise<boolean> => {
 };
 
 export const handleApiError = (error: any) => {
-  if (!error.response) {
-    // Erro de rede ou sem conexão
-    return {
-      success: false,
-      message: 'Erro de conexão. Verifique sua internet.',
-      useLocalDB: true
-    };
-  }
   
   return {
     success: false,
     message: error.response.data.error || 'Erro ao processar requisição',
-    useLocalDB: false
   };
 }; 

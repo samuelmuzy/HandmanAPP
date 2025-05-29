@@ -45,7 +45,6 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }
             if (result.success) {
                 Alert.alert(
                     'Login realizado com sucesso!',
-                    `${result.useLocalDB ? '(Modo offline)' : ''}`
                 );
                 onNavigate('MainApp');
             } else {

@@ -7,12 +7,12 @@ interface CategoryButtonsProps {
 }
 
 export const CategoryButtons = ({ categories, onSelectCategory }: CategoryButtonsProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>(''); // Internal state for selected category
+  const [selectedCategory, setSelectedCategory] = useState<string>(''); 
 
   const handleSelectCategory = (category: string) => {
-    setSelectedCategory(category); // Update internal state
+    setSelectedCategory(category); 
     if (onSelectCategory) {
-      onSelectCategory(category); // Call the external handler if provided
+      onSelectCategory(category); 
     }
   };
 
@@ -20,11 +20,11 @@ export const CategoryButtons = ({ categories, onSelectCategory }: CategoryButton
     <View style={styles.container}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {categories.map((category, index) => {
-          const isSelected = category === selectedCategory; // Check if current category is selected
+          const isSelected = category === selectedCategory; 
           return (
             <TouchableOpacity
               key={index}
-              style={[styles.button, isSelected && styles.selectedButton]} // Apply selectedButton style if isSelected is true
+              style={[styles.button, isSelected && styles.selectedButton]} 
               onPress={() => handleSelectCategory(category)}
             >
               <Text style={[styles.buttonText, isSelected && styles.selectedButtonText]}>{category}</Text> 

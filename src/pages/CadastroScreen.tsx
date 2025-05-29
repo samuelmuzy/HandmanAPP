@@ -29,8 +29,8 @@ const CadastroScreen = () => {
   const navigation = useNavigation<NavigationProp>();
 
   const handleNavigate = (screen: string) => {
-    if (screen === 'MainApp') {
-      navigation.navigate('MainApp');
+    if (screen === 'Login') {
+      navigation.navigate('Login');
     }
   };
 

@@ -13,6 +13,7 @@ import {
 import HeaderNavigation from '../../HeaderNavigation';
 import BarraDeNavegacao from '../../BarraDeNavegacao';
 import dbPromise from '../../db';
+import { authService } from '../services/authService';
 
 const { width, height } = Dimensions.get('window');
 const backgroundImage = require('../assets/handman.jpg');
@@ -34,6 +35,9 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [estado, setEstado] = useState('');
+  const [cep, setCep] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [areaAtuacao, setAreaAtuacao] = useState('');
@@ -46,30 +50,31 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
         return;
       }
 
-      const db = await dbPromise;
+      const usuarioData = {
+        nome: `${nome} ${sobrenome}`,
+        email: email,
+        senha: senha,
+        telefone: telefone,
+        endereco: {
+          rua: endereco,
+          cidade: cidade,
+          estado: estado,
+          cep: cep
+        },
+        formaPagamento: [], // Array vazio inicial para formas de pagamento
+        historico_servicos: [],
+        autenticacaoVia: "local", // Array vazio inicial para histórico de serviços
+        role: 'usuario'
+      };
 
-      await db.runAsync(
-        `INSERT INTO users 
-          (nome, sobrenome, genero, aniversario, usuario, email, telefone, endereco, senha, isPrestador, areaAtuacao, descricaoServicos)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          nome,
-          sobrenome,
-          genero,
-          aniversario,
-          usuario,
-          email,
-          telefone,
-          endereco,
-          senha,
-          isPrestador ? 1 : 0,
-          isPrestador ? areaAtuacao : null,
-          isPrestador ? descricaoServicos : null,
-        ]
-      );
-
-      alert('Cadastro realizado com sucesso!');
-      onNavigate('MainApp'); // Return to main app
+      const result = await authService.cadastro(usuarioData);
+      
+      if (result.success) {
+        alert('Cadastro realizado com sucesso!');
+        onNavigate('Login'); // Navega para a tela de login após o cadastro
+      } else {
+        alert(result.message || 'Erro ao realizar cadastro');
+      }
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
       alert('Erro ao cadastrar. Verifique os dados e tente novamente.');
@@ -115,6 +120,9 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
             <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
             <TextInput style={styles.input} placeholder="Telefone" keyboardType="phone-pad" value={telefone} onChangeText={setTelefone} />
             <TextInput style={styles.input} placeholder="Endereço" value={endereco} onChangeText={setEndereco} />
+            <TextInput style={styles.input} placeholder="Cidade" value={cidade} onChangeText={setCidade} />
+            <TextInput style={styles.input} placeholder="Estado" value={estado} onChangeText={setEstado} />
+            <TextInput style={styles.input} placeholder="CEP" keyboardType="numeric" value={cep} onChangeText={setCep} />
             {isPrestador && (
               <>
                 <TextInput style={styles.input} placeholder="Área de Atuação" value={areaAtuacao} onChangeText={setAreaAtuacao} />

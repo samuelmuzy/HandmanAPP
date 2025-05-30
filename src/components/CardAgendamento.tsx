@@ -3,13 +3,16 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { HistoricoAgendamento } from '../model/Agendamento';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+type StatusType = "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento";
+
 interface CardAgendamentoProps {
     agendamento: HistoricoAgendamento;
     onPress?: () => void;
     onPressEntrarContato: (idFornecedor: string) => void;
+    onPressAtualizarStatus: (novoStatus: StatusType) => void;
 }
 
-const getStatusConfig = (status: string) => {
+const getStatusConfig = (status: StatusType) => {
     switch (status.toLowerCase()) {
         case 'pendente':
             return {
@@ -35,7 +38,7 @@ const getStatusConfig = (status: string) => {
                 icon: 'check-circle' as const,
                 text: 'Concluído'
             };
-        case 'Em Andamento':
+        case 'em andamento':
             return {
                 color: '#2196F3',
                 icon: 'progress-clock' as const,
@@ -50,15 +53,20 @@ const getStatusConfig = (status: string) => {
     }
 };
 
-export const CardAgendamento = ({ agendamento, onPress, onPressEntrarContato }: CardAgendamentoProps) => {
+export const CardAgendamento: React.FC<CardAgendamentoProps> = ({
+    agendamento,
+    onPress,
+    onPressEntrarContato,
+    onPressAtualizarStatus
+}) => {
     const placeholderImage = require('../assets/agenda.png');
-    const statusConfig = getStatusConfig(agendamento.status);
+    const statusConfig = getStatusConfig(agendamento.status as StatusType);
 
     return (
         <View style={styles.cardContainer}>
             <View style={styles.headerContainer}>
                 <Image
-                    source={placeholderImage} // Usar imagem real do fornecedor se disponível
+                    source={placeholderImage}
                     style={styles.providerImage}
                 />
                 <Text style={styles.providerName}>{agendamento.fornecedor.nome}</Text>
@@ -69,7 +77,6 @@ export const CardAgendamento = ({ agendamento, onPress, onPressEntrarContato }: 
                     <Text style={styles.detailLabel}>Data do serviço:</Text>
                     <Text style={styles.detailValue}>{new Date(agendamento.data).toLocaleDateString()}</Text>
                 </View>
-                {/* Assumindo um valor fixo ou buscando de outra fonte, já que HistoricoAgendamento não tem valor */}
                 <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Valor:</Text>
                     <Text style={styles.detailValue}>R$ --,--</Text>
@@ -87,11 +94,13 @@ export const CardAgendamento = ({ agendamento, onPress, onPressEntrarContato }: 
                     </View>
                 </View>
             </View>
+
             {agendamento.status === 'concluido' && (
                 <TouchableOpacity style={styles.button} onPress={onPress}>
                     <Text style={styles.buttonText}>Avaliar</Text>
                 </TouchableOpacity>
             )}
+
             {agendamento.status === 'Em Andamento' && (
                 <TouchableOpacity 
                     style={styles.button} 
@@ -101,21 +110,58 @@ export const CardAgendamento = ({ agendamento, onPress, onPressEntrarContato }: 
                 </TouchableOpacity>
             )}
 
+            <View style={styles.footer}>
+                {agendamento.status.toLowerCase() === 'pendente' && (
+                    <TouchableOpacity
+                        style={[styles.button, styles.confirmButton]}
+                        onPress={() => onPressAtualizarStatus('confirmado')}
+                    >
+                        <Text style={styles.buttonText}>Confirmar Serviço</Text>
+                    </TouchableOpacity>
+                )}
+
+                {agendamento.status.toLowerCase() === 'confirmado' && (
+                    <TouchableOpacity
+                        style={[styles.button, styles.startButton]}
+                        onPress={() => onPressAtualizarStatus('Em Andamento')}
+                    >
+                        <Text style={styles.buttonText}>Iniciar Serviço</Text>
+                    </TouchableOpacity>
+                )}
+
+                {agendamento.status.toLowerCase() === 'em andamento' && (
+                    <TouchableOpacity
+                        style={[styles.button, styles.completeButton]}
+                        onPress={() => onPressAtualizarStatus('concluido')}
+                    >
+                        <Text style={styles.buttonText}>Finalizar Serviço</Text>
+                    </TouchableOpacity>
+                )}
+
+                {['pendente', 'confirmado', 'em andamento'].includes(agendamento.status.toLowerCase()) && (
+                    <TouchableOpacity
+                        style={[styles.button, styles.cancelButton]}
+                        onPress={() => onPressAtualizarStatus('cancelado')}
+                    >
+                        <Text style={styles.buttonText}>Cancelar</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     cardContainer: {
-        backgroundColor: '#Ffffff', // Cor de fundo similar à imagem
+        backgroundColor: '#Ffffff',
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#AC5906', // Cor da borda similar à imagem
+        borderColor: '#AC5906',
         padding: 15,
         marginVertical: 8,
         marginHorizontal: 16,
-        elevation: 2, // Sombra para Android
-        shadowColor: '#000', // Sombra para iOS
+        elevation: 2,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
@@ -128,7 +174,7 @@ const styles = StyleSheet.create({
     providerImage: {
         width: 50,
         height: 50,
-        borderRadius: 25, // Para deixar a imagem redonda
+        borderRadius: 25,
         marginRight: 10,
     },
     providerName: {
@@ -189,6 +235,24 @@ const styles = StyleSheet.create({
     statusText: {
         fontSize: 14,
         fontWeight: '600',
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 10,
+    },
+    confirmButton: {
+        backgroundColor: '#4CAF50',
+    },
+    startButton: {
+        backgroundColor: '#2196F3',
+    },
+    completeButton: {
+        backgroundColor: '#4CAF50',
+    },
+    cancelButton: {
+        backgroundColor: '#F44336',
     },
 });
 

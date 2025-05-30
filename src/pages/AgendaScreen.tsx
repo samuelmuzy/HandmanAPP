@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { AgendamentoService } from '../services/AgendamentoServico';
 import { HistoricoAgendamento } from '../model/Agendamento';
 import { CardAgendamento } from '../components/CardAgendamento';
@@ -13,11 +13,14 @@ import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigatio
 import { ModalAvaliacao } from '../components/ModalAvaliacao';
 import axios from 'axios';
 import { API_URL } from '../constants/ApiUrl';
+import { useStatusNotifications } from '../hooks/useStatusNotifications';
 
 type NavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<RootTabParamList>,
     NativeStackNavigationProp<FornecedorStackParamList>
 >;
+
+type StatusType = "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento";
 
 export const AgendaScreen = () => {
     const [agendamentos, setAgendamentos] = useState<HistoricoAgendamento[]>([]);
@@ -26,6 +29,45 @@ export const AgendaScreen = () => {
     const [servicoSelecionado, setServicoSelecionado] = useState<HistoricoAgendamento | null>(null);
     const navigation = useNavigation<NavigationProp>();
     const token = useGetToken();
+
+    const handleStatusUpdate = (update: { id_servico: string; novo_status: string }) => {
+        setAgendamentos(prevAgendamentos => 
+            prevAgendamentos.map(agendamento => 
+                agendamento.id_servico === update.id_servico
+                    ? { ...agendamento, status: update.novo_status as StatusType }
+                    : agendamento
+            )
+        );
+
+        // Mostra uma notificação para o usuário
+        Alert.alert(
+            "Atualização de Status",
+            `O status do seu serviço foi atualizado para: ${update.novo_status}`,
+            [{ text: "OK" }]
+        );
+    };
+
+    const { emitirMudancaStatus } = useStatusNotifications(handleStatusUpdate);
+
+    const atualizarStatusServico = async (id_servico: string, novo_status: StatusType, id_fornecedor: string) => {
+        try {
+            // Atualiza no banco
+            await axios.put(`${API_URL}/servicos`, {
+                id_servico,
+                status: novo_status
+            });
+
+            // Emite o evento de socket
+            emitirMudancaStatus(id_servico, novo_status, id_fornecedor);
+        } catch (error) {
+            console.error("Erro ao atualizar status:", error);
+            Alert.alert(
+                "Erro",
+                "Não foi possível atualizar o status do serviço. Tente novamente.",
+                [{ text: "OK" }]
+            );
+        }
+    };
 
     useEffect(() => {
         const fetchAgendamentos = async () => {
@@ -101,6 +143,9 @@ export const AgendaScreen = () => {
                         agendamento={item} 
                         onPress={() => handleAvaliarServico(item)}
                         onPressEntrarContato={handleEntrarEmContato}
+                        onPressAtualizarStatus={(novoStatus) => 
+                            atualizarStatusServico(item.id_servico, novoStatus as StatusType, item.id_fornecedor)
+                        }
                     />
                 )}
                 ListEmptyComponent={() => (

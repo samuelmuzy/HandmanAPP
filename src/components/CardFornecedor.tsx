@@ -23,6 +23,13 @@ const windowWidth = Dimensions.get('window').width;
 export const CardFornecedor = ({fornecedor}:CardFornecedorProps) =>{
     const navigation = useNavigation<FornecedorNavigationProp>();
 
+    const formatarAvaliacao = (avaliacao: number) => {
+        if (Number.isInteger(avaliacao)) {
+            return avaliacao.toString();
+        }
+        return avaliacao.toFixed(2).replace('.', ',');
+    };
+
     const handleNavigateToDetalhes = (fornecedorId:string | undefined) => {
         navigation.navigate('FornecedorStack', {
             screen: 'ExibirFornecedorScreen',
@@ -44,7 +51,7 @@ export const CardFornecedor = ({fornecedor}:CardFornecedorProps) =>{
                     <View style={styles.ratingAndValueContainer}>
                         <View style={styles.ratingContainer}>
                             <Star size={16} color="#444" fill="#444"/>
-                            <Text style={styles.avaliacao}>{fornecedor.media_avaliacoes}</Text>
+                            <Text style={styles.avaliacao}>{formatarAvaliacao(fornecedor.media_avaliacoes)}</Text>
                         </View>
                         <Text style={styles.valor}>R$ {fornecedor.valor}</Text>
                     </View>

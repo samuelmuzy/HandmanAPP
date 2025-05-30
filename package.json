@@ -26,6 +26,7 @@
     "react": "19.0.0",
     "react-native": "0.79.2",
     "react-native-paper": "4.9.2",
+    "react-native-ratings": "^8.1.0",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-snap-carousel": "^3.9.1",
     "socket.io-client": "^4.8.1"

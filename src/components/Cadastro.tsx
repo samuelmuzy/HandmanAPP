@@ -9,6 +9,10 @@ import {
   Dimensions,
   ImageBackground,
   Switch,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import HeaderNavigation from '../../HeaderNavigation';
 import BarraDeNavegacao from '../../BarraDeNavegacao';
@@ -147,91 +151,109 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <ImageBackground source={backgroundImage} style={styles.background}>
-          <View style={styles.main}>
-            <Text style={styles.title}>Crie sua conta</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView 
+          contentContainerStyle={styles.container} 
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.headerContainer}>
+            <Text style={styles.title}>HANDYMAN</Text>
+            <Text style={styles.subtitle}>Crie sua conta{'\n'}e encontre profissionais!</Text>
+            <Text style={styles.description}>A sua plataforma confiável para serviços manuais!</Text>
+          </View>
+
+          <View style={styles.card}>
             {renderStep()}
           </View>
-        </ImageBackground>
-      </ScrollView>
-      
-    </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: width * 0.05,
-    backgroundColor: '#EEB16C',
-    paddingBottom: height * 0.1,
+    backgroundColor: '#FFFFFF',
+    paddingBottom: 20,
   },
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '90%',
-    marginTop: height * 0.08,
-  },
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.70)',
-    borderRadius: 20,
-    padding: width * 0.05,
-    marginBottom: height * 0.03,
+  headerContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   title: {
-    fontSize: width * 0.05,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: height * 0.02,
+    color: '#B54708',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 24,
+    color: '#B54708',
+    marginBottom: 8,
+    lineHeight: 32,
+  },
+  description: {
+    fontSize: 16,
+    color: '#B54708',
+    marginBottom: 24,
+  },
+  card: {
+    backgroundColor: '#EEB16C',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    margin: 10,
+    flex: 1,
   },
   input: {
-    height: height * 0.06,
-    borderWidth: 1,
-    borderColor: 'black',
+    backgroundColor: '#FFE1C5',
     borderRadius: 10,
-    padding: width * 0.03,
-    backgroundColor: 'white',
-    marginBottom: height * 0.02,
-    alignItems: 'center',
+    padding: 16,
+    fontSize: 16,
+    color: '#333',
+    height: 56,
+    marginBottom: 16,
   },
   button: {
-    backgroundColor: '#AD5700',
-    paddingVertical: width * 0.03,
-    paddingHorizontal: width * 0.1,
+    backgroundColor: '#7A2D00',
     borderRadius: 10,
+    padding: 16,
     alignItems: 'center',
-    marginTop: height * 0.02,
+    marginBottom: 10,
   },
   buttonText: {
-    color: 'white',
-    fontSize: width * 0.04,
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: 'bold',
   },
   backButton: {
-    backgroundColor: '#AD5700',
-    paddingVertical: width * 0.03,
-    paddingHorizontal: width * 0.1,
+    backgroundColor: '#7A2D00',
     borderRadius: 10,
+    padding: 16,
     alignItems: 'center',
-    marginTop: height * 0.02,
+    marginTop: 5,
   },
   backButtonText: {
-    color: 'white',
-    fontSize: width * 0.04,
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: 'bold',
   },
   prestadorSwitch: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '80%',
-    marginTop: height * 0.02,
+    backgroundColor: '#FFE1C5',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 16,
   },
 });
 

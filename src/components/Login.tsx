@@ -7,17 +7,44 @@ import {
     StyleSheet,
     TouchableOpacity,
     Dimensions,
-    ImageBackground,
-    Alert,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
-import HeaderNavigation from '../../HeaderNavigation';
-import { authService } from '../services/authService';
-import backgroundImage from '../assets/handman.jpg';
 import { useAuth } from '../context/AuthContext';
 
+const { width } = Dimensions.get('window');
 
-const { width, height } = Dimensions.get('window');
+interface InputWithLabelProps {
+    label: string;
+    value: string;
+    onChangeText: (text: string) => void;
+    secureTextEntry?: boolean;
+    keyboardType?: 'default' | 'email-address';
+    editable?: boolean;
+}
+
+const InputWithLabel: React.FC<InputWithLabelProps> = ({
+    label,
+    value,
+    onChangeText,
+    secureTextEntry,
+    keyboardType = 'default',
+    editable = true,
+}) => {
+    return (
+        <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>{label}</Text>
+            <TextInput
+                style={styles.input}
+                value={value}
+                onChangeText={onChangeText}
+                secureTextEntry={secureTextEntry}
+                keyboardType={keyboardType}
+                editable={editable}
+            />
+        </View>
+    );
+};
 
 interface LoginScreenProps {
     onBack: () => void;
@@ -29,7 +56,6 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [loading, setLoading] = useState(false);
-
     const { login } = useAuth();
 
     const handleLogin = async () => {
@@ -59,140 +85,210 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }
     };
 
     return (
-        <View style={{ flex: 1 }}>
-            <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-                <HeaderNavigation onNavigate={onNavigate} activeScreen={currentScreen} />
-                <ImageBackground source={backgroundImage} style={styles.background}>
-                    <View style={styles.main}>
-                        <Text style={styles.title}>Login</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Email"
-                            keyboardType="email-address"
-                            placeholderTextColor="#333"
-                            value={email}
-                            onChangeText={setEmail}
-                            editable={!loading}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Senha"
-                            secureTextEntry
-                            placeholderTextColor="#333"
-                            value={senha}
-                            onChangeText={setSenha}
-                            editable={!loading}
-                        />
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity
-                                style={[styles.button, loading && styles.buttonDisabled]}
-                                onPress={handleLogin}
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <ActivityIndicator color="white" />
-                                ) : (
-                                    <Text style={styles.buttonText}>Entrar</Text>
-                                )}
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.backButton, loading && styles.buttonDisabled]}
-                                onPress={onBack}
-                                disabled={loading}
-                            >
-                                <Text style={styles.backButtonText}>Voltar</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={styles.signupText}>
-                            Não possui conta? <Text onPress={() => onNavigate('Cadastro')} style={styles.signupLink}>Cadastrar-se</Text>
-                        </Text>
-                    </View>
-                </ImageBackground>
-            </ScrollView>
-        </View>
+        <ScrollView 
+            contentContainerStyle={styles.container} 
+            showsVerticalScrollIndicator={false}
+        >
+            <View style={styles.headerContainer}>
+                <Text style={styles.title}>HANDYMAN</Text>
+                <Text style={styles.subtitle}>Não faça você mesmo,{'\n'}encontre um proficional!</Text>
+                <Text style={styles.description}>A sua plataforma confiável para serviços manuais!</Text>
+            </View>
+
+            <View style={styles.card}>
+                <InputWithLabel
+                    label="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    editable={!loading}
+                />
+                
+                <View style={styles.passwordContainer}>
+                    <InputWithLabel
+                        label="Senha"
+                        value={senha}
+                        onChangeText={setSenha}
+                        secureTextEntry
+                        editable={!loading}
+                    />
+                    <TouchableOpacity style={styles.eyeIcon}>
+                        {/* Eye icon would go here */}
+                    </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity
+                    style={[styles.loginButton, loading && styles.buttonDisabled]}
+                    onPress={handleLogin}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <ActivityIndicator color="white" />
+                    ) : (
+                        <Text style={styles.loginButtonText}>Login</Text>
+                    )}
+                </TouchableOpacity>
+
+                <View style={styles.registerContainer}>
+                    <Text style={styles.registerText}>Não tem uma conta? </Text>
+                    <TouchableOpacity onPress={() => onNavigate('Cadastro')}>
+                        <Text style={styles.registerLink}>Cadastre-se</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.dividerContainer}>
+                    <View style={styles.dividerLine} />
+                    <Text style={styles.dividerText}>Tente outro método</Text>
+                    <View style={styles.dividerLine} />
+                </View>
+
+                <TouchableOpacity style={[styles.socialButton, styles.googleButton]}>
+                    <Text style={styles.socialButtonText}>Entrar com o Google</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.socialButton, styles.facebookButton]}>
+                    <Text style={styles.socialButtonText}>Entrar com o Facebook</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.socialButton, styles.appleButton]}>
+                    <Text style={[styles.socialButtonText, styles.appleButtonText]}>Entrar com Apple</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        padding: width * 0.05,
-        backgroundColor: '#EEB16C',
-        paddingBottom: height * 0.1,
+        backgroundColor: '#FFFFFF',
     },
-    background: {
-        flex: 1,
-        width: '100%',
-        height: '100%',
-        marginTop: height * 0.08,
-    },
-    main: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.70)',
-        borderRadius: 20,
-        padding: width * 0.05,
-        marginBottom: height * 0.03,
+    headerContainer: {
+        paddingHorizontal: 20,
+        paddingTop: 40,
+        paddingBottom: 20,
     },
     title: {
-        fontSize: width * 0.05,
+        fontSize: 32,
         fontWeight: 'bold',
-        color: '#333',
-        textAlign: 'center',
-        marginBottom: height * 0.02,
+        color: '#B54708',
+        marginBottom: 8,
+    },
+    subtitle: {
+        fontSize: 24,
+        color: '#B54708',
+        marginBottom: 8,
+        lineHeight: 32,
+    },
+    description: {
+        fontSize: 16,
+        color: '#B54708',
+        marginBottom: 24,
+    },
+    card: {
+        backgroundColor: '#EEB16C',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 20,
+        margin: 10,
+        flex: 1,
+    },
+    inputContainer: {
+        marginBottom: 20,
+    },
+    inputLabel: {
+        fontSize: 14,
+        color: '#FFFFFF',
+        marginBottom: 8,
+        marginLeft: 4,
     },
     input: {
-        width: '100%',
-        borderWidth: 1,
-        borderColor: 'black',
+        backgroundColor: '#FFE1C5',
         borderRadius: 10,
-        padding: width * 0.03,
-        backgroundColor: 'white',
-        marginBottom: height * 0.02,
+        padding: 16,
+        fontSize: 16,
+        color: '#333',
+        height: 56,
     },
-    button: {
-        backgroundColor: '#AD5700',
-        paddingVertical: width * 0.03,
-        paddingHorizontal: width * 0.1,
+    passwordContainer: {
+        position: 'relative',
+        marginBottom: 20,
+    },
+    eyeIcon: {
+        position: 'absolute',
+        right: 16,
+        top: 16,
+    },
+    loginButton: {
+        backgroundColor: '#7A2D00',
         borderRadius: 10,
+        padding: 16,
         alignItems: 'center',
-        marginRight: width * 0.02,
+        marginBottom: 20,
+    },
+    loginButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     buttonDisabled: {
         opacity: 0.7,
     },
-    buttonText: {
-        color: 'white',
-        fontSize: width * 0.04,
-        fontWeight: 'bold',
-    },
-    signupText: {
-        marginTop: height * 0.02,
-        fontSize: width * 0.035,
-        color: '#333',
-    },
-    signupLink: {
-        color: '#AD5700',
-        fontWeight: 'bold',
-    },
-    backButton: {
-        backgroundColor: '#AD5700',
-        paddingVertical: width * 0.03,
-        paddingHorizontal: width * 0.1,
-        borderRadius: 10,
-        alignItems: 'center',
-        marginLeft: width * 0.02,
-    },
-    backButtonText: {
-        color: 'white',
-        fontSize: width * 0.04,
-        fontWeight: 'bold',
-    },
-    buttonContainer: {
+    registerContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: height * 0.02,
+        marginBottom: 24,
+    },
+    registerText: {
+        color: '#333',
+        fontSize: 14,
+    },
+    registerLink: {
+        color: '#333',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    dividerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 24,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#333',
+    },
+    dividerText: {
+        paddingHorizontal: 16,
+        color: '#333',
+        fontSize: 14,
+    },
+    socialButton: {
+        borderRadius: 10,
+        padding: 16,
+        alignItems: 'center',
+        marginBottom: 16,
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    googleButton: {
+        backgroundColor: '#1E1E1E',
+    },
+    facebookButton: {
+        backgroundColor: '#1877F2',
+    },
+    appleButton: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#E5E5E5',
+    },
+    socialButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    appleButtonText: {
+        color: '#000000',
     },
 });
 

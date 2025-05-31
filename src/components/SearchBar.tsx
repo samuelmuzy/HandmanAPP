@@ -2,7 +2,11 @@ import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { Search } from "lucide-react-native"; // Ou use outro pacote de ícones
 
-export const SearchBar = () => {
+interface SearchBarProps {
+  onSearch: (text: string) => void;
+}
+
+export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   return (
     <View style={styles.container}>
       <Search size={18} color="#D17C00" style={styles.icon} />
@@ -10,6 +14,7 @@ export const SearchBar = () => {
         placeholder="Procure Profissionais"
         placeholderTextColor="#666"
         style={styles.input}
+        onChangeText={onSearch}
       />
     </View>
   );

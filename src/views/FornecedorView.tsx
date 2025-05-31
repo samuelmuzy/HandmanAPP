@@ -7,15 +7,42 @@ import { HeaderUsuario } from "../components/HeaderUsuario";
 import { User } from "../model/User";
 import { SearchBar } from "../components/SearchBar";
 import { CategoryButtons } from "../components/CategoryButtons";
+import { useState, useEffect } from "react";
 
 interface FornecedorViewProps {
-    usuario:User | undefined,
+    usuario: User | undefined,
     fornecedor: typeFornecedor[] | undefined,
     onNavigateExibirFornecedor: (screen: string) => void;
     setCategoria: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const FornecedorView = ({usuario, fornecedor,setCategoria }: FornecedorViewProps) => {
+export const FornecedorView = ({usuario, fornecedor, setCategoria }: FornecedorViewProps) => {
+    const [searchText, setSearchText] = useState('');
+    const [filteredFornecedores, setFilteredFornecedores] = useState<typeFornecedor[] | undefined>(fornecedor);
+
+    useEffect(() => {
+        if (!searchText.trim()) {
+            setFilteredFornecedores(fornecedor);
+            return;
+        }
+
+        const filtered = fornecedor?.filter(prof => {
+            const searchLower = searchText.toLowerCase();
+            return (
+                prof.nome?.toLowerCase().includes(searchLower) ||
+                prof.categoria_servico?.some(cat => 
+                    cat.toLowerCase().includes(searchLower)
+                ) ||
+                prof.sub_descricao?.toLowerCase().includes(searchLower)
+            );
+        });
+
+        setFilteredFornecedores(filtered);
+    }, [searchText, fornecedor]);
+
+    const handleSearch = (text: string) => {
+        setSearchText(text);
+    };
 
     const renderFornecedor = ({ item }: ListRenderItemInfo<typeFornecedor>) => {
         return (
@@ -31,7 +58,7 @@ export const FornecedorView = ({usuario, fornecedor,setCategoria }: FornecedorVi
     return (
         <ScrollView style={styles.container}>
            <HeaderUsuario imagem={{uri: usuario?.picture}} name={usuario?.nome}/>
-            <SearchBar/>
+            <SearchBar onSearch={handleSearch}/>
             <BannerCarousel/>
             <CategoryButtons 
                 categories={categorias} 
@@ -42,7 +69,7 @@ export const FornecedorView = ({usuario, fornecedor,setCategoria }: FornecedorVi
             
             <Text style={styles.title}>Melhores preços</Text>
             <FlatList
-                data={fornecedor}
+                data={filteredFornecedores}
                 renderItem={renderFornecedor}
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -50,14 +77,14 @@ export const FornecedorView = ({usuario, fornecedor,setCategoria }: FornecedorVi
             />
             <Text style={styles.title}>Melhores Profissionais</Text>
             <FlatList
-                data={fornecedor}
+                data={filteredFornecedores}
                 renderItem={renderFornecedor}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.contentContainer}
             />
             <FlatList
-                data={fornecedor}
+                data={filteredFornecedores}
                 renderItem={renderFornecedor}
                 horizontal
                 showsHorizontalScrollIndicator={false}

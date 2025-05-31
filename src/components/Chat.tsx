@@ -168,7 +168,7 @@ const Chat: React.FC<ChatProps> = ({ idFornecedor }) => {
             <Text style={styles.mensagemData}>{formatarData(msg.dataEnvio)}</Text>
         </View>
     );
-
+    //possivel impementação para fornecedor para mostrar
     const renderUsuario = ({ item: usu }: { item: Usuario }) => (
         <TouchableOpacity
             style={[

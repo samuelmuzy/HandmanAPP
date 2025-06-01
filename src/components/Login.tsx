@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ScrollView,
     View,
@@ -11,6 +11,9 @@ import {
     Alert,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import { useBiometric } from '../hooks/useBiometric';
+import { Fingerprint } from 'lucide-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -56,7 +59,89 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [loading, setLoading] = useState(false);
+    const [hasStoredCredentials, setHasStoredCredentials] = useState(false);
     const { login } = useAuth();
+    const { isBiometricAvailable, authenticateWithBiometrics, checkBiometricAvailability } = useBiometric();
+
+    useEffect(() => {
+        const initializeAuth = async () => {
+            try {
+                console.log('=== Iniciando verificação de autenticação ===');
+                // Força uma nova verificação de biometria
+                await checkBiometricAvailability();
+                console.log('Status da biometria após verificação:', isBiometricAvailable);
+                
+                // Verifica credenciais salvas
+                const savedEmail = await AsyncStorage.getItem('lastLoginEmail');
+                const savedPassword = await AsyncStorage.getItem('lastLoginPassword');
+                
+                console.log('=== Status das credenciais ===');
+                console.log('Email salvo:', savedEmail ? 'Sim' : 'Não');
+                console.log('Senha salva:', savedPassword ? 'Sim' : 'Não');
+                console.log('Biometria disponível:', isBiometricAvailable);
+
+                // Apenas marca que existem credenciais, mas não as exibe
+                setHasStoredCredentials(!!savedEmail && !!savedPassword);
+
+                if (savedEmail && savedPassword && isBiometricAvailable) {
+                    console.log('Iniciando autenticação biométrica...');
+                    handleBiometricLogin();
+                } else {
+                    console.log('Condições para biometria não atendidas');
+                    if (!isBiometricAvailable) console.log('Biometria não disponível');
+                    if (!savedEmail || !savedPassword) console.log('Credenciais não encontradas');
+                }
+            } catch (error) {
+                console.error('Erro durante a inicialização:', error);
+            }
+        };
+
+        initializeAuth();
+    }, [isBiometricAvailable]);
+
+    const handleBiometricLogin = async () => {
+        if (!isBiometricAvailable) {
+            console.log('Tentativa de autenticação biométrica quando não disponível');
+            return;
+        }
+
+        try {
+            console.log('=== Iniciando login biométrico ===');
+            setLoading(true);
+
+            const success = await authenticateWithBiometrics();
+            console.log('Resultado da autenticação biométrica:', success);
+            
+            if (success) {
+                const savedEmail = await AsyncStorage.getItem('lastLoginEmail');
+                const savedPassword = await AsyncStorage.getItem('lastLoginPassword');
+                
+                if (savedEmail && savedPassword) {
+                    console.log('Tentando login com credenciais salvas');
+                    const result = await login(savedEmail, savedPassword);
+                    
+                    if (result.success) {
+                        console.log('Login biométrico bem-sucedido!');
+                        onNavigate('MainApp');
+                    } else {
+                        console.log('Falha no login com credenciais salvas:', result.message);
+                        Alert.alert('Erro', 'Credenciais inválidas. Por favor, faça login manualmente.');
+                        // Limpa as credenciais inválidas
+                        await AsyncStorage.removeItem('lastLoginEmail');
+                        await AsyncStorage.removeItem('lastLoginPassword');
+                        setHasStoredCredentials(false);
+                    }
+                }
+            } else {
+                console.log('Autenticação biométrica cancelada ou falhou');
+            }
+        } catch (error) {
+            console.error('Erro durante login biométrico:', error);
+            Alert.alert('Erro', 'Ocorreu um erro na autenticação biométrica. Por favor, faça login manualmente.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleLogin = async () => {
         if (!email || !senha) {
@@ -66,18 +151,23 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }
 
         setLoading(true);
         try {
+            console.log('=== Iniciando login manual ===');
             const result = await login(email, senha);
 
             if (result.success) {
-                Alert.alert(
-                    'Login realizado com sucesso!',
-                );
+                console.log('Login manual bem-sucedido, salvando credenciais');
+                await AsyncStorage.setItem('lastLoginEmail', email);
+                await AsyncStorage.setItem('lastLoginPassword', senha);
+                setHasStoredCredentials(true);
+                
+                Alert.alert('Login realizado com sucesso!');
                 onNavigate('MainApp');
             } else {
+                console.log('Falha no login manual:', result.message);
                 Alert.alert('Erro de login', result.message);
             }
         } catch (error) {
-            console.error('Erro ao fazer login:', error);
+            console.error('Erro durante login manual:', error);
             Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login.');
         } finally {
             setLoading(false);
@@ -112,9 +202,6 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }
                         secureTextEntry
                         editable={!loading}
                     />
-                    <TouchableOpacity style={styles.eyeIcon}>
-                        {/* Eye icon would go here */}
-                    </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity

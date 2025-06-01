@@ -113,6 +113,12 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
             <TouchableOpacity style={styles.button} onPress={nextStep}>
               <Text style={styles.buttonText}>Próxima etapa</Text>
             </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.loginBackButton}
+              onPress={() => onNavigate('Login')}
+            >
+              <Text style={styles.buttonText}>Voltar</Text>
+            </TouchableOpacity>
           </View>
         );
       case 2:
@@ -245,6 +251,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loginBackButton: {
+    backgroundColor: '#7A2D00',
+    borderRadius: 10,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 10,
   },
   prestadorSwitch: {
     flexDirection: 'row',

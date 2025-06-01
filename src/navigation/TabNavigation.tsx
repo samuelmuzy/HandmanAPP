@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HandyManApp } from '../pages/HomeScrenn';
+import HomeScreen from '../pages/HomeScrenn';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PerfilScreen from '../pages/PerfilScreen';
 import { ServicoScreen } from '../pages/ServicoScreen';
@@ -49,7 +49,7 @@ export const TabNavigation = () => {
         >
             <Tab.Screen
                 name='Home'
-                component={HandyManApp}
+                component={HomeScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Icon name="home" size={size} color={color} />

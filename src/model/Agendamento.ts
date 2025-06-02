@@ -10,7 +10,7 @@ export interface Agendamento {
     id_avaliacao: string;
 }
 
-interface FornecedorHistorico {
+export interface FornecedorHistorico {
     nome: string;
     email: string;
     telefone: string;
@@ -32,3 +32,22 @@ export type HistoricoAgendamento = {
         picture: string;
     };
 };
+
+export interface Solicitacao {
+    servico: {
+        id_servico: string;
+        categoria: string;
+        data: Date;
+        horario: Date;
+        status: string;
+        descricao: string;
+        id_pagamento?: string;
+        id_avaliacao?: string;
+    };
+    usuario: {
+        nome: string;
+        email: string;
+        telefone: string;
+        picture: string;
+    } | null;
+}

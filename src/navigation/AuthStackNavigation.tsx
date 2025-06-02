@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TabNavigation } from './TabNavigation';
 import LoginScreen from '../pages/LoginScreen';
 import CadastroScreen from '../pages/CadastroScreen';
-
 // Tipos para as rotas
 export type RootStackParamList = {
     Login: undefined;

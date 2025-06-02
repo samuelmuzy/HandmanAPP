@@ -33,9 +33,6 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
   const [isPrestador, setIsPrestador] = useState(false);
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
-  const [genero, setGenero] = useState('');
-  const [aniversario, setAniversario] = useState('');
-  const [usuario, setUsuario] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
@@ -44,8 +41,7 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentSc
   const [cep, setCep] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
-  const [areaAtuacao, setAreaAtuacao] = useState('');
-  const [descricaoServicos, setDescricaoServicos] = useState('');
+  
 
   const handleCadastroPress = async () => {
     try {

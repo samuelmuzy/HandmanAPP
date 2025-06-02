@@ -7,18 +7,20 @@ import { useGetToken } from "../hooks/useGetToken";
 import { User } from "../model/User";
 
 export const FornecedorController = () =>{
-    const [listarFornecedores,setlistarFornecedores] = useState<typeFornecedor[] | undefined>([]);
+    const [fornecedoresPorCategoria, setFornecedoresPorCategoria] = useState<typeFornecedor[] | undefined>([]);
+    const [fornecedoresMelhoresPreco, setFornecedoresMelhoresPreco] = useState<typeFornecedor[] | undefined>([]);
+    const [fornecedoresMelhoresAvaliados, setFornecedoresMelhoresAvaliados] = useState<typeFornecedor[] | undefined>([]);
     const [usuario, setUsuario] = useState<User | undefined>(undefined);
 
-    const [categoria,setCategoria] = useState('Encanamento');
+    const [categoria,setCategoria] = useState('Controle');
 
     const token = useGetToken();
 
     const userId = token?.id;
 
-    const handleGetFornecedores = async () =>{
-        const fornecedores = await FornecedorService.getFornecedoresPorCategoria(categoria);
-        setlistarFornecedores(fornecedores);
+    const handleGetFornecedores = async (categoria: string, ordenarPor?: 'avaliacao' | 'preco', ordem?: 'asc' | 'desc') =>{
+        const fornecedores = await FornecedorService.getFornecedoresPorCategoria(categoria, ordenarPor, ordem);
+        return fornecedores || [];
     }
 
     const handleGetUser = async () =>{
@@ -37,7 +39,22 @@ export const FornecedorController = () =>{
     }
 
     useEffect(() =>{
-        handleGetFornecedores();
+        const fetchFornecedores = async () => {
+            // Busca por categoria
+            const porCategoria = await handleGetFornecedores(categoria);
+            setFornecedoresPorCategoria(porCategoria);
+
+            // Busca por melhores preços (ordem ascendente de preço)
+            const melhoresPreco = await handleGetFornecedores(categoria, 'preco', 'asc');
+            setFornecedoresMelhoresPreco(melhoresPreco);
+
+            // Busca por melhores avaliados (ordem descendente de avaliação)
+            const melhoresAvaliados = await handleGetFornecedores(categoria, 'avaliacao', 'desc');
+            setFornecedoresMelhoresAvaliados(melhoresAvaliados);
+        };
+
+        fetchFornecedores();
+
     },[categoria])
 
     useEffect(() =>{
@@ -48,7 +65,14 @@ export const FornecedorController = () =>{
 
     return(
         <>
-            <FornecedorView usuario={usuario} fornecedor={listarFornecedores} onNavigateExibirFornecedor={() => handleNavigation('exibir')} setCategoria={setCategoria}/>
+            <FornecedorView 
+                usuario={usuario} 
+                fornecedoresPorCategoria={fornecedoresPorCategoria}
+                fornecedoresMelhoresPreco={fornecedoresMelhoresPreco}
+                fornecedoresMelhoresAvaliados={fornecedoresMelhoresAvaliados}
+                onNavigateExibirFornecedor={() => handleNavigation('exibir')} 
+                setCategoria={setCategoria}
+            />
         </>
     )
 }

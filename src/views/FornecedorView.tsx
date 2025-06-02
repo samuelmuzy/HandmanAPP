@@ -11,22 +11,26 @@ import { useState, useEffect } from "react";
 
 interface FornecedorViewProps {
     usuario: User | undefined,
-    fornecedor: typeFornecedor[] | undefined,
+    fornecedoresPorCategoria: typeFornecedor[] | undefined,
+    fornecedoresMelhoresPreco: typeFornecedor[] | undefined,
+    fornecedoresMelhoresAvaliados: typeFornecedor[] | undefined,
     onNavigateExibirFornecedor: (screen: string) => void;
     setCategoria: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const FornecedorView = ({usuario, fornecedor, setCategoria }: FornecedorViewProps) => {
+export const FornecedorView = ({usuario, fornecedoresPorCategoria, fornecedoresMelhoresPreco, fornecedoresMelhoresAvaliados, setCategoria }: FornecedorViewProps) => {
     const [searchText, setSearchText] = useState('');
-    const [filteredFornecedores, setFilteredFornecedores] = useState<typeFornecedor[] | undefined>(fornecedor);
+    const [filteredFornecedores, setFilteredFornecedores] = useState<typeFornecedor[] | undefined>(fornecedoresPorCategoria);
 
     useEffect(() => {
         if (!searchText.trim()) {
-            setFilteredFornecedores(fornecedor);
+            // Se a busca estiver vazia, mostre a lista por categoria completa
+            setFilteredFornecedores(fornecedoresPorCategoria);
             return;
         }
 
-        const filtered = fornecedor?.filter(prof => {
+        // Filtra a lista por categoria baseada no texto de busca
+        const filtered = fornecedoresPorCategoria?.filter(prof => {
             const searchLower = searchText.toLowerCase();
             return (
                 prof.nome?.toLowerCase().includes(searchLower) ||
@@ -38,7 +42,7 @@ export const FornecedorView = ({usuario, fornecedor, setCategoria }: FornecedorV
         });
 
         setFilteredFornecedores(filtered);
-    }, [searchText, fornecedor]);
+    }, [searchText, fornecedoresPorCategoria]);
 
     const handleSearch = (text: string) => {
         setSearchText(text);
@@ -67,24 +71,27 @@ export const FornecedorView = ({usuario, fornecedor, setCategoria }: FornecedorV
                 }}
             />
             
+            <Text style={styles.title}>Fornecedores por Categoria</Text>
+            <FlatList
+                data={filteredFornecedores} // Use a lista filtrada aqui
+                renderItem={renderFornecedor}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.contentContainer}
+            />
+
             <Text style={styles.title}>Melhores preços</Text>
             <FlatList
-                data={filteredFornecedores}
+                data={fornecedoresMelhoresPreco}
                 renderItem={renderFornecedor}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.contentContainer}
             />
+            
             <Text style={styles.title}>Melhores Profissionais</Text>
             <FlatList
-                data={filteredFornecedores}
-                renderItem={renderFornecedor}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.contentContainer}
-            />
-            <FlatList
-                data={filteredFornecedores}
+                data={fornecedoresMelhoresAvaliados}
                 renderItem={renderFornecedor}
                 horizontal
                 showsHorizontalScrollIndicator={false}

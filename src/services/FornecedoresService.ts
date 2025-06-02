@@ -24,9 +24,9 @@ interface LoginError {
 export type LoginResponse = LoginSuccess | LoginError;
 
 export const FornecedorService = {
-    async getFornecedoresPorCategoria(categoriaSelecionada:string):Promise<typeFornecedor[] | undefined>{
+    async getFornecedoresPorCategoria(categoriaSelecionada:string, ordenarPor?: 'avaliacao' | 'preco', ordem?: 'asc' | 'desc'):Promise<typeFornecedor[] | undefined>{
         try{
-            const response = await  axios.get(`${API_URL}/fornecedor/categorias/${categoriaSelecionada}`)
+            const response = await  axios.get(`${API_URL}/fornecedor/categorias/${categoriaSelecionada}${ordenarPor ? `?ordenarPor=${ordenarPor}&ordem=${ordem || 'desc'}` : ''}`)
             
             const user:typeFornecedor[] = response.data;
 
@@ -35,6 +35,7 @@ export const FornecedorService = {
             console.log(error)
         }
     },
+    
     async getFornecedorPorId(id_fornecedor:string | undefined):Promise<typeFornecedor | undefined>{
         try{
             const response = await axios.get(`${API_URL}/fornecedor/${id_fornecedor}`)

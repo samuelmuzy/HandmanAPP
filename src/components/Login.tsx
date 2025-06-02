@@ -53,9 +53,11 @@ interface LoginScreenProps {
     onBack: () => void;
     onNavigate: (screen: string) => void;
     currentScreen: string;
+    isFornecedor: boolean;
+    setIsFornecedor: (isFornecedor: boolean) => void;
 }
 
-const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }) => {
+const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen, isFornecedor, setIsFornecedor }) => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [loading, setLoading] = useState(false);
@@ -220,6 +222,12 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }
                     <Text style={styles.registerText}>Não tem uma conta? </Text>
                     <TouchableOpacity onPress={() => onNavigate('Cadastro')}>
                         <Text style={styles.registerLink}>Cadastre-se</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.registerContainer}>
+                    <Text style={styles.registerText}>Entrar como fornecedor? </Text>
+                    <TouchableOpacity onPress={() => setIsFornecedor(true)}>
+                        <Text style={styles.registerLink}>Entrar como fornecedor</Text>
                     </TouchableOpacity>
                 </View>
 

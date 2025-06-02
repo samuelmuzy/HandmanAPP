@@ -7,6 +7,7 @@ interface AuthContextType {
     token: string | null;
     isLoading: boolean;
     login: (email: string, senha: string) => Promise<LoginResponse>;
+    loginFornecedor: (email: string, senha: string) => Promise<LoginResponse>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
 }
@@ -64,6 +65,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const loginFornecedor = async (email: string, senha: string) => {
+        try {
+            setIsLoading(true);
+            const response = await authService.loginFornecedor(email, senha);
+            
+            if (response.success && response.data.token) {
+                const newToken = response.data.token;
+
+                await AsyncStorage.setItem('userToken', newToken);
+                
+                setToken(newToken);
+                setIsAuthenticated(true);
+                
+                return response;
+            } else {
+                return response;
+            }
+        } catch (error: any) {
+            console.error('Erro ao fazer login:', error.message);
+            return error as LoginResponse;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const logout = async () => {
         try {
             setIsLoading(true);
@@ -84,6 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             token,
             isLoading,
             login, 
+            loginFornecedor,
             logout,
             checkAuth 
         }}>

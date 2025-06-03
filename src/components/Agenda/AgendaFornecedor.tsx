@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { useGetToken } from '../hooks/useGetToken';
-import { useStatusNotifications } from '../hooks/useStatusNotifications';
+import { useGetToken } from '../../hooks/useGetToken';
+import { useStatusNotifications } from '../../hooks/useStatusNotifications';
 import axios from 'axios';
-import { API_URL } from '../constants/ApiUrl';
-import { CardAgendamentoFornecedor } from './CardAgendamentoFornecedor';
+import { API_URL } from '../../constants/ApiUrl';
+import { CardAgendamentoFornecedor } from '../CardAgendamentoFornecedor';
 import { useNavigation } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootTabParamList } from '../navigation/TabNavigation';
-import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
+import { RootTabParamList } from '../../navigation/TabNavigation';
+import { FornecedorStackParamList } from '../../navigation/FornecedorStackNavigation';
 
 type NavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<RootTabParamList>,

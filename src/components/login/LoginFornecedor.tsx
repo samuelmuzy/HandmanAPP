@@ -10,8 +10,8 @@ import {
     ActivityIndicator,
     Alert,
 } from 'react-native';
-import { useAuth } from '../context/AuthContext';
-import { useBiometric } from '../hooks/useBiometric';
+import { useAuth } from '../../context/AuthContext';
+import { useBiometric } from '../../hooks/useBiometric';
 import { Fingerprint } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -53,16 +53,14 @@ interface LoginScreenProps {
     onBack: () => void;
     onNavigate: (screen: string) => void;
     currentScreen: string;
-    isFornecedor: boolean;
-    setIsFornecedor: (isFornecedor: boolean) => void;
 }
 
-const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen, isFornecedor, setIsFornecedor }) => {
+const LoginFornecedor: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen }) => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [loading, setLoading] = useState(false);
     const [hasStoredCredentials, setHasStoredCredentials] = useState(false);
-    const { login } = useAuth();
+    const { loginFornecedor } = useAuth();
     const { isBiometricAvailable, authenticateWithBiometrics, checkBiometricAvailability } = useBiometric();
 
     useEffect(() => {
@@ -120,7 +118,7 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen, 
                 
                 if (savedEmail && savedPassword) {
                     console.log('Tentando login com credenciais salvas');
-                    const result = await login(savedEmail, savedPassword);
+                    const result = await loginFornecedor(savedEmail, savedPassword);
                     
                     if (result.success) {
                         console.log('Login biométrico bem-sucedido!');
@@ -154,7 +152,7 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen, 
         setLoading(true);
         try {
             console.log('=== Iniciando login manual ===');
-            const result = await login(email, senha);
+            const result = await loginFornecedor(email, senha);
 
             if (result.success) {
                 console.log('Login manual bem-sucedido, salvando credenciais');
@@ -222,12 +220,6 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen, 
                     <Text style={styles.registerText}>Não tem uma conta? </Text>
                     <TouchableOpacity onPress={() => onNavigate('Cadastro')}>
                         <Text style={styles.registerLink}>Cadastre-se</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.registerContainer}>
-                    <Text style={styles.registerText}>Entrar como fornecedor? </Text>
-                    <TouchableOpacity onPress={() => setIsFornecedor(true)}>
-                        <Text style={styles.registerLink}>Entrar como fornecedor</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -387,4 +379,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Login;
+export default LoginFornecedor;

@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { AgendamentoService } from '../services/AgendamentoServico';
-import { HistoricoAgendamento } from '../model/Agendamento';
-import { CardAgendamento } from '../components/CardAgendamento';
-import { useGetToken } from '../hooks/useGetToken';
+import { AgendamentoService } from '../../services/AgendamentoServico';
+import { HistoricoAgendamento } from '../../model/Agendamento';
+import { CardAgendamento } from '../CardAgendamento';
+import { useGetToken } from '../../hooks/useGetToken';
 import { useNavigation } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootTabParamList } from '../navigation/TabNavigation';
-import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
-import { ModalAvaliacao } from '../components/ModalAvaliacao';
+import { RootTabParamList } from '../../navigation/TabNavigation';
+import { FornecedorStackParamList } from '../../navigation/FornecedorStackNavigation';
+import { ModalAvaliacao } from '../ModalAvaliacao';
 import axios from 'axios';
-import { API_URL } from '../constants/ApiUrl';
-import { useStatusNotifications } from '../hooks/useStatusNotifications';
+import { API_URL } from '../../constants/ApiUrl';
+import { useStatusNotifications } from '../../hooks/useStatusNotifications';
 
 type NavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<RootTabParamList>,

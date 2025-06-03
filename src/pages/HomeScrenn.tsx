@@ -1,25 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   Image,
   ScrollView,
   Dimensions,
-  ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import LoginScreen from './LoginScreen';
-import CadastroScreen from './CadastroScreen';
-import SobreNosScreen from './SobreNósScreen';
-import AjudaScreen from './AjudaScreen';
-import HeaderNavigation from '../../HeaderNavigation';
-import BarraDeNavegacao from '../../BarraDeNavegacao';
 import { runMigrations } from '../../migrations';
-import Login from '../components/Login';
-import Cadastro from '../components/Cadastro';
 import { useNavigation } from '@react-navigation/native';
 import { ArrowRight } from 'lucide-react-native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';

@@ -4,6 +4,7 @@ import { RouteProp, useNavigation, useRoute, CommonActions } from '@react-naviga
 import { typeFornecedor } from "../model/Fornecedor";
 import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
+import ImagemPadrao from '../assets/pexels-photo-1216589.webp'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -18,7 +19,7 @@ type ExibirFornecedorScreenNavigationProp = NativeStackNavigationProp<Fornecedor
 export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
     const navigation = useNavigation<ExibirFornecedorScreenNavigationProp>();
     const route = useRoute<ExibirFornecedorScreenRouteProp>();
-    
+
     const handleVoltar = () => {
         navigation.dispatch(
             CommonActions.reset({
@@ -29,13 +30,14 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
             })
         );
     };
-    
+
     const handleAgendar = () => {
-        if (fornecedor?.id_fornecedor) {
+        /*if (fornecedor?.id_fornecedor) {
             navigation.navigate('AgendamentoScreen', { 
                 fornecedorId: fornecedor.id_fornecedor 
             });
-        }
+        }*/
+        navigation.navigate('LocalizacaoScreen')
     };
 
     const dadosFornecedor = fornecedor;
@@ -48,13 +50,13 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
                 </TouchableOpacity>
                 <Text style={styles.title}>Product Detail</Text>
                 <TouchableOpacity>
-                     <MaterialCommunityIcons name="heart-outline" size={24} color="#AC5906" />
+                    <MaterialCommunityIcons name="heart-outline" size={24} color="#AC5906" />
                 </TouchableOpacity>
             </View>
 
             <View style={styles.imageContainer}>
-                 <Image
-                    source={{ uri: dadosFornecedor?.imagemIlustrativa }}
+                <Image
+                    source={dadosFornecedor?.imagemIlustrativa ? { uri: dadosFornecedor.imagemIlustrativa } : ImagemPadrao}
                     style={styles.fornecedorImage}
                 />
             </View>
@@ -64,14 +66,17 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
                 <View style={styles.ratingContainer}>
                     <Text style={styles.fornecedorValor}>R$ {dadosFornecedor?.valor} a hora</Text>
                     <View style={styles.starRating}>
-                        <Feather name="star" size={16} color="#FFD700" fill="#FFD700"/>
+                        <Feather name="star" size={16} color="#FFD700" fill="#FFD700" />
                         <Text style={styles.ratingText}>{dadosFornecedor?.media_avaliacoes}</Text>
                     </View>
                 </View>
             </View>
 
-             <TouchableOpacity style={styles.contactButtonGreen}>
-                <Text style={styles.contactButtonGreenText}>Me contate</Text>
+            <TouchableOpacity
+                style={styles.contactButtonBrown}
+                onPress={handleAgendar}
+            >
+                <Text style={styles.contactButtonBrownText}>Entre em contato</Text>
             </TouchableOpacity>
 
             <View style={styles.especialidadesSection}>
@@ -79,26 +84,21 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
                 <Text style={styles.especialidadesText}>{dadosFornecedor?.sub_descricao}</Text>
             </View>
 
-             <TouchableOpacity 
-                style={styles.contactButtonBrown}
-                onPress={handleAgendar}
-            >
-                <Text style={styles.contactButtonBrownText}>Entre em contato</Text>
-            </TouchableOpacity>
-            
+
+
             <View style={styles.servicesOfferedSection}>
-                 <View style={styles.servicesOfferedCard}>
+                <View style={styles.servicesOfferedCard}>
                     <Text style={styles.servicesOfferedTitle}>Este serviço é oferecido por um profissional.</Text>
                     {dadosFornecedor?.categoria_servico && dadosFornecedor.categoria_servico.map((servico, index) => (
-                         <View key={index} style={styles.serviceItem}>
-                             <Text style={styles.serviceItemText}>{servico}</Text>
-                         </View>
-                     ))}
-                 </View>
+                        <View key={index} style={styles.serviceItem}>
+                            <Text style={styles.serviceItemText}>{servico}</Text>
+                        </View>
+                    ))}
+                </View>
             </View>
-            
 
-             <View style={styles.aboutMeSection}>
+
+            <View style={styles.aboutMeSection}>
                 <Text style={styles.sectionTitle}>Sobre mim:</Text>
                 <Text style={styles.aboutMeText}>{dadosFornecedor?.descricao}</Text>
             </View>
@@ -121,53 +121,53 @@ const styles = StyleSheet.create({
         backgroundColor: '#FDF8F2',
     },
     backButton: {
-       // styles for back button if needed
+        // styles for back button if needed
     },
     title: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#AC5906',
     },
-    imageContainer:{
+    imageContainer: {
         alignItems: 'center',
         marginVertical: 20,
     },
-    fornecedorImage:{
+    fornecedorImage: {
         width: 250,
         height: 250,
         borderRadius: 150,
     },
-    infoSection:{
+    infoSection: {
         paddingHorizontal: 20,
         marginBottom: 20,
     },
-    fornecedorNome:{
+    fornecedorNome: {
         fontSize: 22,
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 5,
     },
-    ratingContainer:{
+    ratingContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-     fornecedorValor:{
+    fornecedorValor: {
         fontSize: 16,
-        marginBottom:10,
+        marginBottom: 10,
         color: '#666',
     },
-     starRating:{
+    starRating: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 4,
-     },
-    ratingText:{
+    },
+    ratingText: {
         fontSize: 16,
         color: '#444',
         fontWeight: '500',
     },
-     contactButtonGreen:{
+    contactButtonGreen: {
         marginHorizontal: 20,
         backgroundColor: '#8FBC8F',
         paddingVertical: 15,
@@ -175,27 +175,27 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
-    contactButtonGreenText:{
+    contactButtonGreenText: {
         fontSize: 18,
         color: 'white',
         fontWeight: 'bold',
     },
-    especialidadesSection:{
+    especialidadesSection: {
         paddingHorizontal: 20,
         marginBottom: 40,
-        marginTop:20
+        marginTop: 20
     },
-    sectionTitle:{
+    sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#AC5906',
         marginBottom: 10,
     },
-     especialidadesText:{
+    especialidadesText: {
         fontSize: 16,
         color: '#666',
     },
-     contactButtonBrown:{
+    contactButtonBrown: {
         marginHorizontal: 20,
         backgroundColor: '#AC5906',
         paddingVertical: 15,
@@ -203,29 +203,29 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
-    contactButtonBrownText:{
+    contactButtonBrownText: {
         fontSize: 18,
         color: 'white',
         fontWeight: 'bold',
     },
-    servicesOfferedSection:{
+    servicesOfferedSection: {
         paddingHorizontal: 20,
         marginBottom: 20,
     },
-    servicesOfferedCard:{
+    servicesOfferedCard: {
         backgroundColor: '#FDF2E9',
         borderRadius: 8,
         padding: 15,
         elevation: 1,
     },
-     servicesOfferedTitle:{
+    servicesOfferedTitle: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#AC5906',
         marginBottom: 10,
         textAlign: 'center',
     },
-    serviceItem:{
+    serviceItem: {
         borderWidth: 1,
         borderColor: '#AC5906',
         borderRadius: 5,
@@ -234,15 +234,15 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         alignItems: 'center',
     },
-    serviceItemText:{
+    serviceItemText: {
         fontSize: 15,
         color: '#AC5906',
     },
-     aboutMeSection:{
+    aboutMeSection: {
         paddingHorizontal: 20,
         marginBottom: 20,
     },
-    aboutMeText:{
+    aboutMeText: {
         fontSize: 16,
         color: '#666',
     },

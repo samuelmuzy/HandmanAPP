@@ -19,6 +19,7 @@
     "axios": "^1.9.0",
     "expo": "~53.0.9",
     "expo-local-authentication": "~16.0.4",
+    "expo-location": "^18.1.5",
     "expo-sqlite": "~15.2.9",
     "expo-status-bar": "~2.2.3",
     "jwt-decode": "^4.0.0",

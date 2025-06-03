@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
 import {
-  ScrollView,
-  View,
-  Text,
-  TextInput,
   StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  ImageBackground,
-  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Login from '../components/Login';
-import LoginFornecedor from '../components/LoginFornecedor';
+import Login from '../components/login/Login';
+import LoginFornecedor from '../components/login/LoginFornecedor';
 type RootStackParamList = {
   Login: undefined;
   MainApp: undefined;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useGetToken } from '../hooks/useGetToken';
 import PerfilUsuario from '../components/perfilUsuario';
 import PerfilFornecedor from '../components/PerfilFornecedor';

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useGetToken } from '../../hooks/useGetToken';
 import { useStatusNotifications } from '../../hooks/useStatusNotifications';
+import { useNotifications } from '../../hooks/useNotifications';
 import axios from 'axios';
 import { API_URL } from '../../constants/ApiUrl';
 import { CardAgendamentoFornecedor } from '../CardAgendamentoFornecedor';
@@ -11,6 +12,8 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../../navigation/TabNavigation';
 import { FornecedorStackParamList } from '../../navigation/FornecedorStackNavigation';
+import { io, Socket } from 'socket.io-client';
+import * as Notifications from 'expo-notifications';
 
 type NavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<RootTabParamList>,
@@ -29,6 +32,7 @@ interface Solicitacao {
         id_avaliacao?: string;
     };
     usuario: {
+        id_usuario:string;
         nome: string;
         email: string;
         telefone: string;
@@ -43,17 +47,19 @@ export const AgendaFornecedor = () => {
     const [loading, setLoading] = useState(true);
     const token = useGetToken();
     const navigation = useNavigation<NavigationProp>();
+    const socketRef = useRef<Socket | null>(null);
+    const { expoPushToken } = useNotifications(token?.id);
 
     const handleStatusUpdate = (update: { id_servico: string; novo_status: string }) => {
-        setSolicitacoes(prevSolicitacoes => 
-            prevSolicitacoes.map(solicitacao => 
+        setSolicitacoes(prevSolicitacoes =>
+            prevSolicitacoes.map(solicitacao =>
                 solicitacao.servico.id_servico === update.id_servico
-                    ? { 
-                        ...solicitacao, 
-                        servico: { 
-                            ...solicitacao.servico, 
-                            status: update.novo_status 
-                        } 
+                    ? {
+                        ...solicitacao,
+                        servico: {
+                            ...solicitacao.servico,
+                            status: update.novo_status
+                        }
                     }
                     : solicitacao
             )
@@ -87,34 +93,93 @@ export const AgendaFornecedor = () => {
     };
 
     const handleEntrarEmContato = (idUsuario: string) => {
+        console.log(idUsuario)
         navigation.navigate('FornecedorStack', {
             screen: 'ChatScreen',
             params: { fornecedorId: idUsuario }
         });
     };
 
-    useEffect(() => {
-        const fetchSolicitacoes = async () => {
-            try {
-                if (!token || !token.id) {
-                    console.log("Token não disponível ainda");
-                    return;
-                }
-
-                const response = await axios.get(`${API_URL}/fornecedor/${token.id}/solicitacoes`);
-                setSolicitacoes(response.data);
-            } catch (error) {
-                console.error("Erro ao buscar solicitações:", error);
-                Alert.alert(
-                    "Erro",
-                    "Não foi possível carregar as solicitações. Tente novamente.",
-                    [{ text: "OK" }]
-                );
-            } finally {
-                setLoading(false);
+    const fetchSolicitacoes = async () => {
+        try {
+            if (!token || !token.id) {
+                console.log("Token não disponível ainda");
+                return;
             }
-        };
 
+            const response = await axios.get(`${API_URL}/fornecedor/${token.id}/solicitacoes`);
+            
+            setSolicitacoes(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar solicitações:", error);
+            Alert.alert(
+                "Erro",
+                "Não foi possível carregar as solicitações. Tente novamente.",
+                [{ text: "OK" }]
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Configuração do Socket.IO
+    useEffect(() => {
+        if (!token?.id) return;
+
+        console.log('Iniciando conexão socket para fornecedor:', token.id);
+
+        const socket = io(API_URL, {
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000
+        });
+
+        socketRef.current = socket;
+
+        socket.on('connect', () => {
+            console.log('Socket conectado');
+            socket.emit('join', token.id);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Socket desconectado');
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Erro na conexão do socket:', error);
+        });
+
+        socket.on('novo_agendamento', async (novoAgendamento) => {
+            console.log('Novo agendamento recebido:', novoAgendamento);
+            await fetchSolicitacoes();
+
+            try {
+              
+                // Enviar notificação push
+                await Notifications.scheduleNotificationAsync({
+                    content: {
+                        title: "Nova Solicitação",
+                        body: "Você recebeu uma nova solicitação de serviço!",
+                        data: { novoAgendamento },
+                        sound: true,
+                        priority: Notifications.AndroidNotificationPriority.HIGH,
+                    },
+                    trigger: null, // Enviar imediatamente
+                });
+                console.log('Notificação enviada com sucesso');
+            } catch (error) {
+                console.error('Erro ao enviar notificação:', error);
+            }
+        });
+
+        return () => {
+            console.log('Desconectando socket');
+            socket.disconnect();
+        };
+    }, [token]);
+
+    // Efeito para carregar solicitações iniciais
+    useEffect(() => {
         fetchSolicitacoes();
     }, [token]);
 
@@ -132,10 +197,10 @@ export const AgendaFornecedor = () => {
                 data={solicitacoes}
                 keyExtractor={(item) => item.servico.id_servico}
                 renderItem={({ item }) => (
-                    <CardAgendamentoFornecedor 
+                    <CardAgendamentoFornecedor
                         solicitacao={item}
                         onPressEntrarContato={handleEntrarEmContato}
-                        onPressAtualizarStatus={(novoStatus) => 
+                        onPressAtualizarStatus={(novoStatus) =>
                             atualizarStatusServico(item.servico.id_servico, novoStatus)
                         }
                     />

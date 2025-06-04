@@ -31,7 +31,9 @@
     "react-native-ratings": "^8.1.0",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-snap-carousel": "^3.9.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "expo-notifications": "~0.31.2",
+    "expo-device": "~7.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

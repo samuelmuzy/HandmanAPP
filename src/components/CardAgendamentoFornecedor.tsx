@@ -14,6 +14,7 @@ interface Solicitacao {
         id_avaliacao?: string;
     };
     usuario: {
+        id_usuario:string;
         nome: string;
         email: string;
         telefone: string;
@@ -153,29 +154,28 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
                 )}
 
                 {solicitacao.servico.status.toLowerCase() === 'em andamento' && (
-                    <TouchableOpacity
-                        style={[styles.button, styles.completeButton]}
-                        onPress={() => onPressAtualizarStatus('Aguardando pagamento')}
-                    >
-                        <Text style={styles.buttonText}>Finalizar Serviço</Text>
-                    </TouchableOpacity>
-                )}
-
-                {['em andamento'].includes(solicitacao.servico.status.toLowerCase()) && (
-                    <TouchableOpacity
-                        style={[styles.button, styles.cancelButton]}
-                        onPress={() => onPressAtualizarStatus('cancelado')}
-                    >
-                        <Text style={styles.buttonText}>Cancelar</Text>
-                    </TouchableOpacity>
-                )}
-                {['em andamento'].includes(solicitacao.servico.status.toLowerCase()) && (
-                    <TouchableOpacity
-                        style={[styles.button, styles.contactButton]}
-                        onPress={() => onPressEntrarContato(solicitacao.usuario?.email || '')}
-                    >
-                        <Text style={styles.buttonText}>Contato</Text>
-                    </TouchableOpacity>
+                    <View style={styles.actionButtonsContainer}>
+                        <View style={styles.mainButtonsContainer}>
+                            <TouchableOpacity
+                                style={[styles.button, styles.cancelButton]}
+                                onPress={() => onPressAtualizarStatus('cancelado')}
+                            >
+                                <Text style={styles.buttonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.button, styles.completeButton]}
+                                onPress={() => onPressAtualizarStatus('Aguardando pagamento')}
+                            >
+                                <Text style={styles.buttonText}>Finalizar Serviço</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <TouchableOpacity
+                            style={[styles.button, styles.contactButton, styles.fullWidthButton]}
+                            onPress={() => onPressEntrarContato(solicitacao.usuario?.id_usuario as string)}
+                        >
+                            <Text style={styles.buttonText}>Contato</Text>
+                        </TouchableOpacity>
+                    </View>
                 )}
             </View>
         </View>
@@ -261,21 +261,40 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         gap: 10,
     },
+    actionButtonsContainer: {
+        width: '100%',
+        gap: 8,
+    },
+    mainButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 8,
+        width: '100%',
+    },
     button: {
         flex: 1,
-        minWidth: '45%',
+        minWidth: '30%',
         backgroundColor: '#AC5906',
         borderRadius: 8,
         paddingVertical: 12,
-        paddingHorizontal: 20,
+        paddingHorizontal: 16,
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 10,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    fullWidthButton: {
+        width: '100%',
+        marginTop: 8,
     },
     buttonText: {
         fontSize: 14,
         color: '#FFFFFF',
-        fontWeight: 'bold',
+        fontWeight: '600',
         textAlign: 'center',
     },
     acceptButton: {

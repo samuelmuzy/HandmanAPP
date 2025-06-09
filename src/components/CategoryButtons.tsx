@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 
 interface CategoryButtonsProps {
   categories: string[]; // Assuming categories are strings for now
   onSelectCategory?: (category: string) => void;
+  loading?: boolean;
 }
 
-export const CategoryButtons = ({ categories, onSelectCategory }: CategoryButtonsProps) => {
+export const CategoryButtons = ({ categories, onSelectCategory, loading = false }: CategoryButtonsProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string>(''); 
 
   const handleSelectCategory = (category: string) => {
@@ -24,10 +25,28 @@ export const CategoryButtons = ({ categories, onSelectCategory }: CategoryButton
           return (
             <TouchableOpacity
               key={index}
-              style={[styles.button, isSelected && styles.selectedButton]} 
+              style={[
+                styles.button, 
+                isSelected && styles.selectedButton,
+                isSelected && loading && styles.loadingButton
+              ]} 
               onPress={() => handleSelectCategory(category)}
+              disabled={loading}
             >
-              <Text style={[styles.buttonText, isSelected && styles.selectedButtonText]}>{category}</Text> 
+              <Text style={[
+                styles.buttonText, 
+                isSelected && styles.selectedButtonText,
+                isSelected && loading && styles.loadingButtonText
+              ]}>
+                {category}
+              </Text>
+              {isSelected && loading && (
+                <ActivityIndicator 
+                  size="small" 
+                  color="#fbe6d4" 
+                  style={styles.loadingIndicator}
+                />
+              )}
             </TouchableOpacity>
           );
         })}
@@ -48,9 +67,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   selectedButton: {
     backgroundColor: '#a64b00', // Background color when selected
+  },
+  loadingButton: {
+    backgroundColor: '#8B4513', // Cor mais escura durante o loading
   },
   buttonText: {
     color: '#a64b00', // Default text color
@@ -60,4 +83,11 @@ const styles = StyleSheet.create({
   selectedButtonText: {
     color: '#fbe6d4', // Text color when selected
   },
+  loadingButtonText: {
+    color: '#fbe6d4',
+    marginRight: 8,
+  },
+  loadingIndicator: {
+    marginLeft: 4,
+  }
 }); 

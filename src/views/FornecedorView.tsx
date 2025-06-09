@@ -1,5 +1,6 @@
-import { Image, ListRenderItemInfo, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { ActivityIndicator, Image, ListRenderItemInfo, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import { CardFornecedor } from "../components/CardFornecedor"
+import React from "react";
 import { typeFornecedor } from "../model/Fornecedor";
 import { FlatList } from "react-native";
 import { BannerCarousel } from "../components/PromoCard";
@@ -14,11 +15,11 @@ interface FornecedorViewProps {
     fornecedoresPorCategoria: typeFornecedor[] | undefined,
     fornecedoresMelhoresPreco: typeFornecedor[] | undefined,
     fornecedoresMelhoresAvaliados: typeFornecedor[] | undefined,
-    onNavigateExibirFornecedor: (screen: string) => void;
     setCategoria: React.Dispatch<React.SetStateAction<string>>
+    loading:boolean
 }
 
-export const FornecedorView = ({usuario, fornecedoresPorCategoria, fornecedoresMelhoresPreco, fornecedoresMelhoresAvaliados, setCategoria }: FornecedorViewProps) => {
+export const FornecedorView = ({usuario, fornecedoresPorCategoria, fornecedoresMelhoresPreco, fornecedoresMelhoresAvaliados, setCategoria,loading }: FornecedorViewProps) => {
     const [searchText, setSearchText] = useState('');
     const [filteredFornecedores, setFilteredFornecedores] = useState<typeFornecedor[] | undefined>(fornecedoresPorCategoria);
 
@@ -69,36 +70,44 @@ export const FornecedorView = ({usuario, fornecedoresPorCategoria, fornecedoresM
                 onSelectCategory={(categoria) => {
                     setCategoria(categoria)
                 }}
+                loading={loading}
             />
             
-            <Text style={styles.title}>Fornecedores por Categoria</Text>
-            <FlatList
-                data={filteredFornecedores} // Use a lista filtrada aqui
-                renderItem={renderFornecedor}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.contentContainer}
-            />
+            {loading ? (
+                <View style={[styles.loadingContainer, { marginTop: 50 }]}>
+                    <ActivityIndicator size="large" color="#AC5906" />
+                </View>
+            ) : (
+                <>
+                    <Text style={styles.title}>Fornecedores por Categoria</Text>
+                    <FlatList
+                        data={filteredFornecedores}
+                        renderItem={renderFornecedor}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.contentContainer}
+                    />
 
-            <Text style={styles.title}>Melhores preços</Text>
-            <FlatList
-                data={fornecedoresMelhoresPreco}
-                renderItem={renderFornecedor}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.contentContainer}
-            />
-            
-            <Text style={styles.title}>Melhores Profissionais</Text>
-            <FlatList
-                data={fornecedoresMelhoresAvaliados}
-                renderItem={renderFornecedor}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.contentContainer}
-            />
+                    <Text style={styles.title}>Melhores preços</Text>
+                    <FlatList
+                        data={fornecedoresMelhoresPreco}
+                        renderItem={renderFornecedor}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.contentContainer}
+                    />
+                    
+                    <Text style={styles.title}>Melhores Profissionais</Text>
+                    <FlatList
+                        data={fornecedoresMelhoresAvaliados}
+                        renderItem={renderFornecedor}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.contentContainer}
+                    />
+                </>
+            )}
         </ScrollView>
-        
     )
 }
 
@@ -114,6 +123,12 @@ const styles = StyleSheet.create({
         margin:20,
         fontSize: 18,
         color:'#A75C00'
+    },
+    loadingContainer: {
+        flex: 1,
+        padding:5,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     contentContainer: {
         paddingHorizontal: 10,

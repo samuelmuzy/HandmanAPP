@@ -8,6 +8,10 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../navigation/TabNavigation';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
+import { typeEndereco } from '../model/User';
+import { UserService } from '../services/UserService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useGetToken } from '../hooks/useGetToken';
 
 interface FormattedAddress {
     street: string;
@@ -28,6 +32,9 @@ export const LocalizacaoScreen = () => {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [enderecoFormatado, setEnderecoFormatado] = useState<FormattedAddress | null>(null);
     const [modalVisivel, setModalVisivel] = useState(false);
+    
+    const tokenUser = useGetToken();
+
     const [enderecoManual, setEnderecoManual] = useState<FormattedAddress>({
         street: '',
         city: '',
@@ -103,126 +110,148 @@ export const LocalizacaoScreen = () => {
         setErrorMsg(null);
     };
 
-    const handleContinuar = () => {
-        if (enderecoFormatado) {
-            const fullAddress = [
-                enderecoFormatado.street,
-                enderecoFormatado.city,
-                enderecoFormatado.region,
-                enderecoFormatado.postalCode
-            ].filter(Boolean).join(', ');
+    const handleContinuar = async () => {
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            
+            if (!token) {
+                Alert.alert("Erro", "Token não encontrado. Por favor, faça login novamente.");
+                return;
+            }
 
+            if (!tokenUser?.id) {
+                Alert.alert("Erro", "ID do usuário não encontrado. Por favor, faça login novamente.");
+                return;
+            }
+
+            if (!enderecoFormatado) {
+                Alert.alert("Atenção", "Nenhum endereço foi definido. Por favor, selecione ou insira um.");
+                return;
+            }
+
+            const body: typeEndereco = {
+                cidade: enderecoFormatado.city,
+                cep: enderecoFormatado.postalCode,
+                estado: enderecoFormatado.region,
+                rua: enderecoFormatado.street
+            };
+            
+            await UserService.updateUser(body, token, tokenUser.id);
+    
             navigation.navigate('AgendamentoScreen', {
                 fornecedorId: fornecedorId
             });
-        } else {
-            Alert.alert("Atenção", "Nenhum endereço foi definido. Por favor, selecione ou insira um.");
+            
+        } catch (error) {
+            console.error("Erro ao atualizar endereço:", error);
+            Alert.alert("Erro", "Não foi possível atualizar o endereço. Tente novamente mais tarde.");
         }
-    };
+    }
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.card}>
-                <Text style={styles.tituloCard}>Endereço para o serviço</Text>
 
-                {errorMsg && <Text style={styles.erro}>{errorMsg}</Text>}
+return (
+    <View style={styles.container}>
+        <View style={styles.card}>
+            <Text style={styles.tituloCard}>Endereço para o serviço</Text>
 
-                {enderecoFormatado ? (
-                    <View style={styles.infoContainer}>
-                        <View style={styles.infoItem}>
-                            <Ionicons name="location-outline" size={20} color="#FF9B00" />
-                            <Text style={styles.infoText}>Rua: {enderecoFormatado.street || 'Não informado'}</Text>
-                        </View>
-                        <View style={styles.infoItem}>
-                            <Ionicons name="business-outline" size={20} color="#FF9B00" />
-                            <Text style={styles.infoText}>Cidade: {enderecoFormatado.city || 'Não informado'}</Text>
-                        </View>
-                        <View style={styles.infoItem}>
-                            <Ionicons name="map-outline" size={20} color="#FF9B00" />
-                            <Text style={styles.infoText}>Estado: {enderecoFormatado.region || 'Não informado'}</Text>
-                        </View>
-                        <View style={styles.infoItem}>
-                            <Ionicons name="mail-outline" size={20} color="#FF9B00" />
-                            <Text style={styles.infoText}>CEP: {enderecoFormatado.postalCode || 'Não informado'}</Text>
-                        </View>
+            {errorMsg && <Text style={styles.erro}>{errorMsg}</Text>}
+
+            {enderecoFormatado ? (
+                <View style={styles.infoContainer}>
+                    <View style={styles.infoItem}>
+                        <Ionicons name="location-outline" size={20} color="#FF9B00" />
+                        <Text style={styles.infoText}>Rua: {enderecoFormatado.street || 'Não informado'}</Text>
                     </View>
-                ) : (
-                    <Text style={styles.placeholderText}>Carregando endereço ou aguardando inserção manual...</Text>
-                )}
-
-                <TouchableOpacity
-                    style={[styles.botaoCard, styles.botaoLaranja]}
-                    onPress={() => setModalVisivel(true)}
-                >
-                    <Text style={styles.botaoCardTexto}>Alterar localização</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.botaoCard, styles.botaoVerde]}
-                    onPress={handleContinuar}
-                >
-                    <Text style={styles.botaoCardTexto}>Continuar</Text>
-                </TouchableOpacity>
-            </View>
-
-            <Modal
-                visible={modalVisivel}
-                animationType="slide"
-                transparent={true}
-                onRequestClose={() => setModalVisivel(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitulo}>Inserir Endereço Manualmente</Text>
-                        
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Rua"
-                            value={enderecoManual.street}
-                            onChangeText={(text) => setEnderecoManual({ ...enderecoManual, street: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Cidade"
-                            value={enderecoManual.city}
-                            onChangeText={(text) => setEnderecoManual({ ...enderecoManual, city: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Estado (Ex: MG)"
-                            value={enderecoManual.region}
-                            onChangeText={(text) => setEnderecoManual({ ...enderecoManual, region: text })}
-                            maxLength={2} // Assumindo sigla do estado
-                            autoCapitalize="characters"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="CEP (apenas números)"
-                            value={enderecoManual.postalCode}
-                            onChangeText={(text) => setEnderecoManual({ ...enderecoManual, postalCode: text.replace(/[^0-9]/g, '') })}
-                            keyboardType="numeric"
-                            maxLength={8} // CEP sem hífen
-                        />
-
-                        <View style={styles.modalBotoes}>
-                            <TouchableOpacity
-                                style={[styles.botao, styles.botaoSecundario]}
-                                onPress={() => setModalVisivel(false)}
-                            >
-                                <Text style={styles.botaoTexto}>Cancelar</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.botao, styles.botaoPrimario]}
-                                onPress={handleSalvarEnderecoManual}
-                            >
-                                <Text style={styles.botaoTexto}>Salvar Endereço</Text>
-                            </TouchableOpacity>
-                        </View>
+                    <View style={styles.infoItem}>
+                        <Ionicons name="business-outline" size={20} color="#FF9B00" />
+                        <Text style={styles.infoText}>Cidade: {enderecoFormatado.city || 'Não informado'}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                        <Ionicons name="map-outline" size={20} color="#FF9B00" />
+                        <Text style={styles.infoText}>Estado: {enderecoFormatado.region || 'Não informado'}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                        <Ionicons name="mail-outline" size={20} color="#FF9B00" />
+                        <Text style={styles.infoText}>CEP: {enderecoFormatado.postalCode || 'Não informado'}</Text>
                     </View>
                 </View>
-            </Modal>
+            ) : (
+                <Text style={styles.placeholderText}>Carregando endereço ou aguardando inserção manual...</Text>
+            )}
+
+            <TouchableOpacity
+                style={[styles.botaoCard, styles.botaoLaranja]}
+                onPress={() => setModalVisivel(true)}
+            >
+                <Text style={styles.botaoCardTexto}>Alterar localização</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={[styles.botaoCard, styles.botaoVerde]}
+                onPress={handleContinuar}
+            >
+                <Text style={styles.botaoCardTexto}>Continuar</Text>
+            </TouchableOpacity>
         </View>
-    );
+
+        <Modal
+            visible={modalVisivel}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setModalVisivel(false)}
+        >
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitulo}>Inserir Endereço Manualmente</Text>
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Rua"
+                        value={enderecoManual.street}
+                        onChangeText={(text) => setEnderecoManual({ ...enderecoManual, street: text })}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Cidade"
+                        value={enderecoManual.city}
+                        onChangeText={(text) => setEnderecoManual({ ...enderecoManual, city: text })}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Estado (Ex: MG)"
+                        value={enderecoManual.region}
+                        onChangeText={(text) => setEnderecoManual({ ...enderecoManual, region: text })}
+                        maxLength={2} // Assumindo sigla do estado
+                        autoCapitalize="characters"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="CEP (apenas números)"
+                        value={enderecoManual.postalCode}
+                        onChangeText={(text) => setEnderecoManual({ ...enderecoManual, postalCode: text.replace(/[^0-9]/g, '') })}
+                        keyboardType="numeric"
+                        maxLength={8} // CEP sem hífen
+                    />
+
+                    <View style={styles.modalBotoes}>
+                        <TouchableOpacity
+                            style={[styles.botao, styles.botaoSecundario]}
+                            onPress={() => setModalVisivel(false)}
+                        >
+                            <Text style={styles.botaoTexto}>Cancelar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.botao, styles.botaoPrimario]}
+                            onPress={handleSalvarEnderecoManual}
+                        >
+                            <Text style={styles.botaoTexto}>Salvar Endereço</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    </View>
+);
 };
 
 const styles = StyleSheet.create({

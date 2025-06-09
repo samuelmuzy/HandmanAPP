@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { RouteProp, useNavigation, useRoute, CommonActions } from '@react-navigation/native';
 import { typeFornecedor } from "../model/Fornecedor";
 import { Ionicons } from '@expo/vector-icons';
@@ -45,7 +45,7 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
                 <TouchableOpacity onPress={handleVoltar} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="#AC5906" />
                 </TouchableOpacity>
-                <Text style={styles.title}>Product Detail</Text>
+                <Text style={styles.title}>Detalhes</Text>
                 <TouchableOpacity>
                     <MaterialCommunityIcons name="heart-outline" size={24} color="#AC5906" />
                 </TouchableOpacity>

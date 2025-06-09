@@ -20,7 +20,7 @@ type NavigationProp = CompositeNavigationProp<
     NativeStackNavigationProp<FornecedorStackParamList>
 >;
 
-type StatusType = "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento";
+type StatusType = "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento" | "Aguardando pagamento" | "Recusado";
 
 export const AgendaUsuario = () => {
     const [agendamentos, setAgendamentos] = useState<HistoricoAgendamento[]>([]);
@@ -69,26 +69,27 @@ export const AgendaUsuario = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchAgendamentos = async () => {
-            try {
-                if (!token || !token.id) {
-                    console.log("Token não disponível ainda");
-                    return;
-                }
-
-                const id_usuario = token.id;
-                const agendamentos = await AgendamentoService.getAgendamentos(id_usuario);
-                if (agendamentos) {
-                    setAgendamentos(agendamentos);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar agendamentos:", error);
-            } finally {
-                setLoading(false);
+    const fetchAgendamentos = async () => {
+        setLoading(true);
+        try {
+            if (!token || !token.id) {
+                console.log("Token não disponível ainda");
+                return;
             }
-        };
 
+            const id_usuario = token.id;
+            const agendamentos = await AgendamentoService.getAgendamentos(id_usuario);
+            if (agendamentos) {
+                setAgendamentos(agendamentos);
+            }
+        } catch (error) {
+            console.error("Erro ao buscar agendamentos:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchAgendamentos();
     }, [token]);
 

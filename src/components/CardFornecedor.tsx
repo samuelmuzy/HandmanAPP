@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, Image, Button, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Image, Button, Dimensions, TouchableOpacity } from "react-native";
 import { typeFornecedor } from "../model/Fornecedor"
 import { Star } from 'lucide-react-native';
-import ImagemPadrao from '../assets/pexels-photo-1216589.webp'
+import ImagemPadrao from '../assets/worker.jpg'
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
@@ -39,11 +39,13 @@ export const CardFornecedor = ({fornecedor}:CardFornecedorProps) =>{
 
     return(
         <View style={styles.container}>
-            <Image 
-                source={fornecedor.imagemIlustrativa ? { uri: fornecedor.imagemIlustrativa } : ImagemPadrao}
-                style={styles.image}
-                defaultSource={ImagemPadrao}
-            />
+            <TouchableOpacity onPress={() => handleNavigateToDetalhes(fornecedor.id_fornecedor)}>
+                <Image 
+                    source={fornecedor.imagemIlustrativa ? { uri: fornecedor.imagemIlustrativa } : ImagemPadrao}
+                    style={styles.image}
+                    defaultSource={ImagemPadrao}
+                />
+            </TouchableOpacity>
             <View style={styles.contentContainer}>
                 <View style={styles.infoContainer}>
                     <Text style={styles.nome}>{fornecedor.nome}</Text>

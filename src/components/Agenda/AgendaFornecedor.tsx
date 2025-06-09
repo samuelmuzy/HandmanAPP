@@ -51,7 +51,7 @@ export const AgendaFornecedor = () => {
 
     const { expoPushToken } = useNotifications(token?.id);
 
-    const handleStatusUpdate = (update: { id_servico: string; novo_status: string }) => {
+    const handleStatusUpdate = async (update: { id_servico: string; novo_status: string }) => {
         setSolicitacoes(prevSolicitacoes =>
             prevSolicitacoes.map(solicitacao =>
                 solicitacao.servico.id_servico === update.id_servico
@@ -66,11 +66,24 @@ export const AgendaFornecedor = () => {
             )
         );
 
-        Alert.alert(
-            "Atualização de Status",
-            `O status do serviço foi atualizado para: ${update.novo_status}`,
-            [{ text: "OK" }]
-        );
+       
+
+        try {
+            // Enviar notificação push
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Status do serviço foi atualizado",
+                    body: `O status do serviço foi atualizado para: ${update.novo_status}`,
+                    data: { update },
+                    sound: true,
+                    priority: Notifications.AndroidNotificationPriority.HIGH,
+                },
+                trigger: null, // Enviar imediatamente
+            });
+            console.log('Notificação enviada com sucesso');
+        } catch (error) {
+            console.error('Erro ao enviar notificação:', error);
+        }
     };
 
     const { emitirMudancaStatus } = useStatusNotifications(handleStatusUpdate);
@@ -85,6 +98,7 @@ export const AgendaFornecedor = () => {
             emitirMudancaStatus(id_servico, novo_status, token?.id as string);
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
+            
             Alert.alert(
                 "Erro",
                 "Não foi possível atualizar o status do serviço. Tente novamente.",

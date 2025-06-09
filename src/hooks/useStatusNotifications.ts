@@ -2,6 +2,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { API_URL } from '../constants/ApiUrl';
 import { useGetToken } from './useGetToken';
+import { Alert } from 'react-native';
 
 interface StatusUpdate {
     id_servico: string;
@@ -27,6 +28,12 @@ export const useStatusNotifications = (
         // Escuta atualizações de status
         socket.on('atualizacao_status', (update: StatusUpdate) => {
             onStatusUpdate(update);
+            
+            Alert.alert(
+                "Atualização de Status",
+                `O status do serviço foi atualizado para: ${update.novo_status}`,
+                [{ text: "OK" }]
+            );
         });
 
         return () => {

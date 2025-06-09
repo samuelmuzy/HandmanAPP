@@ -7,20 +7,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  ImageBackground,
   Switch,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import HeaderNavigation from '../../HeaderNavigation';
-import BarraDeNavegacao from '../../BarraDeNavegacao';
-import dbPromise from '../../db';
 import { authService } from '../services/authService';
 
 const { width, height } = Dimensions.get('window');
-const backgroundImage = require('../assets/handman.jpg');
 
 interface CadastroScreenProps {
   onBack: () => void;

@@ -11,12 +11,12 @@ import {
   Switch,
   Alert,
 } from 'react-native';
-import { useGetToken } from '../hooks/useGetToken';
+import { useGetToken } from '../../hooks/useGetToken';
 
 import { useNavigation, CommonActions } from '@react-navigation/native';
-import { User } from '../model/User';
-import { UserService } from '../services/UserService';
-import { useAuth } from '../context/AuthContext';
+import { User } from '../../model/User';
+import { UserService } from '../../services/UserService';
+import { useAuth } from '../../context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -72,10 +72,7 @@ const PerfilUsuario = () => {
     }
   }, [userId]);
 
-  const handleNavigate = (screen: string) => {
-    setCurrentScreen(screen);
-  };
-
+  
   const handleSave = async () => {
     try {
       
@@ -94,12 +91,12 @@ const PerfilUsuario = () => {
 
         <View style={styles.profileInfo}>
           <Image 
-            source={usuario?.picture ? { uri: usuario.picture } : require('../assets/handman.jpg')} 
+            source={usuario?.picture ? { uri: usuario.picture } : require('../../assets/handman.jpg')} 
             style={styles.avatar}
             onError={(e) => {
               console.log('Erro ao carregar imagem:', e.nativeEvent.error);
             }}
-            defaultSource={require('../assets/handman.jpg')}
+            defaultSource={require('../../assets/handman.jpg')}
           />
           <Text style={styles.name}>{usuario?.nome}</Text>
           <Text style={styles.email}>{usuario?.email}</Text>

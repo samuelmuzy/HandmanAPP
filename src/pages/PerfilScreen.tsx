@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGetToken } from '../hooks/useGetToken';
-import PerfilUsuario from '../components/perfilUsuario';
-import PerfilFornecedor from '../components/PerfilFornecedor';
+import PerfilUsuario from '../components/perfil/perfilUsuario';
+import PerfilFornecedor from '../components/perfil/PerfilFornecedor';
 
 
 

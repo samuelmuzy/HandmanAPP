@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { HistoricoAgendamento } from '../model/Agendamento';
+import { HistoricoAgendamento } from '../../model/Agendamento';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type StatusType = "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento";
@@ -59,7 +59,7 @@ export const CardAgendamento: React.FC<CardAgendamentoProps> = ({
     onPressEntrarContato,
     onPressAtualizarStatus
 }) => {
-    const placeholderImage = require('../assets/agenda.png');
+    const placeholderImage = require('../../assets/agenda.png');
     const statusConfig = getStatusConfig(agendamento.status as StatusType);
 
     return (
@@ -112,30 +112,9 @@ export const CardAgendamento: React.FC<CardAgendamentoProps> = ({
 
             <View style={styles.footer}>
                 {agendamento.status.toLowerCase() === 'pendente' && (
-                    <TouchableOpacity
-                        style={[styles.button, styles.confirmButton]}
-                        onPress={() => onPressAtualizarStatus('confirmado')}
-                    >
-                        <Text style={styles.buttonText}>Confirmar Serviço</Text>
-                    </TouchableOpacity>
-                )}
-
-                {agendamento.status.toLowerCase() === 'confirmado' && (
-                    <TouchableOpacity
-                        style={[styles.button, styles.startButton]}
-                        onPress={() => onPressAtualizarStatus('Em Andamento')}
-                    >
-                        <Text style={styles.buttonText}>Iniciar Serviço</Text>
-                    </TouchableOpacity>
-                )}
-
-                {agendamento.status.toLowerCase() === 'em andamento' && (
-                    <TouchableOpacity
-                        style={[styles.button, styles.completeButton]}
-                        onPress={() => onPressAtualizarStatus('concluido')}
-                    >
-                        <Text style={styles.buttonText}>Finalizar Serviço</Text>
-                    </TouchableOpacity>
+                    <>
+                        <Text style={styles.pendingMessage}>Aguardando confirmação do fornecedor.</Text>
+                    </>
                 )}
 
                 {['pendente', 'confirmado', 'em andamento'].includes(agendamento.status.toLowerCase()) && (
@@ -253,6 +232,14 @@ const styles = StyleSheet.create({
     },
     cancelButton: {
         backgroundColor: '#F44336',
+    },
+    pendingMessage: {
+        fontSize: 14,
+        color: '#FFA500',
+        textAlign: 'center',
+        marginTop: 5,
+        marginBottom: 10,
+        width: '100%',
     },
 });
 

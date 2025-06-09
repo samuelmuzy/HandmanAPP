@@ -6,19 +6,19 @@ import { API_URL } from '../constants/ApiUrl';
 import axios from 'axios';
 
 Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-        shouldShowBanner: true,
-        shouldShowList: true
+    handleNotification: async (): Promise<any> => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
     }),
-});
+  });
+  
 
 export const useNotifications = (userId: string | undefined) => {
     const [expoPushToken, setExpoPushToken] = useState<string>('');
-    const notificationListener = useRef<Notifications.Subscription | null>(null);
-    const responseListener = useRef<Notifications.Subscription | null>(null);
+    const notificationListener = useRef<Notifications.EventSubscription | null>(null);
+    const responseListener = useRef<Notifications.EventSubscription | null>(null);
+
 
     async function registerForPushNotificationsAsync() {
         let token;
@@ -36,14 +36,14 @@ export const useNotifications = (userId: string | undefined) => {
         if (Device.isDevice) {
             const { status: existingStatus } = await Notifications.getPermissionsAsync();
             console.log('Status atual das permissões:', existingStatus);
-            
+
             let finalStatus = existingStatus;
             if (existingStatus !== 'granted') {
                 const { status } = await Notifications.requestPermissionsAsync();
                 finalStatus = status;
                 console.log('Novo status das permissões:', status);
             }
-            
+
             if (finalStatus !== 'granted') {
                 console.log('Falha ao obter token para notificação push!');
                 return;
@@ -103,12 +103,8 @@ export const useNotifications = (userId: string | undefined) => {
 
         return () => {
             console.log('Limpando listeners de notificação');
-            if (notificationListener.current) {
-                Notifications.removeNotificationSubscription(notificationListener.current);
-            }
-            if (responseListener.current) {
-                Notifications.removeNotificationSubscription(responseListener.current);
-            }
+            notificationListener.current?.remove();
+            responseListener.current?.remove();
         };
     }, [userId]);
 

@@ -1,16 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { LocationObject } from 'expo-location';
+import { useNavigation, useRoute, CompositeNavigationProp, RouteProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootTabParamList } from '../navigation/TabNavigation';
+import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
+
+interface FormattedAddress {
+    street: string;
+    city: string;
+    region: string;
+    postalCode: string;
+}
+
+type LocalizacaoScreenNavigationProp = CompositeNavigationProp<
+    BottomTabNavigationProp<RootTabParamList, 'FornecedorStack'>,
+    NativeStackNavigationProp<FornecedorStackParamList, 'LocalizacaoScreen'>
+>;
+
+type LocalizacaoScreenRouteProp = RouteProp<FornecedorStackParamList, 'LocalizacaoScreen'>;
 
 export const LocalizacaoScreen = () => {
     const [location, setLocation] = useState<LocationObject | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    const [endereco, setEndereco] = useState<string | null>(null);
-    const [modoManual, setModoManual] = useState(false);
-    const [enderecoManual, setEnderecoManual] = useState('');
+    const [enderecoFormatado, setEnderecoFormatado] = useState<FormattedAddress | null>(null);
     const [modalVisivel, setModalVisivel] = useState(false);
+    const [enderecoManual, setEnderecoManual] = useState<FormattedAddress>({
+        street: '',
+        city: '',
+        region: '',
+        postalCode: '',
+    });
+
+    const navigation = useNavigation<LocalizacaoScreenNavigationProp>();
+    const route = useRoute<LocalizacaoScreenRouteProp>();
+    const { fornecedorId } = route.params;
 
     const obterEndereco = async (latitude: number, longitude: number) => {
         try {
@@ -21,19 +48,19 @@ export const LocalizacaoScreen = () => {
 
             if (enderecos.length > 0) {
                 const endereco = enderecos[0];
-                const enderecoFormatado = [
-                    endereco.street,
-                    endereco.district,
-                    endereco.city,
-                    endereco.region,
-                    endereco.postalCode,
-                    endereco.country
-                ].filter(Boolean).join(', ');
-                
-                setEndereco(enderecoFormatado);
+                setEnderecoFormatado({
+                    street: endereco.street || '',
+                    city: endereco.city || '',
+                    region: endereco.region || '',
+                    postalCode: endereco.postalCode || '',
+                });
+                setErrorMsg(null);
+            } else {
+                setErrorMsg('Nenhum endereço encontrado para as coordenadas.');
             }
         } catch (error) {
-            setErrorMsg('Erro ao obter endereço');
+            setErrorMsg('Erro ao obter endereço. Tente novamente ou insira manualmente.');
+            console.error("Erro ao reverter geocodificação:", error);
         }
     };
 
@@ -41,114 +68,154 @@ export const LocalizacaoScreen = () => {
         try {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                setModoManual(true);
-                setErrorMsg('Permissão para acessar a localização foi negada');
+                setErrorMsg('Permissão para acessar a localização foi negada. Por favor, insira o endereço manualmente.');
+                setModalVisivel(true); // Abre a modal para inserção manual
                 return;
             }
 
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-            
-            if (location) {
+            let currentLocation = await Location.getCurrentPositionAsync({});
+            setLocation(currentLocation);
+
+            if (currentLocation) {
                 await obterEndereco(
-                    location.coords.latitude,
-                    location.coords.longitude
+                    currentLocation.coords.latitude,
+                    currentLocation.coords.longitude
                 );
             }
         } catch (error) {
-            setErrorMsg('Erro ao obter localização');
-            setModoManual(true);
+            setErrorMsg('Erro ao obter localização. Verifique suas configurações de localização.');
+            setModalVisivel(true); // Abre a modal em caso de erro na localização
+            console.error("Erro ao obter localização atual:", error);
         }
     };
 
     useEffect(() => {
-        if (!modoManual) {
-            obterLocalizacaoAtual();
-        }
-    }, [modoManual]);
+        obterLocalizacaoAtual();
+    }, []);
 
-    const salvarEnderecoManual = () => {
-        if (enderecoManual.trim()) {
-            setEndereco(enderecoManual);
-            setModalVisivel(false);
+    const handleSalvarEnderecoManual = () => {
+        if (!enderecoManual.street || !enderecoManual.city || !enderecoManual.region || !enderecoManual.postalCode) {
+            Alert.alert("Campos incompletos", "Por favor, preencha todos os campos do endereço.");
+            return;
+        }
+        setEnderecoFormatado(enderecoManual);
+        setModalVisivel(false);
+        setErrorMsg(null);
+    };
+
+    const handleContinuar = () => {
+        if (enderecoFormatado) {
+            const fullAddress = [
+                enderecoFormatado.street,
+                enderecoFormatado.city,
+                enderecoFormatado.region,
+                enderecoFormatado.postalCode
+            ].filter(Boolean).join(', ');
+
+            navigation.navigate('AgendamentoScreen', {
+                fornecedorId: fornecedorId
+            });
+        } else {
+            Alert.alert("Atenção", "Nenhum endereço foi definido. Por favor, selecione ou insira um.");
         }
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.card}>
-                <Ionicons name="location" size={40} color="#007AFF" />
-                <Text style={styles.titulo}>Sua Localização</Text>
-                
-                {errorMsg && !modoManual ? (
-                    <Text style={styles.erro}>{errorMsg}</Text>
-                ) : (
+                <Text style={styles.tituloCard}>Endereço para o serviço</Text>
+
+                {errorMsg && <Text style={styles.erro}>{errorMsg}</Text>}
+
+                {enderecoFormatado ? (
                     <View style={styles.infoContainer}>
-                        <Text style={styles.endereco}>
-                            {endereco || 'Nenhum endereço definido'}
-                        </Text>
-                        
-                        {!modoManual && location && (
-                            <>
-                                <Text style={styles.coordenadas}>
-                                    Latitude: {location.coords.latitude.toFixed(6)}
-                                </Text>
-                                <Text style={styles.coordenadas}>
-                                    Longitude: {location.coords.longitude.toFixed(6)}
-                                </Text>
-                            </>
-                        )}
+                        <View style={styles.infoItem}>
+                            <Ionicons name="location-outline" size={20} color="#FF9B00" />
+                            <Text style={styles.infoText}>Rua: {enderecoFormatado.street || 'Não informado'}</Text>
+                        </View>
+                        <View style={styles.infoItem}>
+                            <Ionicons name="business-outline" size={20} color="#FF9B00" />
+                            <Text style={styles.infoText}>Cidade: {enderecoFormatado.city || 'Não informado'}</Text>
+                        </View>
+                        <View style={styles.infoItem}>
+                            <Ionicons name="map-outline" size={20} color="#FF9B00" />
+                            <Text style={styles.infoText}>Estado: {enderecoFormatado.region || 'Não informado'}</Text>
+                        </View>
+                        <View style={styles.infoItem}>
+                            <Ionicons name="mail-outline" size={20} color="#FF9B00" />
+                            <Text style={styles.infoText}>CEP: {enderecoFormatado.postalCode || 'Não informado'}</Text>
+                        </View>
                     </View>
+                ) : (
+                    <Text style={styles.placeholderText}>Carregando endereço ou aguardando inserção manual...</Text>
                 )}
 
-                <View style={styles.botoesContainer}>
-                    <TouchableOpacity 
-                        style={[styles.botao, modoManual ? styles.botaoSecundario : styles.botaoPrimario]}
-                        onPress={() => setModoManual(!modoManual)}
-                    >
-                        <Text style={styles.botaoTexto}>
-                            {modoManual ? 'Usar Localização Atual' : 'Inserir Endereço Manualmente'}
-                        </Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.botaoCard, styles.botaoLaranja]}
+                    onPress={() => setModalVisivel(true)}
+                >
+                    <Text style={styles.botaoCardTexto}>Alterar localização</Text>
+                </TouchableOpacity>
 
-                    {!modoManual && (
-                        <TouchableOpacity 
-                            style={[styles.botao, styles.botaoSecundario]}
-                            onPress={obterLocalizacaoAtual}
-                        >
-                            <Text style={styles.botaoTexto}>Atualizar Localização</Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
+                <TouchableOpacity
+                    style={[styles.botaoCard, styles.botaoVerde]}
+                    onPress={handleContinuar}
+                >
+                    <Text style={styles.botaoCardTexto}>Continuar</Text>
+                </TouchableOpacity>
             </View>
 
             <Modal
                 visible={modalVisivel}
                 animationType="slide"
                 transparent={true}
+                onRequestClose={() => setModalVisivel(false)}
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitulo}>Inserir Endereço</Text>
+                        <Text style={styles.modalTitulo}>Inserir Endereço Manualmente</Text>
+                        
                         <TextInput
                             style={styles.input}
-                            placeholder="Digite seu endereço completo"
-                            value={enderecoManual}
-                            onChangeText={setEnderecoManual}
-                            multiline
+                            placeholder="Rua"
+                            value={enderecoManual.street}
+                            onChangeText={(text) => setEnderecoManual({ ...enderecoManual, street: text })}
                         />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Cidade"
+                            value={enderecoManual.city}
+                            onChangeText={(text) => setEnderecoManual({ ...enderecoManual, city: text })}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Estado (Ex: MG)"
+                            value={enderecoManual.region}
+                            onChangeText={(text) => setEnderecoManual({ ...enderecoManual, region: text })}
+                            maxLength={2} // Assumindo sigla do estado
+                            autoCapitalize="characters"
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="CEP (apenas números)"
+                            value={enderecoManual.postalCode}
+                            onChangeText={(text) => setEnderecoManual({ ...enderecoManual, postalCode: text.replace(/[^0-9]/g, '') })}
+                            keyboardType="numeric"
+                            maxLength={8} // CEP sem hífen
+                        />
+
                         <View style={styles.modalBotoes}>
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 style={[styles.botao, styles.botaoSecundario]}
                                 onPress={() => setModalVisivel(false)}
                             >
                                 <Text style={styles.botaoTexto}>Cancelar</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 style={[styles.botao, styles.botaoPrimario]}
-                                onPress={salvarEnderecoManual}
+                                onPress={handleSalvarEnderecoManual}
                             >
-                                <Text style={styles.botaoTexto}>Salvar</Text>
+                                <Text style={styles.botaoTexto}>Salvar Endereço</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -164,70 +231,77 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#f5f5f5',
         justifyContent: 'center',
+        alignItems: 'center',
     },
     card: {
         backgroundColor: 'white',
         borderRadius: 15,
         padding: 20,
-        alignItems: 'center',
+        width: '95%', // Ajuste para ser mais parecido com a imagem
+        maxWidth: 500,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
             height: 2,
         },
-        shadowOpacity: 0.25,
+        shadowOpacity: 0.1,
         shadowRadius: 3.84,
         elevation: 5,
+        alignItems: 'flex-start', // Alinha os itens do card à esquerda
     },
-    titulo: {
-        fontSize: 24,
+    tituloCard: {
+        fontSize: 20,
         fontWeight: 'bold',
-        marginTop: 10,
         marginBottom: 20,
-        color: '#333',
+        color: '#FF9B00', // Cor laranja como na imagem
+        alignSelf: 'center', // Centraliza o título
     },
     infoContainer: {
         width: '100%',
-        marginVertical: 15,
+        marginBottom: 20,
     },
-    endereco: {
-        fontSize: 18,
-        color: '#333',
+    infoItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 10,
-        textAlign: 'center',
-        fontWeight: '500',
     },
-    coordenadas: {
+    infoText: {
+        fontSize: 16,
+        color: '#333',
+        marginLeft: 10,
+    },
+    placeholderText: {
         fontSize: 16,
         color: '#666',
-        marginVertical: 5,
+        textAlign: 'center',
+        width: '100%',
+        marginBottom: 20,
     },
     erro: {
-        fontSize: 16,
+        fontSize: 15,
         color: 'red',
-        marginVertical: 15,
-    },
-    botoesContainer: {
-        width: '100%',
-        gap: 10,
-    },
-    botao: {
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 8,
-        marginTop: 5,
-    },
-    botaoPrimario: {
-        backgroundColor: '#007AFF',
-    },
-    botaoSecundario: {
-        backgroundColor: '#6c757d',
-    },
-    botaoTexto: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+        marginBottom: 15,
         textAlign: 'center',
+        width: '100%',
+    },
+    botaoCard: {
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 8,
+        marginTop: 15,
+        width: '100%',
+        alignItems: 'center',
+    },
+    botaoLaranja: {
+        backgroundColor: '#FF9B00', // Laranja como na imagem
+    },
+    botaoVerde: {
+        backgroundColor: '#5CB85C', // Verde como na imagem
+    },
+    botaoCardTexto: {
+        color: 'white',
+        fontSize: 17,
+        fontWeight: 'bold',
     },
     modalContainer: {
         flex: 1,
@@ -241,25 +315,48 @@ const styles = StyleSheet.create({
         padding: 20,
         width: '90%',
         maxWidth: 400,
+        alignItems: 'center',
     },
     modalTitulo: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 15,
+        marginBottom: 20,
         textAlign: 'center',
+        color: '#333',
     },
     input: {
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 8,
-        padding: 10,
+        padding: 12,
         marginBottom: 15,
-        minHeight: 100,
-        textAlignVertical: 'top',
+        width: '100%',
+        fontSize: 16,
     },
     modalBotoes: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         gap: 10,
+        width: '100%',
+        marginTop: 10,
     },
-}); 
+    botao: {
+        flex: 1,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    botaoPrimario: {
+        backgroundColor: '#007AFF',
+    },
+    botaoSecundario: {
+        backgroundColor: '#6c757d',
+    },
+    botaoTexto: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+});

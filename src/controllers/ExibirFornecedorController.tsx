@@ -10,8 +10,6 @@ interface ExibirFornecedorControllerProps{
 export const ExibirFornecedorController = ({id_fornecedor}:ExibirFornecedorControllerProps) =>{
     const [fornecedor,setFornecedor] = useState<typeFornecedor | undefined>(undefined);
    
-
-
     const handleGetFornecedor = async () =>{
         const fornecedor = await FornecedorService.getFornecedorPorId(id_fornecedor);
         setFornecedor(fornecedor);

@@ -11,7 +11,6 @@ import {
     KeyboardAvoidingView,
     Platform,
     StatusBar,
-    ScrollView,
     Keyboard,
 } from 'react-native';
 import { io, Socket } from 'socket.io-client';

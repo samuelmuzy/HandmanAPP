@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { AgendamentoService } from '../../services/AgendamentoServico';
 import { HistoricoAgendamento } from '../../model/Agendamento';
-import { CardAgendamento } from '../CardAgendamento';
+import { CardAgendamento } from './CardAgendamento';
 import { useGetToken } from '../../hooks/useGetToken';
 import { useNavigation } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';

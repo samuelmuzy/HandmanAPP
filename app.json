@@ -20,13 +20,19 @@
         "foregroundImage": "./src//assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.mcpozr.snack8f8e781cdb994f20881a5b19ef3f4fcf"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
     },
     "plugins": [
       "expo-sqlite"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6a0837b0-d572-4b1f-9e62-d05aca2536ce"
+      }
+    }
   }
 }

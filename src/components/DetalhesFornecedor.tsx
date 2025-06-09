@@ -32,12 +32,9 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
     };
 
     const handleAgendar = () => {
-        /*if (fornecedor?.id_fornecedor) {
-            navigation.navigate('AgendamentoScreen', { 
-                fornecedorId: fornecedor.id_fornecedor 
-            });
-        }*/
-        navigation.navigate('LocalizacaoScreen')
+        navigation.navigate('LocalizacaoScreen', { 
+            fornecedorId: fornecedor?.id_fornecedor 
+        });
     };
 
     const dadosFornecedor = fornecedor;

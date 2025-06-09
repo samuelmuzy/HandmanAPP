@@ -16,7 +16,7 @@ export type FornecedorStackParamList = {
         endereco: string;
     };
     ChatScreen:{fornecedorId: string | undefined}
-    LocalizacaoScreen:undefined
+    LocalizacaoScreen: { fornecedorId: string | undefined }
 };
 
 const Stack = createNativeStackNavigator<FornecedorStackParamList>();

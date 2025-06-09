@@ -5,7 +5,7 @@ import { useStatusNotifications } from '../../hooks/useStatusNotifications';
 import { useNotifications } from '../../hooks/useNotifications';
 import axios from 'axios';
 import { API_URL } from '../../constants/ApiUrl';
-import { CardAgendamentoFornecedor } from '../CardAgendamentoFornecedor';
+import { CardAgendamentoFornecedor } from './CardAgendamentoFornecedor';
 import { useNavigation } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -48,6 +48,7 @@ export const AgendaFornecedor = () => {
     const token = useGetToken();
     const navigation = useNavigation<NavigationProp>();
     const socketRef = useRef<Socket | null>(null);
+
     const { expoPushToken } = useNotifications(token?.id);
 
     const handleStatusUpdate = (update: { id_servico: string; novo_status: string }) => {
@@ -154,7 +155,6 @@ export const AgendaFornecedor = () => {
             await fetchSolicitacoes();
 
             try {
-              
                 // Enviar notificação push
                 await Notifications.scheduleNotificationAsync({
                     content: {

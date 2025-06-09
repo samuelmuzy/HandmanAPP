@@ -88,7 +88,7 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
     onPressEntrarContato,
     onPressAtualizarStatus
 }) => {
-    const placeholderImage = require('../assets/agenda.png');
+    const placeholderImage = require('../../assets/agenda.png');
     const statusConfig = getStatusConfig(solicitacao.servico.status);
 
     return (

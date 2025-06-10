@@ -5,16 +5,22 @@ import { AgendamentoScreen } from '../pages/AgendamentoScreen';
 import { ConfirmacaoScreen } from '../pages/ConfirmacaoScreen';
 import { ChatScreen } from '../pages/ChatScreen';
 import { LocalizacaoScreen } from '../pages/LocalizacaoScreen';
+import { ExibirAgendamentoScreen } from '../pages/ExibirAgendamentoScreen';
 
 export type FornecedorStackParamList = {
     ExibirFornecedorScreen: { fornecedorId: string | undefined};
     AgendamentoScreen: { fornecedorId: string | undefined };
+    
     ConfirmacaoScreen: { 
         fornecedorId: string | undefined ;
         data: string;
         horario: string;
         endereco: string;
+        imagem: string | null;
     };
+
+    ExibirAgendamentoScreen:{ fornecedorId:string | undefined}
+    
     ChatScreen:{fornecedorId: string | undefined}
     LocalizacaoScreen: { fornecedorId: string | undefined }
 };
@@ -32,6 +38,7 @@ export const FornecedorStackNavigation = () => {
             <Stack.Screen name="AgendamentoScreen" component={AgendamentoScreen} />
             <Stack.Screen name='LocalizacaoScreen' component={LocalizacaoScreen} />
             <Stack.Screen name="ConfirmacaoScreen" component={ConfirmacaoScreen} />
+            <Stack.Screen name="ExibirAgendamentoScreen" component={ExibirAgendamentoScreen} />
             <Stack.Screen name="ChatScreen" component={ChatScreen}/>
         </Stack.Navigator>
     );

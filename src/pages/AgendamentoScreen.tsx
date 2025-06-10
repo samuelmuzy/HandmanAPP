@@ -65,10 +65,10 @@ export const AgendamentoScreen = () => {
             </View>
 
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>Endereço</Text>
+                <Text style={styles.label}>Descrição</Text>
                 <TextInput
                     style={[styles.input, styles.addressInput]}
-                    placeholder="Digite o endereço do serviço"
+                    placeholder="Digite a descrição do serviço"
                     value={endereco}
                     onChangeText={setEndereco}
                     multiline

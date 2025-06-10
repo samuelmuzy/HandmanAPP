@@ -40,7 +40,7 @@ export const ConfirmacaoScreen = () => {
                 categoria: 'Limpeza',
                 data: dataHorarioISO,
                 horario: dataHorarioISO,
-                descricao: 'Serviço de limpeza agendado',
+                descricao: endereco,
                 status: 'pendente',
                 id_pagamento: '123',
                 id_avaliacao: '123'

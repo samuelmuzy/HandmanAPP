@@ -23,6 +23,7 @@ export type HistoricoAgendamento = {
     id_fornecedor:string
     data: Date;
     horario: Date;
+    data_submisao:Date;
     status: "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento" | "Aguardando pagamento" | "Recusado";
     descricao: string;
     fornecedor: {
@@ -37,6 +38,7 @@ export interface Solicitacao {
     servico: {
         id_servico: string;
         categoria: string;
+        data_submisao:Date;
         data: Date;
         horario: Date;
         status: string;

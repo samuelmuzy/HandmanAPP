@@ -8,6 +8,7 @@ interface Solicitacao {
         categoria: string;
         data: Date;
         horario: Date;
+        data_submisao:Date
         status: string;
         descricao: string;
         id_pagamento?: string;

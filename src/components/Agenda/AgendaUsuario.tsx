@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert, SectionList, TouchableOpacity, ScrollView } from 'react-native';
 import { AgendamentoService } from '../../services/AgendamentoServico';
 import { HistoricoAgendamento } from '../../model/Agendamento';
 import { CardAgendamento } from './CardAgendamento';
@@ -26,6 +26,7 @@ export const AgendaUsuario = () => {
     const [loading, setLoading] = useState(true);
     const [isAvaliacaoOpen, setIsAvaliacaoOpen] = useState(false);
     const [servicoSelecionado, setServicoSelecionado] = useState<HistoricoAgendamento | null>(null);
+    const [filtroAtivo, setFiltroAtivo] = useState<StatusType | 'todos'>('todos');
     const navigation = useNavigation<NavigationProp>();
     const token = useGetToken();
 
@@ -118,6 +119,67 @@ export const AgendaUsuario = () => {
         setIsAvaliacaoOpen(true);
     };
 
+    const statusDisponiveis: (StatusType | 'todos')[] = [
+        'todos',
+        'pendente',
+        'Em Andamento',
+        'Aguardando pagamento',
+        'concluido',
+        'cancelado',
+        'Recusado'
+    ];
+
+    const getStatusColor = (status: StatusType | 'todos') => {
+        const cores = {
+            todos: '#666666',
+            pendente: '#FF9800',
+            confirmado: '#00C853',
+            'Em Andamento': '#2196F3',
+            'Aguardando pagamento': '#9C27B0',
+            concluido: '#00C853',
+            cancelado: '#FF5252',
+            Recusado: '#FF5252'
+        };
+        return cores[status];
+    };
+
+    const getStatusBackground = (status: StatusType | 'todos') => {
+        const cores = {
+            todos: '#F5F5F5',
+            pendente: '#FFF3E0',
+            confirmado: '#E8F5E9',
+            'Em Andamento': '#E3F2FD',
+            'Aguardando pagamento': '#F3E5F5',
+            concluido: '#E8F5E9',
+            cancelado: '#FFEBEE',
+            Recusado: '#FFEBEE'
+        };
+        return cores[status];
+    };
+
+    const getStatusLabel = (status: StatusType | 'todos') => {
+        const labels = {
+            todos: 'Todos',
+            pendente: 'Pendente',
+            confirmado: 'Confirmado',
+            'Em Andamento': 'Em Andamento',
+            'Aguardando pagamento': 'Aguardando Pagamento',
+            concluido: 'Concluído',
+            cancelado: 'Cancelado',
+            Recusado: 'Recusado'
+        };
+        return labels[status];
+    };
+
+    const agendamentosFiltrados = filtroAtivo === 'todos' 
+        ? agendamentos 
+        : agendamentos.filter(ag => ag.status === filtroAtivo);
+        
+
+    const agendamentosOrdenados = [...agendamentosFiltrados].sort((a, b) => 
+        new Date(b.data_submisao).getTime() - new Date(a.data_submisao).getTime()
+    );
+
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
@@ -128,8 +190,43 @@ export const AgendaUsuario = () => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.headerContainer}>
+                <Text style={styles.headerTitle}>Meus Agendamentos</Text>
+                <ScrollView 
+                    horizontal 
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.filtroContainer}
+                    contentContainerStyle={styles.filtroContent}
+                >
+                    {statusDisponiveis.map((status) => (
+                        <TouchableOpacity
+                            key={status}
+                            style={[
+                                styles.filtroBotao,
+                                filtroAtivo === status && styles.filtroBotaoAtivo,
+                                { 
+                                    backgroundColor: filtroAtivo === status 
+                                        ? getStatusBackground(status)
+                                        : '#FFFFFF',
+                                    borderColor: getStatusColor(status)
+                                }
+                            ]}
+                            onPress={() => setFiltroAtivo(status)}
+                        >
+                            <Text style={[
+                                styles.filtroTexto,
+                                filtroAtivo === status && styles.filtroTextoAtivo,
+                                { color: getStatusColor(status) }
+                            ]}>
+                                {getStatusLabel(status)}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
+
             <FlatList
-                data={agendamentos}
+                data={agendamentosOrdenados}
                 keyExtractor={(item) => item.id_servico}
                 renderItem={({ item }) => (
                     <CardAgendamento 
@@ -142,8 +239,12 @@ export const AgendaUsuario = () => {
                     />
                 )}
                 ListEmptyComponent={() => (
-                    <Text style={styles.emptyMessage}>Nenhum agendamento encontrado.</Text>
+                    <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyMessage}>Nenhum agendamento encontrado</Text>
+                        <Text style={styles.emptySubMessage}>Tente selecionar outro filtro</Text>
+                    </View>
                 )}
+                contentContainerStyle={styles.listaContainer}
             />
 
             <ModalAvaliacao
@@ -161,18 +262,85 @@ export const AgendaUsuario = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#FFFFFF',
+    },
+    headerContainer: {
+        backgroundColor: '#FFFFFF',
         paddingTop: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    headerTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333333',
+        marginLeft: 16,
+        marginBottom: 16,
+    },
+    filtroContainer: {
+        maxHeight: 50,
+    },
+    filtroContent: {
+        paddingHorizontal: 12,
+        paddingBottom: 12,
+    },
+    filtroBotao: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        marginHorizontal: 4,
+        borderWidth: 1.5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+    },
+    filtroBotaoAtivo: {
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    filtroTexto: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    filtroTextoAtivo: {
+        fontWeight: '700',
+    },
+    listaContainer: {
+        padding: 16,
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 32,
+    },
     emptyMessage: {
-        textAlign: 'center',
-        marginTop: 20,
-        fontSize: 16,
-        color: '#666',
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#666666',
+        marginBottom: 8,
+    },
+    emptySubMessage: {
+        fontSize: 14,
+        color: '#999999',
     },
 });

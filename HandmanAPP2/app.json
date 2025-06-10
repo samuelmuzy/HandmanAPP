@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "handman",
+    "slug": "snack-8f8e781c-db99-4f20-881a-5b19ef3f4fcf",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./src/assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src//assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.mcpozr.snack8f8e781cdb994f20881a5b19ef3f4fcf"
+    },
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6a0837b0-d572-4b1f-9e62-d05aca2536ce"
+      }
+    }
+  }
+}

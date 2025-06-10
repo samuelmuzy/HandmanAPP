@@ -6,41 +6,21 @@ import { useNotifications } from '../../hooks/useNotifications';
 import axios from 'axios';
 import { API_URL } from '../../constants/ApiUrl';
 import { CardAgendamentoFornecedor } from './CardAgendamentoFornecedor';
-import { useNavigation ,CompositeNavigationProp } from '@react-navigation/native';
+import { useNavigation, CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../../navigation/TabNavigation';
 import { FornecedorStackParamList } from '../../navigation/FornecedorStackNavigation';
 import { io, Socket } from 'socket.io-client';
 import * as Notifications from 'expo-notifications';
+import { Solicitacao, StatusType } from '../../model/Agendamento';
+import { getStatusColor, getStatusBackground, getStatusLabel } from '../../utils/statusConfig';
+import { Loading } from '../Loading';
 
 type NavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<RootTabParamList>,
     NativeStackNavigationProp<FornecedorStackParamList>
 >;
-
-interface Solicitacao {
-    servico: {
-        id_servico: string;
-        categoria: string;
-        data: Date;
-        horario: Date;
-        data_submisao:Date;
-        status: string;
-        descricao: string;
-        id_pagamento?: string;
-        id_avaliacao?: string;
-    };
-    usuario: {
-        id_usuario:string;
-        nome: string;
-        email: string;
-        telefone: string;
-        picture: string;
-    } | null;
-}
-
-type StatusType = "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento" | "Aguardando pagamento" | "Recusado";
 
 export const AgendaFornecedor = () => {
     const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
@@ -209,48 +189,6 @@ export const AgendaFornecedor = () => {
         'Recusado'
     ];
 
-    const getStatusColor = (status: StatusType | 'todos') => {
-        const cores = {
-            todos: '#666666',
-            pendente: '#FF9800',
-            confirmado: '#00C853',
-            'Em Andamento': '#2196F3',
-            'Aguardando pagamento': '#9C27B0',
-            concluido: '#00C853',
-            cancelado: '#FF5252',
-            Recusado: '#FF5252'
-        };
-        return cores[status];
-    };
-
-    const getStatusBackground = (status: StatusType | 'todos') => {
-        const cores = {
-            todos: '#F5F5F5',
-            pendente: '#FFF3E0',
-            confirmado: '#E8F5E9',
-            'Em Andamento': '#E3F2FD',
-            'Aguardando pagamento': '#F3E5F5',
-            concluido: '#E8F5E9',
-            cancelado: '#FFEBEE',
-            Recusado: '#FFEBEE'
-        };
-        return cores[status];
-    };
-
-    const getStatusLabel = (status: StatusType | 'todos') => {
-        const labels = {
-            todos: 'Todos',
-            pendente: 'Pendente',
-            confirmado: 'Confirmado',
-            'Em Andamento': 'Em Andamento',
-            'Aguardando pagamento': 'Aguardando Pagamento',
-            concluido: 'Concluído',
-            cancelado: 'Cancelado',
-            Recusado: 'Recusado'
-        };
-        return labels[status];
-    };
-
     const solicitacoesFiltradas = filtroAtivo === 'todos' 
         ? solicitacoes 
         : solicitacoes.filter(sol => sol.servico.status === filtroAtivo);
@@ -261,9 +199,7 @@ export const AgendaFornecedor = () => {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#AC5906" />
-            </View>
+            <Loading/>
         );
     }
 

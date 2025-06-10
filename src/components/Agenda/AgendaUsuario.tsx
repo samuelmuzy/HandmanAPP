@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert, SectionList, TouchableOpacity, ScrollView } from 'react-native';
 import { AgendamentoService } from '../../services/AgendamentoServico';
-import { HistoricoAgendamento } from '../../model/Agendamento';
+import { HistoricoAgendamento, StatusType } from '../../model/Agendamento';
 import { CardAgendamento } from './CardAgendamento';
 import { useGetToken } from '../../hooks/useGetToken';
 import { CompositeNavigationProp,useNavigation } from '@react-navigation/native';
@@ -13,13 +13,13 @@ import { ModalAvaliacao } from '../ModalAvaliacao';
 import axios from 'axios';
 import { API_URL } from '../../constants/ApiUrl';
 import { useStatusNotifications } from '../../hooks/useStatusNotifications';
+import { getStatusColor, getStatusBackground, getStatusLabel } from '../../utils/statusConfig';
+import { Loading } from '../Loading';
 
 type NavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<RootTabParamList>,
     NativeStackNavigationProp<FornecedorStackParamList>
 >;
-
-type StatusType = "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento" | "Aguardando pagamento" | "Recusado";
 
 export const AgendaUsuario = () => {
     const [agendamentos, setAgendamentos] = useState<HistoricoAgendamento[]>([]);
@@ -129,48 +129,6 @@ export const AgendaUsuario = () => {
         'Recusado'
     ];
 
-    const getStatusColor = (status: StatusType | 'todos') => {
-        const cores = {
-            todos: '#666666',
-            pendente: '#FF9800',
-            confirmado: '#00C853',
-            'Em Andamento': '#2196F3',
-            'Aguardando pagamento': '#9C27B0',
-            concluido: '#00C853',
-            cancelado: '#FF5252',
-            Recusado: '#FF5252'
-        };
-        return cores[status];
-    };
-
-    const getStatusBackground = (status: StatusType | 'todos') => {
-        const cores = {
-            todos: '#F5F5F5',
-            pendente: '#FFF3E0',
-            confirmado: '#E8F5E9',
-            'Em Andamento': '#E3F2FD',
-            'Aguardando pagamento': '#F3E5F5',
-            concluido: '#E8F5E9',
-            cancelado: '#FFEBEE',
-            Recusado: '#FFEBEE'
-        };
-        return cores[status];
-    };
-
-    const getStatusLabel = (status: StatusType | 'todos') => {
-        const labels = {
-            todos: 'Todos',
-            pendente: 'Pendente',
-            confirmado: 'Confirmado',
-            'Em Andamento': 'Em Andamento',
-            'Aguardando pagamento': 'Aguardando Pagamento',
-            concluido: 'Concluído',
-            cancelado: 'Cancelado',
-            Recusado: 'Recusado'
-        };
-        return labels[status];
-    };
-
     const agendamentosFiltrados = filtroAtivo === 'todos' 
         ? agendamentos 
         : agendamentos.filter(ag => ag.status === filtroAtivo);
@@ -182,9 +140,7 @@ export const AgendaUsuario = () => {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#AC5906" />
-            </View>
+            <Loading/>
         );
     }
 

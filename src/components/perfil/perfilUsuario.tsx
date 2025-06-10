@@ -18,7 +18,7 @@ import { User } from '../../model/User';
 import { UserService } from '../../services/UserService';
 import { useAuth } from '../../context/AuthContext';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const PerfilUsuario = () => {
   const navigation = useNavigation();
@@ -27,11 +27,10 @@ const PerfilUsuario = () => {
 
   const userId = token?.id;
   
-  const [currentScreen, setCurrentScreen] = useState<string>('Perfil');
   const [usuario, setUsuario] = useState<User | undefined>(undefined);
   const [isPrestador, setIsPrestador] = useState<boolean>(false);
-  const [nome, setNome] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
+  //const [nome, setNome] = useState<string>('');
+  //const [email, setEmail] = useState<string>('');
   const [telefone, setTelefone] = useState<string>('');
   const [endereco, setEndereco] = useState<string>('');
   const [areaAtuacao, setAreaAtuacao] = useState<string>('');
@@ -72,10 +71,20 @@ const PerfilUsuario = () => {
     }
   }, [userId]);
 
-  
   const handleSave = async () => {
     try {
-      
+      if (!userId) {
+        Alert.alert('Erro', 'Usuário não identificado');
+        return;
+      }
+
+      if (!usuario) {
+        Alert.alert('Erro', 'Dados do usuário não encontrados');
+        return;
+      }
+
+      //await UserService.updateUser(usuario, userId);
+      Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
       Alert.alert('Erro', 'Não foi possível salvar as alterações.');

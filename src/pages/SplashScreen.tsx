@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { View, StyleSheet, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'; // Importar NativeStackNavigationProp
 
@@ -47,7 +47,7 @@ const SplashScreen = () => {
       pulseAnimation.stop(); // Para a animação
       clearTimeout(timer);
     };
-  }, [scaleAnim]); // Dependência para garantir que a animação seja criada apenas uma vez
+  }, [scaleAnim, navigation]); // Adicionado navigation como dependência
 
   return (
     <View style={styles.container}>

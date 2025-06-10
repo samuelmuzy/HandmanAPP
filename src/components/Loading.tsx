@@ -1,6 +1,6 @@
 import { View } from "lucide-react-native"
 import { ActivityIndicatorBase, StyleSheet } from "react-native"
-import { ActivityIndicator } from "react-native-paper"
+
 
 export const Loading = () => {
     return (

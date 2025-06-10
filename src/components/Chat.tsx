@@ -7,7 +7,6 @@ import {
     FlatList,
     Image,
     StyleSheet,
-    Dimensions,
     KeyboardAvoidingView,
     Platform,
     StatusBar,
@@ -18,10 +17,10 @@ import { useGetToken } from '../hooks/useGetToken';
 import axios from 'axios';
 import { API_URL } from '../constants/ApiUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import imagemDefault from '../assets/carpintaria.png';
 
-const imagemDefault = require('../assets/agenda.png');
 
-const { width, height } = Dimensions.get('window');
+
 
 interface Mensagem {
     _id: string;
@@ -47,6 +46,7 @@ const Chat: React.FC<ChatProps> = ({ idFornecedor }) => {
     const [mensagens, setMensagens] = useState<Mensagem[]>([]);
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [destinatarioId, setDestinatarioId] = useState(idFornecedor);
+    console.log(setDestinatarioId)
     const flatListRef = useRef<FlatList>(null);
     const socketRef = useRef<Socket | null>(null);
 
@@ -168,6 +168,7 @@ const Chat: React.FC<ChatProps> = ({ idFornecedor }) => {
         </View>
     );
     //possivel impementação para fornecedor para mostrar
+    /*
     const renderUsuario = ({ item: usu }: { item: Usuario }) => (
         <TouchableOpacity
             style={[
@@ -186,7 +187,7 @@ const Chat: React.FC<ChatProps> = ({ idFornecedor }) => {
             <Text style={styles.nomeUsuario}>{usu.nome}</Text>
         </TouchableOpacity>
     );
-
+    */
     return (
         <View style={styles.mainContainer}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content" />

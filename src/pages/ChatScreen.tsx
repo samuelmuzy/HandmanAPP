@@ -1,6 +1,5 @@
 import Chat from "../components/Chat"
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
 
 type ChatScreenRouteProp = RouteProp<FornecedorStackParamList, 'ChatScreen'>;

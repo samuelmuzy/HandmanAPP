@@ -1,14 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp, CommonActions  } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
 import { AgendamentoService } from '../services/AgendamentoServico';
 import { Agendamento } from '../model/Agendamento';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGetToken } from '../hooks/useGetToken';
 import moment from 'moment';
-import { CommonActions } from '@react-navigation/native';
+
 
 type ConfirmacaoScreenRouteProp = RouteProp<FornecedorStackParamList, 'ConfirmacaoScreen'>;
 type ConfirmacaoScreenNavigationProp = NativeStackNavigationProp<FornecedorStackParamList, 'ConfirmacaoScreen'>;

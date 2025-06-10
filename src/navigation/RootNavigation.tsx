@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthStackNavigation } from "./AuthStackNavigation";
 import SplashScreen from '../pages/SplashScreen';
 import { TabNavigation } from "./TabNavigation";
-import { useAuth } from "../context/AuthContext";
+
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -14,7 +14,6 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigation = () =>{
-    const { isAuthenticated } = useAuth();
     
     return(
         <NavigationContainer>

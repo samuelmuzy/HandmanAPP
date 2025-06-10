@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { User } from '../model/User';
 import { typeFornecedor } from '../model/Fornecedor';
 import { API_URL } from '../constants/ApiUrl';
 

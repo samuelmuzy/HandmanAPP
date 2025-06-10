@@ -6,16 +6,14 @@ import {
     TextInput,
     StyleSheet,
     TouchableOpacity,
-    Dimensions,
     ActivityIndicator,
     Alert,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useBiometric } from '../../hooks/useBiometric';
-import { Fingerprint } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const { width } = Dimensions.get('window');
+
 
 interface InputWithLabelProps {
     label: string;
@@ -62,6 +60,7 @@ const LoginFornecedor: React.FC<LoginScreenProps> = ({ onBack, onNavigate, curre
     const [hasStoredCredentials, setHasStoredCredentials] = useState(false);
     const { loginFornecedor } = useAuth();
     const { isBiometricAvailable, authenticateWithBiometrics, checkBiometricAvailability } = useBiometric();
+    console.log(hasStoredCredentials)
 
     useEffect(() => {
         const initializeAuth = async () => {

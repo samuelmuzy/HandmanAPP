@@ -1,14 +1,12 @@
-import { ActivityIndicator, Image, ListRenderItemInfo, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { ActivityIndicator, ListRenderItemInfo, ScrollView, StyleSheet, Text, View,FlatList } from "react-native"
 import { CardFornecedor } from "../components/CardFornecedor"
-import React from "react";
 import { typeFornecedor } from "../model/Fornecedor";
-import { FlatList } from "react-native";
 import { BannerCarousel } from "../components/PromoCard";
 import { HeaderUsuario } from "../components/HeaderUsuario";
 import { User } from "../model/User";
 import { SearchBar } from "../components/SearchBar";
 import { CategoryButtons } from "../components/CategoryButtons";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 interface FornecedorViewProps {
     usuario: User | undefined,

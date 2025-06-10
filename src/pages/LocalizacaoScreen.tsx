@@ -32,6 +32,8 @@ export const LocalizacaoScreen = () => {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [enderecoFormatado, setEnderecoFormatado] = useState<FormattedAddress | null>(null);
     const [modalVisivel, setModalVisivel] = useState(false);
+
+    console.log(location)
     
     const tokenUser = useGetToken();
 

@@ -4,8 +4,7 @@ import { AgendamentoService } from '../../services/AgendamentoServico';
 import { HistoricoAgendamento } from '../../model/Agendamento';
 import { CardAgendamento } from './CardAgendamento';
 import { useGetToken } from '../../hooks/useGetToken';
-import { useNavigation } from '@react-navigation/native';
-import { CompositeNavigationProp } from '@react-navigation/native';
+import { CompositeNavigationProp,useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../../navigation/TabNavigation';
@@ -37,13 +36,6 @@ export const AgendaUsuario = () => {
                     ? { ...agendamento, status: update.novo_status as StatusType }
                     : agendamento
             )
-        );
-
-        // Mostra uma notificação para o usuário
-        Alert.alert(
-            "Atualização de Status",
-            `O status do seu serviço foi atualizado para: ${update.novo_status}`,
-            [{ text: "OK" }]
         );
     };
 

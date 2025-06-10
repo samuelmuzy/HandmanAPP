@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Login from '../components/login/Login';
@@ -47,9 +44,5 @@ const LoginScreen = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  
-});
 
 export default LoginScreen;

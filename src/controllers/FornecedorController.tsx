@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import { typeFornecedor } from "../model/Fornecedor"
 import { FornecedorView } from "../views/FornecedorView";
 import { FornecedorService } from "../services/FornecedoresService";
@@ -7,24 +7,21 @@ import { useGetToken } from "../hooks/useGetToken";
 import { User } from "../model/User";
 
 export const FornecedorController = () => {
-    const [fornecedoresPorCategoria, setFornecedoresPorCategoria] = useState<typeFornecedor[] | undefined>([]);
-    const [fornecedoresMelhoresPreco, setFornecedoresMelhoresPreco] = useState<typeFornecedor[] | undefined>([]);
-    const [fornecedoresMelhoresAvaliados, setFornecedoresMelhoresAvaliados] = useState<typeFornecedor[] | undefined>([]);
+    const [fornecedoresPorCategoria, setFornecedoresPorCategoria] = useState<typeFornecedor[]>([]);
+    const [fornecedoresMelhoresPreco, setFornecedoresMelhoresPreco] = useState<typeFornecedor[]>([]);
+    const [fornecedoresMelhoresAvaliados, setFornecedoresMelhoresAvaliados] = useState<typeFornecedor[]>([]);
     const [usuario, setUsuario] = useState<User | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
-
     const [categoria, setCategoria] = useState('Controle');
-
     const token = useGetToken();
-
     const userId = token?.id;
 
-    const handleGetFornecedores = async (categoria: string, ordenarPor?: 'avaliacao' | 'preco', ordem?: 'asc' | 'desc') => {
+    const handleGetFornecedores = useCallback(async (categoria: string, ordenarPor?: 'avaliacao' | 'preco', ordem?: 'asc' | 'desc') => {
         const fornecedores = await FornecedorService.getFornecedoresPorCategoria(categoria, ordenarPor, ordem);
         return fornecedores || [];
-    }
+    }, []);
 
-    const handleGetUser = async () => {
+    const handleGetUser = useCallback(async () => {
         setLoading(true);
         try {
             if (!userId) {
@@ -33,44 +30,40 @@ export const FornecedorController = () => {
             }
             const user = await UserService.getUsers(userId);
             setUsuario(user);
-
         } catch (error) {
             console.log(error);
         } finally {
             setLoading(false);
         }
-    }
+    }, [userId]);
 
-    const fetchFornecedores = async () => {
+    const fetchFornecedores = useCallback(async () => {
         setLoading(true);
         try {
-            // Busca por categoria
             const porCategoria = await handleGetFornecedores(categoria);
             setFornecedoresPorCategoria(porCategoria);
 
-            // Busca por melhores preços (ordem ascendente de preço)
             const melhoresPreco = await handleGetFornecedores(categoria, 'preco', 'asc');
             setFornecedoresMelhoresPreco(melhoresPreco);
 
-            // Busca por melhores avaliados (ordem descendente de avaliação)
             const melhoresAvaliados = await handleGetFornecedores(categoria, 'avaliacao', 'desc');
             setFornecedoresMelhoresAvaliados(melhoresAvaliados);
         } catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             setLoading(false);
         }
-    };
+    }, [categoria, handleGetFornecedores]);
 
     useEffect(() => {
         fetchFornecedores();
-    }, [categoria])
+    }, [fetchFornecedores]);
 
     useEffect(() => {
         if (userId) {
             handleGetUser();
         }
-    }, [userId])
+    }, [userId, handleGetUser]);
 
     return (
         <>

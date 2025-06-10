@@ -5,8 +5,8 @@ import HomeScreen from '../pages/HomeScrenn';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PerfilScreen from '../pages/PerfilScreen';
 import { ServicoScreen } from '../pages/ServicoScreen';
-import { FornecedorStackNavigation } from './FornecedorStackNavigation';
-import { FornecedorStackParamList } from './FornecedorStackNavigation';
+import { FornecedorStackParamList,FornecedorStackNavigation } from './FornecedorStackNavigation';
+
 import { AgendaScreen } from '../pages/AgendaScreen';
 
 export type RootTabParamList = {

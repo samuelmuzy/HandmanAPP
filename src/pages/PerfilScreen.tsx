@@ -4,7 +4,6 @@ import PerfilUsuario from '../components/perfil/perfilUsuario';
 import PerfilFornecedor from '../components/perfil/PerfilFornecedor';
 
 
-
 const PerfilScreen = () => {
 
   const token = useGetToken();

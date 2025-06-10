@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { RouteProp, useNavigation, useRoute, CommonActions } from '@react-navigation/native';
 import { typeFornecedor } from "../model/Fornecedor";
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +19,7 @@ type ExibirFornecedorScreenNavigationProp = NativeStackNavigationProp<Fornecedor
 export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
     const navigation = useNavigation<ExibirFornecedorScreenNavigationProp>();
     const route = useRoute<ExibirFornecedorScreenRouteProp>();
+    console.log(route);
 
     const handleVoltar = () => {
         navigation.dispatch(
@@ -42,7 +43,7 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={handleVoltar} style={styles.backButton}>
+                <TouchableOpacity onPress={handleVoltar} >
                     <Ionicons name="arrow-back" size={24} color="#AC5906" />
                 </TouchableOpacity>
                 <Text style={styles.title}>Detalhes</Text>
@@ -116,9 +117,6 @@ const styles = StyleSheet.create({
         padding: 15,
         paddingTop: 40,
         backgroundColor: '#FDF8F2',
-    },
-    backButton: {
-        // styles for back button if needed
     },
     title: {
         fontSize: 18,

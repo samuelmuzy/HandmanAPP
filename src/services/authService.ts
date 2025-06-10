@@ -1,7 +1,5 @@
 import axios from 'axios';
-import dbPromise from '../../db';
-import { checkInternetConnection, handleApiError } from '../utils/networkUtils';
-;
+import { handleApiError } from '../utils/networkUtils';
 import { API_URL } from '../constants/ApiUrl';
 import { User } from '../model/User';
 
@@ -17,8 +15,6 @@ interface LoginError {
     success: false;
     message: string;
 }
-
-
 
 export type LoginResponse = LoginSuccess | LoginError;
 

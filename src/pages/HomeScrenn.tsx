@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import { runMigrations } from '../../migrations';
+
 import { useNavigation } from '@react-navigation/native';
 import { ArrowRight } from 'lucide-react-native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -25,50 +25,49 @@ const HomeScreen = () => {
 
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
-  useEffect(() => {
+  /*useEffect(() => {
     runMigrations().catch((err) => {
       console.error('Erro ao rodar migrations:', err);
     });
-  }, []);
+  }, []);*/
 
   const handleDiscoverPress = () => {
     navigation.navigate('Serviços');
   };
 
- const renderScreen = () => {
-        return (
-          <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {/* Header Section */}
-            <View style={styles.header}>
-              <Text style={styles.title}>HANDYMAN</Text>
-              <Text style={styles.headerTitle}>Não faça você mesmo,{'\n'}encontre um profissional!</Text>
-              <Text style={styles.headerSubtitle}>A sua plataforma confiável para serviços manuais!</Text>
-              <TouchableOpacity style={styles.discoverButton} onPress={handleDiscoverPress}>
-                <Text style={styles.discoverButtonText}>Descubra</Text>
-                <ArrowRight color="#B54708" size={24} />
-              </TouchableOpacity>
-            </View>
+  const renderScreen = () => {
+    return (
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        {/* Header Section */}
+        <View style={styles.header}>
+          <Text style={styles.title}>HANDYMAN</Text>
+          <Text style={styles.headerTitle}>Não faça você mesmo,{'\n'}encontre um profissional!</Text>
+          <Text style={styles.headerSubtitle}>A sua plataforma confiável para serviços manuais!</Text>
+          <TouchableOpacity style={styles.discoverButton} onPress={handleDiscoverPress}>
+            <Text style={styles.discoverButtonText}>Descubra</Text>
+            <ArrowRight color="#B54708" size={24} />
+          </TouchableOpacity>
+        </View>
 
-            {/* Nossa Essência Section */}
-            <View style={styles.essenciaSection}>
-              <Text style={styles.sectionTitle}>Nossa Essência</Text>
-              <Text style={styles.essenciaText}>
-                A Handyman nasceu com a missão de conectar você a profissionais qualificados para serviços manuais de forma simples e segura. Seja para consertos, instalações, montagens ou pequenos reparos, estamos aqui para facilitar o seu dia a dia com soluções eficientes e confiáveis.
-              </Text>
-            </View>
+        {/* Nossa Essência Section */}
+        <View style={styles.essenciaSection}>
+          <Text style={styles.sectionTitle}>Nossa Essência</Text>
+          <Text style={styles.essenciaText}>
+            A Handyman nasceu com a missão de conectar você a profissionais qualificados para serviços manuais de forma simples e segura. Seja para consertos, instalações, montagens ou pequenos reparos, estamos aqui para facilitar o seu dia a dia com soluções eficientes e confiáveis.
+          </Text>
+        </View>
 
-            {/* Descubra Profissionais Section */}
-            <View style={styles.profissionaisSection}>
-              <Text style={styles.profissionaisTitle}>Descubra Profissionais</Text>
-              <Image 
-                source={require('../assets/worker.jpg')} 
-                style={styles.profissionalImage}
-                resizeMode="cover"
-              />
-            </View>
-          </ScrollView>
-        );
-    
+        {/* Descubra Profissionais Section */}
+        <View style={styles.profissionaisSection}>
+          <Text style={styles.profissionaisTitle}>Descubra Profissionais</Text>
+          <Image 
+            source={require('../assets/worker.jpg')} 
+            style={styles.profissionalImage}
+            resizeMode="cover"
+          />
+        </View>
+      </ScrollView>
+    );
   };
 
   return (

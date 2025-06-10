@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, ImageSourcePropType } from "react-native";
-import { Bell, ShoppingCart } from "lucide-react-native"; // ou use ícones de outra lib
+import { Bell } from "lucide-react-native"; // ou use ícones de outra lib
 
 interface HeaderUsuarioProps {
     name: string | undefined,

@@ -2,10 +2,9 @@ import { View, Text, StyleSheet, Image, Button, Dimensions, TouchableOpacity } f
 import { typeFornecedor } from "../model/Fornecedor"
 import { Star } from 'lucide-react-native';
 import ImagemPadrao from '../assets/worker.jpg'
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,CompositeNavigationProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
-import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../navigation/TabNavigation';
 
@@ -30,7 +29,7 @@ export const CardFornecedor = ({fornecedor}:CardFornecedorProps) =>{
         return avaliacao.toFixed(2).replace('.', ',');
     };
 
-    const handleNavigateToDetalhes = (fornecedorId:string | undefined) => {
+    const handleNavigateToDetalhes = () => {
         navigation.navigate('FornecedorStack', {
             screen: 'ExibirFornecedorScreen',
             params: { fornecedorId: fornecedor.id_fornecedor }
@@ -39,7 +38,7 @@ export const CardFornecedor = ({fornecedor}:CardFornecedorProps) =>{
 
     return(
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => handleNavigateToDetalhes(fornecedor.id_fornecedor)}>
+            <TouchableOpacity onPress={() => handleNavigateToDetalhes()}>
                 <Image 
                     source={fornecedor.imagemIlustrativa ? { uri: fornecedor.imagemIlustrativa } : ImagemPadrao}
                     style={styles.image}
@@ -59,7 +58,7 @@ export const CardFornecedor = ({fornecedor}:CardFornecedorProps) =>{
                     </View>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button color={'#AC5906'}  title="Contratar" onPress={() => handleNavigateToDetalhes(fornecedor.id_fornecedor)}/>
+                    <Button color={'#AC5906'}  title="Contratar" onPress={() => handleNavigateToDetalhes()}/>
                 </View>
             </View>
         </View>

@@ -1,18 +1,4 @@
-import React, { useState } from 'react';
-import {
-  ScrollView,
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  ImageBackground,
-  Switch,
-} from 'react-native';
-import HeaderNavigation from '../../HeaderNavigation';
-import BarraDeNavegacao from '../../BarraDeNavegacao';
-import dbPromise from '../../db';
+import React from 'react';
 import Cadastro from '../components/Cadastro';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -37,13 +23,10 @@ const CadastroScreen = () => {
 
   return (
     <>
-      <Cadastro onBack={() => {}} onNavigate={handleNavigate} currentScreen='Cadastro' />
+      <Cadastro onNavigate={handleNavigate} />
     </>
   );
 };
 
-const styles = StyleSheet.create({
- 
-});
 
 export default CadastroScreen;

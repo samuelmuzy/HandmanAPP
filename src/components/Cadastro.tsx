@@ -6,7 +6,6 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
   Switch,
   KeyboardAvoidingView,
   Platform,
@@ -15,15 +14,12 @@ import {
 } from 'react-native';
 import { authService } from '../services/authService';
 
-const { width, height } = Dimensions.get('window');
 
 interface CadastroScreenProps {
-  onBack: () => void;
   onNavigate: (screen: string) => void;
-  currentScreen: string;
 }
 
-const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentScreen }) => {
+const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
   const [step, setStep] = useState(1);
   const [isPrestador, setIsPrestador] = useState(false);
   const [nome, setNome] = useState('');

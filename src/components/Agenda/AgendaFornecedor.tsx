@@ -6,8 +6,7 @@ import { useNotifications } from '../../hooks/useNotifications';
 import axios from 'axios';
 import { API_URL } from '../../constants/ApiUrl';
 import { CardAgendamentoFornecedor } from './CardAgendamentoFornecedor';
-import { useNavigation } from '@react-navigation/native';
-import { CompositeNavigationProp } from '@react-navigation/native';
+import { useNavigation ,CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../../navigation/TabNavigation';
@@ -50,6 +49,8 @@ export const AgendaFornecedor = () => {
     const socketRef = useRef<Socket | null>(null);
 
     const { expoPushToken } = useNotifications(token?.id);
+
+    console.log(expoPushToken);
 
     const handleStatusUpdate = async (update: { id_servico: string; novo_status: string }) => {
         setSolicitacoes(prevSolicitacoes =>

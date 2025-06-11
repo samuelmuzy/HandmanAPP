@@ -59,6 +59,7 @@ export interface Solicitacao {
 }
 
 interface FornecedorIlustrar {
+    imagemPerfil:string;
     nome: string;
     email: string;
     telefone: string;
@@ -75,5 +76,6 @@ export interface ServicoIlustrar {
     horario: Date;
     status: string;
     descricao: string;
+    valor: number;
     fornecedor: FornecedorIlustrar;
 }

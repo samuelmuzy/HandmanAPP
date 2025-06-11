@@ -1,5 +1,6 @@
 import axios from 'axios';
-import {  handleApiError } from '../utils/networkUtils';
+import dbPromise from '../../db';
+import { checkInternetConnection, handleApiError } from '../utils/networkUtils';
 ;
 import { API_URL } from '../constants/ApiUrl';
 import { User } from '../model/User';
@@ -61,6 +62,37 @@ export const authService = {
         }
     },
 
+    async loginFornecedor(email: string, senha: string): Promise<LoginResponse> {
+        try {
+            const loginData = {
+                email: email.trim(),
+                senha: senha.trim()
+            };
+             // Tenta fazer login na API
+             const response = await axios.post(`${API_URL}/fornecedor/login`, loginData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.data.token) {
+                return {
+                    success: true,
+                    data: {
+                        token: response.data.token
+                    },
+                };
+            } else {
+                throw new Error('Token não recebido da API');
+            }
+        } catch (error: any) {
+            console.error('Erro na requisição:', error.response?.data || error.message);
+            const errorResult = handleApiError(error);
+            return errorResult as LoginError;
+        }
+    },
+
+    
     async cadastro(usuario: User): Promise<LoginResponse> {
         try {
             const response = await axios.post(`${API_URL}/usuarios`, usuario);

@@ -7,6 +7,7 @@ type RootStackParamList = {
   Login: undefined;
   MainApp: undefined;
   Cadastro: undefined;
+  CadastroFornecedor: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -22,6 +23,9 @@ const LoginScreen = () => {
     if (screen === 'Cadastro') {
       navigation.navigate('Cadastro');
     }
+    if (screen === 'CadastroFornecedor') {
+      navigation.navigate('CadastroFornecedor');
+    }
   };
 
   return (
@@ -29,7 +33,7 @@ const LoginScreen = () => {
     {isFornecedor ? (
       <LoginFornecedor
         currentScreen='LoginFornecedor'
-        onBack={() => navigation.goBack()}
+        onBack={() => setIsFornecedor(false)}
         onNavigate={handleNavigate}
       />
     ) : (

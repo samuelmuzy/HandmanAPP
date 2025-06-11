@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useBiometric } from '../../hooks/useBiometric';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 

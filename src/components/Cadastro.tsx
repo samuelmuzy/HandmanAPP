@@ -6,42 +6,22 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-<<<<<<< HEAD
-  Dimensions,
-  ImageBackground,
-=======
   Switch,
->>>>>>> cbf92d8044a778853fef1fe14218784b147c4fde
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-<<<<<<< HEAD
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import HeaderNavigation from '../../HeaderNavigation';
-import BarraDeNavegacao from '../../BarraDeNavegacao';
-import dbPromise from '../../db';
-=======
->>>>>>> cbf92d8044a778853fef1fe14218784b147c4fde
 import { authService } from '../services/authService';
 
 
 interface CadastroScreenProps {
   onNavigate: (screen: string) => void;
-<<<<<<< HEAD
-  currentScreen: string;
-  isFornecedor: boolean;
-  setIsFornecedor: (isFornecedor: boolean) => void;
-}
-
-const Cadastro: React.FC<CadastroScreenProps> = ({ onBack, onNavigate, currentScreen, isFornecedor, setIsFornecedor }) => {
-=======
 }
 
 const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
->>>>>>> cbf92d8044a778853fef1fe14218784b147c4fde
   const [step, setStep] = useState(1);
+  const [isPrestador, setIsPrestador] = useState(false);
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [email, setEmail] = useState('');
@@ -72,9 +52,9 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
           estado: estado,
           cep: cep
         },
-        formaPagamento: [], 
+        formaPagamento: [], // Array vazio inicial para formas de pagamento
         historico_servicos: [],
-        autenticacaoVia: "local",
+        autenticacaoVia: "local", // Array vazio inicial para histórico de serviços
         role: 'usuario'
       };
 
@@ -82,7 +62,7 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
       
       if (result.success) {
         alert('Cadastro realizado com sucesso!');
-        onNavigate('Login');
+        onNavigate('Login'); // Navega para a tela de login após o cadastro
       } else {
         alert(result.message || 'Erro ao realizar cadastro');
       }
@@ -107,8 +87,24 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
           <View>
             <TextInput style={styles.input} placeholder="Primeiro Nome" value={nome} onChangeText={setNome} />
             <TextInput style={styles.input} placeholder="Sobrenome" value={sobrenome} onChangeText={setSobrenome} />
+            <View style={styles.prestadorSwitch}>
+              <Text>Prestador de Serviço?</Text>
+              <Switch
+                trackColor={{ false: '#767577', true: '#81b0ff' }}
+                thumbColor={isPrestador ? '#f5dd4b' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => setIsPrestador(!isPrestador)}
+                value={isPrestador}
+              />
+            </View>
             <TouchableOpacity style={styles.button} onPress={nextStep}>
               <Text style={styles.buttonText}>Próxima etapa</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.loginBackButton}
+              onPress={() => onNavigate('Login')}
+            >
+              <Text style={styles.buttonText}>Voltar</Text>
             </TouchableOpacity>
           </View>
         );
@@ -160,9 +156,6 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.headerContainer}>
-            <TouchableOpacity style={styles.backButton} onPress={() => onNavigate('Login')}>
-              <Icon name="arrow-left" size={24} color="#7A2D00" />
-            </TouchableOpacity>
             <Text style={styles.title}>HANDYMAN</Text>
             <Text style={styles.subtitle}>Crie sua conta{'\n'}e encontre profissionais!</Text>
             <Text style={styles.description}>A sua plataforma confiável para serviços manuais!</Text>
@@ -187,9 +180,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
     paddingBottom: 20,
-  },
-  backButton: {
-    marginBottom: 16,
   },
   title: {
     fontSize: 32,
@@ -237,6 +227,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  backButton: {
+    backgroundColor: '#7A2D00',
+    borderRadius: 10,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 5,
+  },
   backButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
@@ -248,6 +245,15 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
     marginTop: 10,
+  },
+  prestadorSwitch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFE1C5',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 16,
   },
 });
 

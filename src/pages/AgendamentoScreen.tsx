@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
@@ -17,14 +17,22 @@ export const AgendamentoScreen = () => {
     const [horario, setHorario] = useState('');
     const [endereco, setEndereco] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [imagem, setImagem] = useState(null);
+    
 
     const handleConfirmar = () => {
         navigation.navigate('ConfirmacaoScreen', {
             fornecedorId,
             data: data.toLocaleDateString(),
             horario,
-            endereco
+            endereco,
+            imagem,
         });
+    };
+
+    const handleImageUpload = () => {
+        // Implementar a lógica de upload de imagem aqui
+        // Por exemplo, usar a biblioteca expo-image-picker
     };
 
     return (
@@ -65,14 +73,32 @@ export const AgendamentoScreen = () => {
             </View>
 
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>Endereço</Text>
+                <Text style={styles.label}>Descrição</Text>
                 <TextInput
                     style={[styles.input, styles.addressInput]}
-                    placeholder="Digite o endereço do serviço"
+                    placeholder="Digite a descrição do serviço"
                     value={endereco}
                     onChangeText={setEndereco}
                     multiline
                 />
+            </View>
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>Categoria</Text>
+                <TextInput
+                    style={[styles.input, styles.addressInput]}
+                    placeholder="Digite a descrição do serviço"
+                    value={endereco}
+                    onChangeText={setEndereco}
+                    multiline
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>Imagem</Text>
+                <TouchableOpacity style={styles.imageButton} onPress={handleImageUpload}>
+                    <Text>Upload de Imagem</Text>
+                </TouchableOpacity>
+                {imagem && <Image source={{ uri: imagem }} style={styles.image} />}
             </View>
 
             <TouchableOpacity 
@@ -122,6 +148,19 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderWidth: 1,
         borderColor: '#ddd',
+    },
+    imageButton: {
+        backgroundColor: 'white',
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        alignItems: 'center',
+    },
+    image: {
+        width: 100,
+        height: 100,
+        marginTop: 10,
     },
     confirmButton: {
         backgroundColor: '#AC5906',

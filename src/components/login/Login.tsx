@@ -182,7 +182,7 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen, 
         >
             <View style={styles.headerContainer}>
                 <Text style={styles.title}>HANDYMAN</Text>
-                <Text style={styles.subtitle}>Não faça você mesmo,{'\n'}encontre um profissional!</Text>
+                <Text style={styles.subtitle}>Não faça você mesmo,{'\n'}encontre um proficional!</Text>
                 <Text style={styles.description}>A sua plataforma confiável para serviços manuais!</Text>
             </View>
 
@@ -218,25 +218,15 @@ const Login: React.FC<LoginScreenProps> = ({ onBack, onNavigate, currentScreen, 
                 </TouchableOpacity>
 
                 <View style={styles.registerContainer}>
-                    <TouchableOpacity 
-                        style={styles.registerButton}
-                        onPress={() => onNavigate('Cadastro')}
-                    >
-                        <View style={styles.buttonContent}>
-                            <Icon name="account-plus" size={20} color="#FFFFFF" />
-                            <Text style={styles.registerButtonText}>Cadastre-se</Text>
-                        </View>
+                    <Text style={styles.registerText}>Não tem uma conta? </Text>
+                    <TouchableOpacity onPress={() => onNavigate('Cadastro')}>
+                        <Text style={styles.registerLink}>Cadastre-se</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.registerContainer}>
-                    <TouchableOpacity 
-                        style={[styles.registerButton]}
-                        onPress={() => setIsFornecedor(true)}
-                    >
-                        <View style={styles.buttonContent}>
-                            <Icon name="account-hard-hat" size={20} color="#FFFFFF" />
-                            <Text style={styles.registerButtonText}>Área do profissional</Text>
-                        </View>
+                    <Text style={styles.registerText}>Entrar como fornecedor? </Text>
+                    <TouchableOpacity onPress={() => setIsFornecedor(true)}>
+                        <Text style={styles.registerLink}>Entrar como fornecedor</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -339,34 +329,18 @@ const styles = StyleSheet.create({
         opacity: 0.7,
     },
     registerContainer: {
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    registerButton: {
-        backgroundColor: '#7A2D00',
-        borderRadius: 8,
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        minWidth: 250,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-    },
-    buttonContent: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'center',
+        marginBottom: 24,
     },
-    registerButtonText: {
-        color: '#FFFFFF',
-        fontSize: 15,
-        fontWeight: '600',
-        marginLeft: 8,
+    registerText: {
+        color: '#333',
+        fontSize: 14,
+    },
+    registerLink: {
+        color: '#333',
+        fontSize: 14,
+        fontWeight: 'bold',
     },
     dividerContainer: {
         flexDirection: 'row',

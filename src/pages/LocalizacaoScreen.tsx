@@ -50,23 +50,21 @@ export const LocalizacaoScreen = () => {
 
     const obterEndereco = async (latitude: number, longitude: number) => {
         try {
+            
             const enderecos = await Location.reverseGeocodeAsync({
                 latitude,
                 longitude
             });
 
-            if (enderecos.length > 0) {
                 const endereco = enderecos[0];
                 setEnderecoFormatado({
                     street: endereco.street || '',
-                    city: endereco.city || '',
+                    city: endereco.district || '',
                     region: endereco.region || '',
                     postalCode: endereco.postalCode || '',
                 });
                 setErrorMsg(null);
-            } else {
-                setErrorMsg('Nenhum endereço encontrado para as coordenadas.');
-            }
+            
         } catch (error) {
             setErrorMsg('Erro ao obter endereço. Tente novamente ou insira manualmente.');
             console.error("Erro ao reverter geocodificação:", error);
@@ -82,7 +80,11 @@ export const LocalizacaoScreen = () => {
                 return;
             }
 
-            let currentLocation = await Location.getCurrentPositionAsync({});
+            let currentLocation = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.High,
+                timeInterval: 5000,
+                distanceInterval: 10
+            });
             setLocation(currentLocation);
 
             if (currentLocation) {
@@ -97,10 +99,6 @@ export const LocalizacaoScreen = () => {
             console.error("Erro ao obter localização atual:", error);
         }
     };
-
-    useEffect(() => {
-        obterLocalizacaoAtual();
-    }, []);
 
     const handleSalvarEnderecoManual = () => {
         if (!enderecoManual.street || !enderecoManual.city || !enderecoManual.region || !enderecoManual.postalCode) {
@@ -186,6 +184,13 @@ return (
                 onPress={() => setModalVisivel(true)}
             >
                 <Text style={styles.botaoCardTexto}>Alterar localização</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={[styles.botaoCard, styles.botaoVerde]}
+                onPress={obterLocalizacaoAtual}
+            >
+                <Text style={styles.botaoCardTexto}>Usar localização atual</Text>
             </TouchableOpacity>
 
             <TouchableOpacity

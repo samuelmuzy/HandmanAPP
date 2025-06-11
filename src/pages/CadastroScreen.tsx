@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Cadastro from '../components/Cadastro';
 import CadastroFornecedor from '../components/CadastroFornecedor';
 import { useNavigation } from '@react-navigation/native';
@@ -24,7 +24,6 @@ const CadastroScreen = () => {
 
   return (
     <>
-<<<<<<< HEAD
       {isFornecedor ? (
         <CadastroFornecedor
           currentScreen='CadastroFornecedor'
@@ -40,12 +39,7 @@ const CadastroScreen = () => {
           setIsFornecedor={setIsFornecedor}
         />
       )}
-=======
-      <Cadastro onNavigate={handleNavigate} />
->>>>>>> cbf92d8044a778853fef1fe14218784b147c4fde
     </>
-  );
-};
-
-
+)
+}
 export default CadastroScreen;

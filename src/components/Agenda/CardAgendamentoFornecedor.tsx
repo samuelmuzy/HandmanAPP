@@ -1,28 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FornecedorStackParamList } from '../../navigation/FornecedorStackNavigation';
+import { Solicitacao, StatusType } from '../../model/Agendamento';
+import { getStatusConfig } from '../../utils/statusConfig';
+import { RootTabParamList } from '../../navigation/TabNavigation';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
-interface Solicitacao {
-    servico: {
-        id_servico: string;
-        categoria: string;
-        data: Date;
-        horario: Date;
-        status: string;
-        descricao: string;
-        id_pagamento?: string;
-        id_avaliacao?: string;
-    };
-    usuario: {
-        id_usuario:string;
-        nome: string;
-        email: string;
-        telefone: string;
-        picture: string;
-    } | null;
-}
-
-type StatusType = "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento" | "Aguardando pagamento" | "Recusado";
+type NavigationProp = CompositeNavigationProp<
+    BottomTabNavigationProp<RootTabParamList>,
+    BottomTabNavigationProp<FornecedorStackParamList>
+>;
 
 interface CardAgendamentoFornecedorProps {
     solicitacao: Solicitacao;
@@ -30,69 +20,26 @@ interface CardAgendamentoFornecedorProps {
     onPressAtualizarStatus: (novoStatus: StatusType) => void;
 }
 
-const getStatusConfig = (status: string) => {
-    switch (status.toLowerCase()) {
-        case 'pendente':
-            return {
-                color: '#FFA500',
-                icon: 'clock-outline' as const,
-                text: 'Pendente'
-            };
-        case 'confirmado':
-            return {
-                color: '#4CAF50',
-                icon: 'check-circle-outline' as const,
-                text: 'Confirmado'
-            };
-        case 'cancelado':
-            return {
-                color: '#F44336',
-                icon: 'close-circle-outline' as const,
-                text: 'Cancelado'
-            };
-        case 'concluido':
-            return {
-                color: '#2196F3',
-                icon: 'check-circle' as const,
-                text: 'Concluído'
-            };
-        case 'em andamento':
-            return {
-                color: '#2196F3',
-                icon: 'progress-clock' as const,
-                text: 'Em Andamento'
-            };
-        case 'aguardando pagamento':
-            return {
-                color: '#9C27B0',
-                icon: 'cash-multiple' as const,
-                text: 'Aguardando Pagamento'
-            };
-        case 'recusado':
-            return {
-                color: '#F44336',
-                icon: 'close-circle' as const,
-                text: 'Recusado'
-            };
-        default:
-            return {
-                color: '#757575',
-                icon: 'help-circle-outline' as const,
-                text: status
-            };
-    }
-};
-
 export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps> = ({
     solicitacao,
     onPressEntrarContato,
     onPressAtualizarStatus
 }) => {
+    const navigation = useNavigation<NavigationProp>();
     const placeholderImage = require('../../assets/agenda.png');
     const statusConfig = getStatusConfig(solicitacao.servico.status);
 
+    const handleCardPress = () => {
+        navigation.navigate('FornecedorStack', {
+            screen: 'ExibirAgendamentoScreen',
+            params: {
+                fornecedorId: solicitacao.servico.id_servico
+            }
+        });
+    };
+
     return (
-        <View style={styles.cardContainer}>
+        <TouchableOpacity style={styles.cardContainer} onPress={handleCardPress}>
             <View style={styles.headerContainer}>
                 <Image
                     source={solicitacao.usuario?.picture ? { uri: solicitacao.usuario.picture } : placeholderImage}
@@ -178,7 +125,7 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
                     </View>
                 )}
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 

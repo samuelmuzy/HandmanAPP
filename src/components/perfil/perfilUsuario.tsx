@@ -28,15 +28,9 @@ const PerfilUsuario = () => {
   const userId = token?.id;
   
   const [usuario, setUsuario] = useState<User | undefined>(undefined);
-<<<<<<< HEAD:src/components/perfilUsuario.tsx
-  const [isProfissional, setIsProfissional] = useState<boolean>(false);
-  const [nome, setNome] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-=======
   const [isPrestador, setIsPrestador] = useState<boolean>(false);
   //const [nome, setNome] = useState<string>('');
   //const [email, setEmail] = useState<string>('');
->>>>>>> cbf92d8044a778853fef1fe14218784b147c4fde:src/components/perfil/perfilUsuario.tsx
   const [telefone, setTelefone] = useState<string>('');
   const [endereco, setEndereco] = useState<string>('');
   const [areaAtuacao, setAreaAtuacao] = useState<string>('');
@@ -116,21 +110,21 @@ const PerfilUsuario = () => {
           <Text style={styles.name}>{usuario?.nome}</Text>
           <Text style={styles.email}>{usuario?.email}</Text>
 
-          <View style={styles.profissionalSwitch}>
-            <Text>Profissional</Text>
+          <View style={styles.prestadorSwitch}>
+            <Text>Prestador de Serviço?</Text>
             <Switch
               trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={isProfissional ? "#f5dd4b" : "#f4f3f4"}
+              thumbColor={isPrestador ? "#f5dd4b" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
-              onValueChange={() => setIsProfissional(!isProfissional)}
-              value={isProfissional}
+              onValueChange={() => setIsPrestador(!isPrestador)}
+              value={isPrestador}
             />
           </View>
         </View>
 
-        {isProfissional ? (
-          <View style={styles.profissionalDetails}>
-            <Text style={styles.sectionTitle}>Detalhes Profissionais</Text>
+        {isPrestador ? (
+          <View style={styles.prestadorDetails}>
+            <Text style={styles.sectionTitle}>Detalhes do Prestador</Text>
             <TextInput
               style={styles.input}
               placeholder="Área de Atuação"
@@ -209,7 +203,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
-  profissionalSwitch: {
+  prestadorSwitch: {
     marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -245,7 +239,7 @@ const styles = StyleSheet.create({
     color: '#ff4444',
     fontWeight: 'bold',
   },
-  profissionalDetails: {
+  prestadorDetails: {
     marginTop: 10,
   },
   clienteDetails: {

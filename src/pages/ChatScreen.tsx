@@ -9,6 +9,7 @@ export const ChatScreen = () =>{
     const route = useRoute<ChatScreenRouteProp>();
 
     const { fornecedorId } = route.params;
+    
     return(
         <Chat idFornecedor={fornecedorId as string} />
     )

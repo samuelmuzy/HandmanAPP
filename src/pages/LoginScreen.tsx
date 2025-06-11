@@ -3,7 +3,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Login from '../components/login/Login';
 import LoginFornecedor from '../components/login/LoginFornecedor';
-
 type RootStackParamList = {
   Login: undefined;
   MainApp: undefined;

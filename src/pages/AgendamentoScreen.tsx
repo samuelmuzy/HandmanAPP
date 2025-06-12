@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as ImagePicker from 'expo-image-picker';
+import { FornecedorService } from '../services/FornecedoresService';
+import { typeFornecedor } from '../model/Fornecedor';
+import { Loading } from '../components/Loading';
+import DropDownPicker from 'react-native-dropdown-picker';
+
 
 type AgendamentoScreenRouteProp = RouteProp<FornecedorStackParamList, 'AgendamentoScreen'>;
 type AgendamentoScreenNavigationProp = NativeStackNavigationProp<FornecedorStackParamList, 'AgendamentoScreen'>;
@@ -11,14 +17,22 @@ type AgendamentoScreenNavigationProp = NativeStackNavigationProp<FornecedorStack
 export const AgendamentoScreen = () => {
     const navigation = useNavigation<AgendamentoScreenNavigationProp>();
     const route = useRoute<AgendamentoScreenRouteProp>();
+
     const { fornecedorId } = route.params;
 
     const [data, setData] = useState(new Date());
     const [horario, setHorario] = useState('');
     const [endereco, setEndereco] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [imagem, setImagem] = useState(null);
-    
+    const [open,setOpen] = useState(false);
+    const [imagem, setImagem] = useState<string | null>(null);
+
+    const [fornecedor, setFornecedor] = useState<{ label: string; value: string }[]>([]);
+
+
+    const [loading, setLoading] = useState<boolean>(false);
+    const [categoriaSelecionada, setCategoriaSelecionada] = useState<string>('');
+
 
     const handleConfirmar = () => {
         navigation.navigate('ConfirmacaoScreen', {
@@ -27,21 +41,83 @@ export const AgendamentoScreen = () => {
             horario,
             endereco,
             imagem,
+            categoria: categoriaSelecionada,
         });
     };
 
-    const handleImageUpload = () => {
-        // Implementar a lógica de upload de imagem aqui
-        // Por exemplo, usar a biblioteca expo-image-picker
+    const handleGetFornecedor = async () => {
+        setLoading(true);
+        try {
+            const fornecedor = await FornecedorService.getFornecedorPorId(fornecedorId);
+            
+            if (!fornecedor) return;
+    
+            const categoriasFormatadas = fornecedor.categoria_servico.map((cat: string) => ({
+                label: cat,
+                value: cat,
+            }));
+    
+            setFornecedor(categoriasFormatadas);
+    
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
+    useEffect(() => {
+        handleGetFornecedor();
+    }, [fornecedorId])
+
+    const handleImageUpload = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== 'granted') {
+            Alert.alert("Permisão necessária para o uso de imagem")
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: 'images',
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1
+        });
+
+        if (!result.canceled) {
+            setImagem(result.assets[0].uri);
+        }
+
+
     };
+
+    if (loading) {
+        return (
+            <Loading />
+        );
+    }
 
     return (
         <ScrollView style={styles.container}>
             <Text style={styles.title}>Agendar Serviço</Text>
-            
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>Categoria</Text>
+                <DropDownPicker
+                    open={open}
+                    value={categoriaSelecionada}
+                    items={fornecedor}
+                    setOpen={setOpen}
+                    setValue={setCategoriaSelecionada}
+                    setItems={setFornecedor}
+                    listMode="SCROLLVIEW"
+                    placeholder="Selecione uma categoria"
+                />
+            </View>
+
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Data</Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.dateButton}
                     onPress={() => setShowDatePicker(true)}
                 >
@@ -82,16 +158,7 @@ export const AgendamentoScreen = () => {
                     multiline
                 />
             </View>
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Categoria</Text>
-                <TextInput
-                    style={[styles.input, styles.addressInput]}
-                    placeholder="Digite a descrição do serviço"
-                    value={endereco}
-                    onChangeText={setEndereco}
-                    multiline
-                />
-            </View>
+
 
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Imagem</Text>
@@ -101,7 +168,7 @@ export const AgendamentoScreen = () => {
                 {imagem && <Image source={{ uri: imagem }} style={styles.image} />}
             </View>
 
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={styles.confirmButton}
                 onPress={handleConfirmar}
             >

@@ -26,5 +26,6 @@ export type typeFornecedor = {
     valor:number;
     disponibilidade: typeDisponibilidade[];
     solicitacoes: string[];
+    imagemServicos:string[];
     media_avaliacoes: number;
 } 

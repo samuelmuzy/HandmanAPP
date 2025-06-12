@@ -190,7 +190,7 @@ export const ExibirAgendamentoUsuario: React.FC<ExibirAgendamentoUsuarioProps> =
                         <Text style={styles.value}>{agendamento.descricao}</Text>
                     </View>
                     <View style={styles.detailRow}>
-                        <Text style={styles.label}>Descrição:</Text>
+                        <Text style={styles.label}>Status:</Text>
                         <Text style={styles.value}>{agendamento.status}</Text>
                     </View>
                 </View>

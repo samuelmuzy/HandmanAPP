@@ -8,6 +8,7 @@ import ImagemPadrao from '../assets/pexels-photo-1216589.webp'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Carrosel } from './Carrosel';
 
 interface DetalhesFornecedorProps {
     fornecedor: typeFornecedor | undefined;
@@ -81,9 +82,10 @@ export const DetalhesFornecedor = ({ fornecedor }: DetalhesFornecedorProps) => {
                 <Text style={styles.sectionTitle}>Especialidades:</Text>
                 <Text style={styles.especialidadesText}>{dadosFornecedor?.sub_descricao}</Text>
             </View>
-
-
-
+            {dadosFornecedor?.imagemServicos && dadosFornecedor?.imagemServicos.length > 0 && (
+                <Carrosel imagens={dadosFornecedor?.imagemServicos}/>
+            )}
+            
             <View style={styles.servicesOfferedSection}>
                 <View style={styles.servicesOfferedCard}>
                     <Text style={styles.servicesOfferedTitle}>Este serviço é oferecido por um profissional.</Text>

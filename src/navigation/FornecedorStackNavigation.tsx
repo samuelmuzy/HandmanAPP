@@ -17,6 +17,7 @@ export type FornecedorStackParamList = {
         horario: string;
         endereco: string;
         imagem: string | null;
+        categoria:string
     };
 
     ExibirAgendamentoScreen:{ fornecedorId:string | undefined}

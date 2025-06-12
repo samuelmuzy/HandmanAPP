@@ -1,6 +1,7 @@
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { DetalhesFornecedor } from "../components/DetalhesFornecedor";
 import { typeFornecedor } from "../model/Fornecedor"
+import { Loading } from "../components/Loading";
 
 interface ExibirFornecedorProps{
     fornecedor:typeFornecedor | undefined;
@@ -9,9 +10,7 @@ interface ExibirFornecedorProps{
 export const ExibirFornecedorView = ({fornecedor,loading}:ExibirFornecedorProps) =>{
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#AC5906" />
-            </View>
+            <Loading/>
         );
     }
 
@@ -20,10 +19,3 @@ export const ExibirFornecedorView = ({fornecedor,loading}:ExibirFornecedorProps)
     )
 
 }
-const styles = StyleSheet.create({
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-});

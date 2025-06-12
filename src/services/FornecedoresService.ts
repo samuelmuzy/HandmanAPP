@@ -40,7 +40,9 @@ export const FornecedorService = {
             const response = await axios.get(`${API_URL}/fornecedor/${id_fornecedor}`)
             
             const user:typeFornecedor = response.data;
-            console.log(user)
+
+            
+            
             return user;
         }catch(error){
             console.log(error)

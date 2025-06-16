@@ -1,7 +1,8 @@
 import React from 'react';
 import { useGetToken } from '../hooks/useGetToken';
 import PerfilUsuario from '../components/perfil/perfilUsuario';
-import PerfilFornecedor from '../components/perfil/PerfilFornecedor';
+import { PerfilFornecedor } from '../components/perfil/PerfilFornecedor';
+
 
 
 const PerfilScreen = () => {

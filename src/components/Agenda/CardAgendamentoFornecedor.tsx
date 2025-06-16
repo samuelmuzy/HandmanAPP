@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,6 +8,8 @@ import { Solicitacao, StatusType } from '../../model/Agendamento';
 import { getStatusConfig } from '../../utils/statusConfig';
 import { RootTabParamList } from '../../navigation/TabNavigation';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import axios from 'axios';
+import { API_URL } from '../../constants/ApiUrl';
 
 type NavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<RootTabParamList>,
@@ -28,6 +30,8 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
     const navigation = useNavigation<NavigationProp>();
     const placeholderImage = require('../../assets/agenda.png');
     const statusConfig = getStatusConfig(solicitacao.servico.status);
+    const [showNegociacaoModal, setShowNegociacaoModal] = useState(false);
+    const [novoValor, setNovoValor] = useState('');
 
     const handleCardPress = () => {
         navigation.navigate('FornecedorStack', {
@@ -36,6 +40,31 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
                 fornecedorId: solicitacao.servico.id_servico
             }
         });
+    };
+
+    const handleNegociarPreco = async () => {
+        try {
+            if (!novoValor || isNaN(Number(novoValor)) || Number(novoValor) <= 0) {
+                Alert.alert('Erro', 'Por favor, insira um valor válido');
+                return;
+            }
+
+            const data = {
+                id_servico: solicitacao.servico.id_servico,
+                valor: Number(novoValor)
+            };
+
+            await axios.put(`${API_URL}/servicos/valor`, data);
+            onPressAtualizarStatus('confirmar valor');
+
+            Alert.alert('Sucesso', 'Valor atualizado com sucesso!');
+
+            setShowNegociacaoModal(false);
+            setNovoValor('');
+        } catch (error) {
+            console.error('Erro ao atualizar valor:', error);
+            Alert.alert('Erro', 'Erro ao atualizar valor');
+        }
     };
 
     return (
@@ -87,9 +116,25 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
                     <>
                         <TouchableOpacity
                             style={[styles.button, styles.acceptButton]}
-                            onPress={() => onPressAtualizarStatus('Em Andamento')}
+                            onPress={() => onPressAtualizarStatus('negociar valor')}
                         >
                             <Text style={styles.buttonText}>Aceitar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.button, styles.rejectButton]}
+                            onPress={() => onPressAtualizarStatus('Recusado')}
+                        >
+                            <Text style={styles.buttonText}>Recusar</Text>
+                        </TouchableOpacity>
+                    </>
+                )}
+                {solicitacao.servico.status.toLowerCase() === 'negociar valor' && (
+                    <>
+                        <TouchableOpacity
+                            style={[styles.button, styles.acceptButton]}
+                            onPress={() => setShowNegociacaoModal(true)}
+                        >
+                            <Text style={styles.buttonText}>Negociar Valor</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.button, styles.rejectButton]}
@@ -124,7 +169,70 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
                         </TouchableOpacity>
                     </View>
                 )}
+                {solicitacao.servico.status.toLowerCase() === 'confirmado' && (
+                    <View style={styles.actionButtonsContainer}>
+                        <View style={styles.mainButtonsContainer}>
+                            <TouchableOpacity
+                                style={[styles.button, styles.cancelButton]}
+                                onPress={() => onPressAtualizarStatus('cancelado')}
+                            >
+                                <Text style={styles.buttonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.button, styles.completeButton]}
+                                onPress={() => onPressAtualizarStatus('Em Andamento')}
+                            >
+                                <Text style={styles.buttonText}>Iniciar serviço</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <TouchableOpacity
+                            style={[styles.button, styles.contactButton, styles.fullWidthButton]}
+                            onPress={() => onPressEntrarContato(solicitacao.usuario?.id_usuario as string)}
+                        >
+                            <Text style={styles.buttonText}>Contato</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
+
+            {/* Modal de Negociação */}
+            <Modal
+                visible={showNegociacaoModal}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setShowNegociacaoModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Negociar Preço</Text>
+                        
+                        <TextInput
+                            style={styles.input}
+                            value={novoValor}
+                            onChangeText={setNovoValor}
+                            placeholder="Digite o novo valor"
+                            keyboardType="numeric"
+                            placeholderTextColor="#666"
+                        />
+
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={[styles.modalButton, styles.cancelButton]}
+                                onPress={() => setShowNegociacaoModal(false)}
+                            >
+                                <Text style={styles.modalButtonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity
+                                style={[styles.modalButton, styles.confirmButton]}
+                                onPress={handleNegociarPreco}
+                            >
+                                <Text style={styles.modalButtonText}>Confirmar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </TouchableOpacity>
     );
 };
@@ -258,5 +366,50 @@ const styles = StyleSheet.create({
     },
     contactButton: {
         backgroundColor: '#9C27B0',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        width: '90%',
+        maxWidth: 400,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 15,
+        color: '#333',
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 15,
+        fontSize: 16,
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        gap: 10,
+    },
+    modalButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 5,
+    },
+    confirmButton: {
+        backgroundColor: '#AC5906',
+    },
+    modalButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '500',
     },
 }); 

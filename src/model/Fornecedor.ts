@@ -17,6 +17,7 @@ export type typeFornecedor = {
     email: string;
     telefone: string;
     senha: string;
+    sobre:string;
     endereco: typeEndereco;
     categoria_servico: string[];
     descricao: string;

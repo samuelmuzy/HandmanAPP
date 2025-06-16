@@ -1,22 +1,73 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useNavigation, useRoute, RouteProp, CommonActions  } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp, CommonActions } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigation';
 import { AgendamentoService } from '../services/AgendamentoServico';
 import { Agendamento } from '../model/Agendamento';
 import { useGetToken } from '../hooks/useGetToken';
 import moment from 'moment';
-
+import { io, Socket } from 'socket.io-client';
+import { API_URL } from '../constants/ApiUrl';
+import axios from 'axios';
 
 type ConfirmacaoScreenRouteProp = RouteProp<FornecedorStackParamList, 'ConfirmacaoScreen'>;
 type ConfirmacaoScreenNavigationProp = NativeStackNavigationProp<FornecedorStackParamList, 'ConfirmacaoScreen'>;
 
+interface ImagemType {
+    uri: string;
+    type?: string;
+    fileName?: string;
+}
+
 export const ConfirmacaoScreen = () => {
     const navigation = useNavigation<ConfirmacaoScreenNavigationProp>();
     const route = useRoute<ConfirmacaoScreenRouteProp>();
-    const { data, horario, endereco, fornecedorId } = route.params;
+    const { data, horario, endereco, imagem, fornecedorId } = route.params;
     const token = useGetToken();
+
+    const socketRef = useRef<Socket | null>(null);
+
+    // Inicializa o socket
+    useEffect(() => {
+        const socket = io(API_URL);
+        socketRef.current = socket;
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
+    const enviarImagem = async (idServico: string) => {
+        try {
+            if (!imagem) return;
+
+            const imagemData = imagem as ImagemType;
+
+            // Criar o FormData no formato correto para React Native
+            const formData = new FormData();
+            formData.append('imagem', {
+                uri: imagemData.uri,
+                type: imagemData.type || 'image/jpeg',
+                name: imagemData.fileName || 'imagem.jpg'
+            } as any);
+
+            const response = await axios.post(
+                `${API_URL}/servicos/inserir-imagems/${idServico}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Accept': 'application/json',
+                    },
+                }
+            );
+
+            console.log('Imagem enviada com sucesso:', response.data);
+        } catch (error) {
+            console.error('Erro ao enviar imagem:', error);
+            Alert.alert('Erro', 'Não foi possível enviar a imagem. O serviço foi agendado, mas a imagem não foi anexada.');
+        }
+    };
 
     const handleFinalizar = async () => {
         try {
@@ -26,8 +77,8 @@ export const ConfirmacaoScreen = () => {
             }
 
             if (!fornecedorId) {
-                 Alert.alert('Erro', 'ID do fornecedor não disponível.');
-                 return;
+                Alert.alert('Erro', 'ID do fornecedor não disponível.');
+                return;
             }
 
             const [dia, mes, ano] = data.split('/').map(Number);
@@ -46,8 +97,21 @@ export const ConfirmacaoScreen = () => {
                 id_avaliacao: '123'
             };
 
-            await AgendamentoService.AgendarServico(novoAgendamento);
+            const response = await AgendamentoService.AgendarServico(novoAgendamento);
             
+            // Envia a imagem se existir
+            if (imagem) {
+                await enviarImagem(response.id_servico);
+            }
+
+            // Emite o evento de novo agendamento
+            if (socketRef.current) {
+                socketRef.current.emit('novo_agendamento', {
+                    ...response,
+                    id_fornecedor: fornecedorId
+                });
+            }
+
             Alert.alert(
                 'Sucesso',
                 'Agendamento realizado com sucesso!',
@@ -69,7 +133,7 @@ export const ConfirmacaoScreen = () => {
             );
         } catch (error) {
             console.error('Erro ao agendar serviço:', error);
-             Alert.alert('Erro', 'Não foi possível realizar o agendamento. Verifique os dados e tente novamente.');
+            Alert.alert('Erro', 'Não foi possível realizar o agendamento. Verifique os dados e tente novamente.');
         }
     };
 
@@ -94,14 +158,14 @@ export const ConfirmacaoScreen = () => {
                 </View>
             </View>
 
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={styles.confirmButton}
                 onPress={handleFinalizar}
             >
                 <Text style={styles.confirmButtonText}>Confirmar Agendamento</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={styles.cancelButton}
                 onPress={() => navigation.goBack()}
             >

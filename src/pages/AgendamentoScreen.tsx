@@ -6,10 +6,15 @@ import { FornecedorStackParamList } from '../navigation/FornecedorStackNavigatio
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { FornecedorService } from '../services/FornecedoresService';
-import { typeFornecedor } from '../model/Fornecedor';
+
 import { Loading } from '../components/Loading';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+interface ImagemType {
+    uri: string;
+    type?: string;
+    fileName?: string;
+}
 
 type AgendamentoScreenRouteProp = RouteProp<FornecedorStackParamList, 'AgendamentoScreen'>;
 type AgendamentoScreenNavigationProp = NativeStackNavigationProp<FornecedorStackParamList, 'AgendamentoScreen'>;
@@ -25,14 +30,12 @@ export const AgendamentoScreen = () => {
     const [endereco, setEndereco] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [open,setOpen] = useState(false);
-    const [imagem, setImagem] = useState<string | null>(null);
+    const [imagem, setImagem] = useState<ImagemType | undefined>(undefined);
 
     const [fornecedor, setFornecedor] = useState<{ label: string; value: string }[]>([]);
 
-
     const [loading, setLoading] = useState<boolean>(false);
     const [categoriaSelecionada, setCategoriaSelecionada] = useState<string>('');
-
 
     const handleConfirmar = () => {
         navigation.navigate('ConfirmacaoScreen', {
@@ -66,36 +69,42 @@ export const AgendamentoScreen = () => {
         }
     }
 
-
     useEffect(() => {
         handleGetFornecedor();
     }, [fornecedorId])
 
     const handleImageUpload = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-        if (status !== 'granted') {
-            Alert.alert("Permisão necessária para o uso de imagem")
+            if (status !== 'granted') {
+                Alert.alert("Erro", "Permissão necessária para acessar a galeria de imagens");
+                return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets[0]) {
+                const selectedImage = result.assets[0];
+                setImagem({
+                    uri: selectedImage.uri,
+                    type: 'image/jpeg',
+                    fileName: selectedImage.uri.split('/').pop() || 'imagem.jpg'
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao selecionar imagem:', error);
+            Alert.alert('Erro', 'Não foi possível selecionar a imagem');
         }
-
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: 'images',
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1
-        });
-
-        if (!result.canceled) {
-            setImagem(result.assets[0].uri);
-        }
-
-
     };
 
     if (loading) {
-        return (
-            <Loading />
-        );
+        return <Loading />;
     }
 
     return (
@@ -159,13 +168,12 @@ export const AgendamentoScreen = () => {
                 />
             </View>
 
-
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Imagem</Text>
                 <TouchableOpacity style={styles.imageButton} onPress={handleImageUpload}>
                     <Text>Upload de Imagem</Text>
                 </TouchableOpacity>
-                {imagem && <Image source={{ uri: imagem }} style={styles.image} />}
+                {imagem && <Image source={{ uri: imagem.uri }} style={styles.image} />}
             </View>
 
             <TouchableOpacity

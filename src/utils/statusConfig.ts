@@ -7,14 +7,20 @@ interface StatusConfig {
     text: string;
 }
 
-export const getStatusConfig = (status: StatusType): StatusConfig => {
-    switch (status) {
+export const getStatusConfig = (status: string): StatusConfig => {
+    switch (status.toLowerCase()) {
         case 'pendente':
             return {
                 color: '#FFA500',
                 icon: 'clock-outline',
                 text: 'Pendente'
             };
+        case 'confirmar valor':
+            return{
+                color:'#9C27B0',
+                icon: 'cash-multiple',
+                text: 'Confimação de Valor'
+            }
         case 'confirmado':
             return {
                 color: '#4CAF50',
@@ -27,25 +33,25 @@ export const getStatusConfig = (status: StatusType): StatusConfig => {
                 icon: 'close-circle-outline',
                 text: 'Cancelado'
             };
-        case 'concluído':
+        case 'concluido':
             return {
                 color: '#2196F3',
                 icon: 'check-circle',
                 text: 'Concluído'
             };
-        case 'Em Andamento':
+        case 'em andamento':
             return {
                 color: '#2196F3',
                 icon: 'progress-clock',
                 text: 'Em Andamento'
             };
-        case 'Aguardando Pagamento':
+        case 'aguardando pagamento':
             return {
                 color: '#9C27B0',
                 icon: 'cash-multiple',
                 text: 'Aguardando Pagamento'
             };
-        case 'Recusado':
+        case 'recusado':
             return {
                 color: '#F44336',
                 icon: 'close-circle',
@@ -60,30 +66,34 @@ export const getStatusConfig = (status: StatusType): StatusConfig => {
     }
 };
 
-export const getStatusColor = (status: StatusType): string => {
-    const colors = {
-        pendente: '#FFA000',
-        confirmado: '#2196F3',
-        'Em Andamento': '#9C27B0',
-        'Aguardando Pagamento': '#9C27B0',
-        concluído: '#00C853',
-        cancelado: '#F44336',
+export const getStatusColor = (status: StatusType | 'todos'): string => {
+    const cores = {
+        todos: '#666666',
+        pendente: '#FF9800',
+        confirmado: '#00C853',
+        "confirmar valor":"#9C27B0",
+        'Em Andamento': '#2196F3',
+        'Aguardando pagamento': '#9C27B0',
+        concluido: '#00C853',
+        cancelado: '#FF5252',
         Recusado: '#FF5252'
     };
-    return colors[status];
+    return cores[status];
 };
 
-export const getStatusBackgroundColor = (status: StatusType): string => {
-    const colors = {
+export const getStatusBackground = (status: StatusType | 'todos'): string => {
+    const cores = {
+        todos: '#F5F5F5',
         pendente: '#FFF3E0',
-        confirmado: '#E3F2FD',
-        'Em Andamento': '#F3E5F5',
-        'Aguardando Pagamento': '#F3E5F5',
-        concluído: '#E8F5E9',
+        confirmado: '#E8F5E9',
+        'Em Andamento': '#E3F2FD',
+        'Aguardando pagamento': '#F3E5F5',
+        "confirmar valor":"#F3E5F5",
+        concluido: '#E8F5E9',
         cancelado: '#FFEBEE',
         Recusado: '#FFEBEE'
     };
-    return colors[status];
+    return cores[status];
 };
 
 export const getStatusLabel = (status: StatusType | 'todos'): string => {
@@ -92,8 +102,9 @@ export const getStatusLabel = (status: StatusType | 'todos'): string => {
         pendente: 'Pendente',
         confirmado: 'Confirmado',
         'Em Andamento': 'Em Andamento',
-        'Aguardando Pagamento': 'Aguardando Pagamento',
-        concluído: 'Concluído',
+        "confirmar valor":'Confimação de Valor',
+        'Aguardando pagamento': 'Aguardando Pagamento',
+        concluido: 'Concluído',
         cancelado: 'Cancelado',
         Recusado: 'Recusado'
     };

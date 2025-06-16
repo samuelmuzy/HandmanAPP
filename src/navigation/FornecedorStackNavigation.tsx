@@ -16,7 +16,11 @@ export type FornecedorStackParamList = {
         data: string;
         horario: string;
         endereco: string;
-        imagem: string | null;
+        imagem?: {
+            uri: string;
+            type?: string;
+            fileName?: string;
+        };
         categoria:string
     };
 

@@ -169,7 +169,7 @@ export const ExibirAgendamentoUsuario: React.FC<ExibirAgendamentoUsuarioProps> =
                     <Text style={styles.orderInfo}>
                         {new Date(agendamento.data).toLocaleDateString()} às {new Date(agendamento.horario).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </Text>
-                    {agendamento.status === 'concluído' && (
+                    {agendamento.status === 'concluido' && (
                         <View style={styles.orderStatusContainer}>
                             <Ionicons name="checkmark-circle" size={22} color="#4CAF50" />
                             <Text style={styles.orderStatusText}>
@@ -205,13 +205,13 @@ export const ExibirAgendamentoUsuario: React.FC<ExibirAgendamentoUsuarioProps> =
                     </View>
                 </View>
 
-                {agendamento.status === 'concluído' && (
+                {agendamento.status === 'concluido' && (
                     <TouchableOpacity style={styles.button} onPress={handleAvaliarServico}>
                         <Text style={styles.buttonText}>Avaliar</Text>
                     </TouchableOpacity>
                 )}
 
-                {agendamento.status === 'Aguardando Pagamento' && (
+                {agendamento.status === 'Aguardando pagamento' && (
                     <View style={styles.paymentButtonsContainer}>
                         <TouchableOpacity
                             style={[styles.button, styles.paymentButton]}
@@ -223,7 +223,7 @@ export const ExibirAgendamentoUsuario: React.FC<ExibirAgendamentoUsuarioProps> =
 
                         <TouchableOpacity
                             style={[styles.button, styles.paymentButton, styles.localPaymentButton]}
-                            onPress={() => atualizarStatusServico('concluído')}
+                            onPress={() => atualizarStatusServico('concluido')}
                         >
                             <MaterialCommunityIcons name="cash" size={20} color="#FFFFFF" style={styles.buttonIcon} />
                             <Text style={styles.buttonText}>Pagamento realizado Localmente</Text>

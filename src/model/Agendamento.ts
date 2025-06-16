@@ -1,28 +1,25 @@
 export interface Agendamento {
-    id: string;
+    id_usuario: string;
+    id_fornecedor: string;
+    categoria: string;
     data: string;
-    hora: string;
-    servico: string;
-    status: StatusType;
-    usuarioId: string;
-    fornecedorId: string;
-    endereco: string;
-    observacoes?: string;
+    horario: string;
+    descricao: string;
+    status: 'pendente' | 'confirmado' | 'cancelado' | 'concluido';
+    id_pagamento: string;
+    id_avaliacao: string;
 }
 
-export type StatusType = "pendente" | "confirmado" | "cancelado" | "concluído" | "Em Andamento" | "Aguardando Pagamento" | "Recusado";
+export type StatusType = 
+    | "pendente" 
+    | "confirmado" 
+    | "cancelado" 
+    | "concluido" 
+    | "Em Andamento" 
+    | "Aguardando pagamento" 
+    | "Recusado"
+    | "confirmar valor";
 
-export interface AgendamentoData {
-    id: string;
-    data: string;
-    hora: string;
-    servico: string;
-    status: StatusType;
-    usuarioId: string;
-    fornecedorId: string;
-    endereco: string;
-    observacoes?: string;
-}
 
 export interface FornecedorHistorico {
     nome: string;
@@ -38,13 +35,15 @@ export type HistoricoAgendamento = {
     data: Date;
     horario: Date;
     data_submisao: Date;
-    status: "pendente" | "confirmado" | "cancelado" | "concluido" | "Em Andamento" | "Aguardando pagamento" | "Recusado";
+    status: StatusType;
     descricao: string;
+    valor:number;
+    avaliado:boolean;
     fornecedor: {
         nome: string;
         email: string;
         telefone: string;
-        picture: string;
+        imagemPerfil: string;
     };
 };
 

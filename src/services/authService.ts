@@ -3,6 +3,7 @@ import dbPromise from '../../db';
 import { checkInternetConnection, handleApiError } from '../utils/networkUtils';
 import { API_URL } from '../constants/ApiUrl';
 import { User } from '../model/User';
+import { typeFornecedor } from '../model/Fornecedor';
 
 interface LoginSuccess {
     success: true;
@@ -92,6 +93,24 @@ export const authService = {
             
             throw new Error('Dados não recebidos da API');
         } catch (error: any) {
+            console.error('Erro no cadastro:', error.response?.data || error.message);
+            return handleApiError(error) as LoginError;
+        }
+    },
+    async cadastrarFornecedor(usuario:Partial<typeFornecedor>){
+        try{
+            const response = await axios.post(`${API_URL}/fornecedor`,usuario)
+            if (response.data) {
+                return {
+                    success: true,
+                    data: {
+                        token: response.data.token
+                    }
+                };
+            }
+            
+            throw new Error('Dados não recebidos da API');
+        }catch (error: any) {
             console.error('Erro no cadastro:', error.response?.data || error.message);
             return handleApiError(error) as LoginError;
         }

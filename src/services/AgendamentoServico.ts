@@ -6,7 +6,7 @@ export const AgendamentoService = {
     async AgendarServico(agendamento:Agendamento){
         try{
             const response = await axios.post(`${API_URL}/servicos`,agendamento);
-            console.log(response);
+            return response.data;
         }catch(error:unknown){
             console.log(error);
         }

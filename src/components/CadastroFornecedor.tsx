@@ -35,13 +35,14 @@ const CadastroFornecedor: React.FC<CadastroFornecedorProps> = ({ onBack, onNavig
   const [descricao, setDescricao] = useState('');
   const [subDescricao, setSubDescricao] = useState('');
   const [valor, setValor] = useState('');
-  
+  const [sobre, setSobre] = useState('');
+
   // Endereço
   const [rua, setRua] = useState('');
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [cep, setCep] = useState('');
-  
+
   // Categoria de serviço (pode selecionar múltiplos)
   const [categoriasServico, setCategoriasServico] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -123,6 +124,7 @@ const CadastroFornecedor: React.FC<CadastroFornecedorProps> = ({ onBack, onNavig
         telefone,
         senha,
         endereco,
+        sobre,
         categoria_servico: categoriasServico,
         descricao,
         sub_descricao: subDescricao,
@@ -135,7 +137,7 @@ const CadastroFornecedor: React.FC<CadastroFornecedorProps> = ({ onBack, onNavig
       };
 
       const response = await authService.cadastrarFornecedor(fornecedor);
-      
+
       if (response.success) {
         Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
         onNavigate('Login');
@@ -310,17 +312,17 @@ const CadastroFornecedor: React.FC<CadastroFornecedorProps> = ({ onBack, onNavig
               ]}
               onPress={() => toggleCategoria(categoria)}
             >
-              <Icon 
+              <Icon
                 name={
                   categoria === 'Encanamento' ? 'pipe' :
-                  categoria === 'Mudança' ? 'truck' :
-                  categoria === 'Carpintaria' ? 'hammer' :
-                  categoria === 'Elétricista' ? 'flash' :
-                  categoria === 'Jardinagem' ? 'flower' :
-                  'broom'
-                } 
-                size={24} 
-                color={categoriasServico.includes(categoria) ? '#FFFFFF' : '#7A2D00'} 
+                    categoria === 'Mudança' ? 'truck' :
+                      categoria === 'Carpintaria' ? 'hammer' :
+                        categoria === 'Elétricista' ? 'flash' :
+                          categoria === 'Jardinagem' ? 'flower' :
+                            'broom'
+                }
+                size={24}
+                color={categoriasServico.includes(categoria) ? '#FFFFFF' : '#7A2D00'}
               />
               <Text style={[
                 styles.categoriaButtonText,
@@ -358,6 +360,17 @@ const CadastroFornecedor: React.FC<CadastroFornecedorProps> = ({ onBack, onNavig
           numberOfLines={4}
         />
       </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Escreva sobre você e seu trabalho*</Text>
+        <TextInput
+          style={[styles.input]}
+          value={sobre}
+          onChangeText={setSobre}
+          placeholder="Informações adicionais sobre seus serviços"
+          placeholderTextColor="#999"
+          numberOfLines={1}
+        />
+      </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Valor Hora/Serviço (R$) *</Text>
@@ -378,7 +391,7 @@ const CadastroFornecedor: React.FC<CadastroFornecedorProps> = ({ onBack, onNavig
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >

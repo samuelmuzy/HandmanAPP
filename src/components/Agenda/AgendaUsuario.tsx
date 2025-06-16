@@ -13,7 +13,7 @@ import { ModalAvaliacao } from '../ModalAvaliacao';
 import axios from 'axios';
 import { API_URL } from '../../constants/ApiUrl';
 import { useStatusNotifications } from '../../hooks/useStatusNotifications';
-import { getStatusColor, getStatusBackgroundColor, getStatusLabel } from '../../utils/statusConfig';
+import { getStatusColor, getStatusBackground, getStatusLabel } from '../../utils/statusConfig';
 import { Loading } from '../Loading';
 
 type NavigationProp = CompositeNavigationProp<
@@ -34,7 +34,7 @@ export const AgendaUsuario = () => {
         setAgendamentos(prevAgendamentos => 
             prevAgendamentos.map(agendamento => 
                 agendamento.id_servico === update.id_servico
-                    ? { ...agendamento, status: update.novo_status as HistoricoAgendamento['status'] }
+                    ? { ...agendamento, status: update.novo_status as StatusType }
                     : agendamento
             )
         );
@@ -100,6 +100,7 @@ export const AgendaUsuario = () => {
             };
             
             await axios.post(`${API_URL}/avaliacao`, dataAvaliacao);
+            servicoSelecionado.avaliado = true;
             setIsAvaliacaoOpen(false);
             setServicoSelecionado(null);
         } catch (error) {
@@ -119,12 +120,13 @@ export const AgendaUsuario = () => {
         setIsAvaliacaoOpen(true);
     };
 
-    const statusOptions = [
+    const statusDisponiveis: (StatusType | 'todos')[] = [
+        'todos',
         'pendente',
         'confirmado',
         'Em Andamento',
-        'Aguardando Pagamento',
-        'concluído',
+        'Aguardando pagamento',
+        'concluido',
         'cancelado',
         'Recusado'
     ];
@@ -154,7 +156,7 @@ export const AgendaUsuario = () => {
                     style={styles.filtroContainer}
                     contentContainerStyle={styles.filtroContent}
                 >
-                    {statusOptions.map((status) => (
+                    {statusDisponiveis.map((status) => (
                         <TouchableOpacity
                             key={status}
                             style={[
@@ -162,19 +164,19 @@ export const AgendaUsuario = () => {
                                 filtroAtivo === status && styles.filtroBotaoAtivo,
                                 { 
                                     backgroundColor: filtroAtivo === status 
-                                        ? getStatusBackgroundColor(status as StatusType)
+                                        ? getStatusBackground(status)
                                         : '#FFFFFF',
-                                    borderColor: getStatusColor(status as StatusType)
+                                    borderColor: getStatusColor(status)
                                 }
                             ]}
-                            onPress={() => setFiltroAtivo(status as StatusType | 'todos')}
+                            onPress={() => setFiltroAtivo(status)}
                         >
                             <Text style={[
                                 styles.filtroTexto,
                                 filtroAtivo === status && styles.filtroTextoAtivo,
-                                { color: getStatusColor(status as StatusType) }
+                                { color: getStatusColor(status) }
                             ]}>
-                                {getStatusLabel(status as StatusType | 'todos')}
+                                {getStatusLabel(status)}
                             </Text>
                         </TouchableOpacity>
                     ))}

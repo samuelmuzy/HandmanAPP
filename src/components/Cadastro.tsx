@@ -6,7 +6,6 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  Switch,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
@@ -21,7 +20,6 @@ interface CadastroScreenProps {
 
 const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
   const [step, setStep] = useState(1);
-  const [isPrestador, setIsPrestador] = useState(false);
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [email, setEmail] = useState('');
@@ -87,18 +85,8 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
           <View>
             <TextInput style={styles.input} placeholder="Primeiro Nome" value={nome} onChangeText={setNome} />
             <TextInput style={styles.input} placeholder="Sobrenome" value={sobrenome} onChangeText={setSobrenome} />
-            <View style={styles.prestadorSwitch}>
-              <Text>Prestador de Serviço?</Text>
-              <Switch
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={isPrestador ? '#f5dd4b' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => setIsPrestador(!isPrestador)}
-                value={isPrestador}
-              />
-            </View>
             <TouchableOpacity style={styles.button} onPress={nextStep}>
-              <Text style={styles.buttonText}>Próxima etapa</Text>
+              <Text style={styles.buttonText}>Próximo</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.loginBackButton}
@@ -113,12 +101,8 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
           <View>
             <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
             <TextInput style={styles.input} placeholder="Telefone" keyboardType="phone-pad" value={telefone} onChangeText={setTelefone} />
-            <TextInput style={styles.input} placeholder="Endereço" value={endereco} onChangeText={setEndereco} />
-            <TextInput style={styles.input} placeholder="Cidade" value={cidade} onChangeText={setCidade} />
-            <TextInput style={styles.input} placeholder="Estado" value={estado} onChangeText={setEstado} />
-            <TextInput style={styles.input} placeholder="CEP" keyboardType="numeric" value={cep} onChangeText={setCep} />
             <TouchableOpacity style={styles.button} onPress={nextStep}>
-              <Text style={styles.buttonText}>Próxima etapa</Text>
+              <Text style={styles.buttonText}>Próximo</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.backButton} onPress={prevStep}>
               <Text style={styles.backButtonText}>Voltar</Text>
@@ -126,6 +110,21 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
           </View>
         );
       case 3:
+        return (
+          <View>
+            <TextInput style={styles.input} placeholder="Endereço" value={endereco} onChangeText={setEndereco} />
+            <TextInput style={styles.input} placeholder="Cidade" value={cidade} onChangeText={setCidade} />
+            <TextInput style={styles.input} placeholder="Estado" value={estado} onChangeText={setEstado} />
+            <TextInput style={styles.input} placeholder="CEP" keyboardType="numeric" value={cep} onChangeText={setCep} />
+            <TouchableOpacity style={styles.button} onPress={nextStep}>
+              <Text style={styles.buttonText}>Próximo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.backButton} onPress={prevStep}>
+              <Text style={styles.backButtonText}>Voltar</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      case 4:
         return (
           <View>
             <TextInput style={styles.input} placeholder="Senha" secureTextEntry value={senha} onChangeText={setSenha} />
@@ -157,7 +156,7 @@ const Cadastro: React.FC<CadastroScreenProps> = ({ onNavigate }) => {
         >
           <View style={styles.headerContainer}>
             <Text style={styles.title}>HANDYMAN</Text>
-            <Text style={styles.subtitle}>Crie sua conta{'\n'}e encontre profissionais!</Text>
+            <Text style={styles.subtitle}>Não faça você mesmo,{'\n'}encontre um profissional!</Text>
             <Text style={styles.description}>A sua plataforma confiável para serviços manuais!</Text>
           </View>
 
@@ -245,16 +244,7 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
     marginTop: 10,
-  },
-  prestadorSwitch: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFE1C5',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 16,
-  },
+  }
 });
 
 export default Cadastro;

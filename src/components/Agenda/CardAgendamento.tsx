@@ -34,7 +34,7 @@ export const CardAgendamento: React.FC<CardAgendamentoProps> = ({
     onPressPagarLocal
 }) => {
     const placeholderImage = require('../../assets/agenda.png');
-    const statusConfig = getStatusConfig(agendamento.status);
+    const statusConfig = getStatusConfig(agendamento.status as StatusType);
     const navigation = useNavigation<NavigationProp>();
 
     const handleCardPress = () => {
@@ -98,7 +98,7 @@ export const CardAgendamento: React.FC<CardAgendamentoProps> = ({
 
                         <TouchableOpacity
                             style={[styles.button, styles.paymentButton, styles.localPaymentButton]}
-                            onPress={() => onPressAtualizarStatus('concluido')}
+                            onPress={() => onPressAtualizarStatus('concluído')}
                         >
                             <MaterialCommunityIcons name="cash" size={20} color="#FFFFFF" style={styles.buttonIcon} />
                             <Text style={styles.buttonText}>Pagamento realizado Localmente</Text>

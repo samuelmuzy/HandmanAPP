@@ -8,12 +8,13 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Alert,
+    ImageBackground,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useBiometric } from '../../hooks/useBiometric';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface InputWithLabelProps {
     label: string;
@@ -178,68 +179,56 @@ const LoginFornecedor: React.FC<LoginScreenProps> = ({ onBack, onNavigate, curre
             contentContainerStyle={styles.container} 
             showsVerticalScrollIndicator={false}
         >
-            <View style={styles.headerContainer}>
-                <Text style={styles.title}>HANDYMAN</Text>
-                <Text style={styles.subtitle}>Não faça você mesmo,{'\n'}encontre um proficional!</Text>
-                <Text style={styles.description}>A sua plataforma confiável para serviços manuais!</Text>
-            </View>
+            <LinearGradient
+                colors={['#f8f9fa', '#e9ecef']}
+                style={styles.gradientBackground}
+            >
+                <View style={styles.headerContainer}>
+                    <Icon name="store" size={40} color="#2c3e50" style={styles.headerIcon} />
+                    <Text style={styles.title}>HANDYMAN</Text>
+                    <Text style={styles.subtitle}>Área do Fornecedor</Text>
+                    <Text style={styles.description}>Gerencie seus serviços e clientes</Text>
+                </View>
 
-            <View style={styles.card}>
-                <InputWithLabel
-                    label="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    editable={!loading}
-                />
-                
-                <View style={styles.passwordContainer}>
+                <View style={styles.card}>
                     <InputWithLabel
-                        label="Senha"
-                        value={senha}
-                        onChangeText={setSenha}
-                        secureTextEntry
+                        label="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
                         editable={!loading}
                     />
-                </View>
+                    
+                    <View style={styles.passwordContainer}>
+                        <InputWithLabel
+                            label="Senha"
+                            value={senha}
+                            onChangeText={setSenha}
+                            secureTextEntry
+                            editable={!loading}
+                        />
+                    </View>
 
-                <TouchableOpacity
-                    style={[styles.loginButton, loading && styles.buttonDisabled]}
-                    onPress={handleLogin}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <ActivityIndicator color="white" />
-                    ) : (
-                        <Text style={styles.loginButtonText}>Login</Text>
-                    )}
-                </TouchableOpacity>
-
-                <View style={styles.registerContainer}>
-                    <Text style={styles.registerText}>Não tem uma conta? </Text>
-                    <TouchableOpacity onPress={() => onNavigate('Cadastro')}>
-                        <Text style={styles.registerLink}>Cadastre-se</Text>
+                    <TouchableOpacity
+                        style={[styles.loginButton, loading && styles.buttonDisabled]}
+                        onPress={handleLogin}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="white" />
+                        ) : (
+                            <Text style={styles.loginButtonText}>Entrar</Text>
+                        )}
                     </TouchableOpacity>
+
+                    <View style={styles.registerContainer}>
+                        <Text style={styles.registerText}>Não tem uma conta? </Text>
+                        <TouchableOpacity onPress={() => onNavigate('CadastroFornecedor')}>
+                            <Text style={styles.registerLink}>Cadastre-se como Fornecedor</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-
-                <View style={styles.dividerContainer}>
-                    <View style={styles.dividerLine} />
-                    <Text style={styles.dividerText}>Tente outro método</Text>
-                    <View style={styles.dividerLine} />
-                </View>
-
-                <TouchableOpacity style={[styles.socialButton, styles.googleButton]}>
-                    <Text style={styles.socialButtonText}>Entrar com o Google</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={[styles.socialButton, styles.facebookButton]}>
-                    <Text style={styles.socialButtonText}>Entrar com o Facebook</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={[styles.socialButton, styles.appleButton]}>
-                    <Text style={[styles.socialButtonText, styles.appleButtonText]}>Entrar com Apple</Text>
-                </TouchableOpacity>
-            </View>
+            </LinearGradient>
         </ScrollView>
     );
 };
@@ -247,135 +236,104 @@ const LoginFornecedor: React.FC<LoginScreenProps> = ({ onBack, onNavigate, curre
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
+    },
+    gradientBackground: {
+        flex: 1,
+        padding: 20,
         backgroundColor: '#FFFFFF',
     },
     headerContainer: {
-        paddingHorizontal: 20,
-        paddingTop: 40,
-        paddingBottom: 20,
+        alignItems: 'center',
+        marginBottom: 30,
+        marginTop: 20,
+    },
+    headerIcon: {
+        marginBottom: 10,
+        color: '#B54708',
     },
     title: {
         fontSize: 32,
         fontWeight: 'bold',
         color: '#B54708',
-        marginBottom: 8,
+        marginBottom: 10,
     },
     subtitle: {
         fontSize: 24,
         color: '#B54708',
-        marginBottom: 8,
-        lineHeight: 32,
+        textAlign: 'center',
+        marginBottom: 5,
     },
     description: {
         fontSize: 16,
         color: '#B54708',
-        marginBottom: 24,
+        textAlign: 'center',
     },
     card: {
         backgroundColor: '#EEB16C',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        borderRadius: 15,
         padding: 20,
-        margin: 10,
-        flex: 1,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     inputContainer: {
         marginBottom: 20,
     },
     inputLabel: {
-        fontSize: 14,
+        fontSize: 16,
         color: '#FFFFFF',
         marginBottom: 8,
-        marginLeft: 4,
+        fontWeight: '500',
     },
     input: {
         backgroundColor: '#FFE1C5',
-        borderRadius: 10,
-        padding: 16,
+        borderRadius: 8,
+        padding: 12,
         fontSize: 16,
-        color: '#333',
-        height: 56,
+        borderWidth: 1,
+        borderColor: '#FFD4A3',
     },
     passwordContainer: {
-        position: 'relative',
         marginBottom: 20,
-    },
-    eyeIcon: {
-        position: 'absolute',
-        right: 16,
-        top: 16,
     },
     loginButton: {
         backgroundColor: '#7A2D00',
-        borderRadius: 10,
-        padding: 16,
+        borderRadius: 8,
+        padding: 15,
         alignItems: 'center',
         marginBottom: 20,
-    },
-    loginButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
     },
     buttonDisabled: {
         opacity: 0.7,
     },
+    loginButtonText: {
+        color: '#ffffff',
+        fontSize: 18,
+        fontWeight: '600',
+    },
     registerContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginBottom: 24,
+        marginBottom: 20,
+        flexWrap: 'wrap',
+        paddingHorizontal: 10,
     },
     registerText: {
-        color: '#333',
-        fontSize: 14,
-    },
-    registerLink: {
-        color: '#333',
-        fontSize: 14,
-        fontWeight: 'bold',
-    },
-    dividerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 24,
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#333',
-    },
-    dividerText: {
-        paddingHorizontal: 16,
-        color: '#333',
-        fontSize: 14,
-    },
-    socialButton: {
-        borderRadius: 10,
-        padding: 16,
-        alignItems: 'center',
-        marginBottom: 16,
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    googleButton: {
-        backgroundColor: '#1E1E1E',
-    },
-    facebookButton: {
-        backgroundColor: '#1877F2',
-    },
-    appleButton: {
-        backgroundColor: '#FFFFFF',
-        borderWidth: 1,
-        borderColor: '#E5E5E5',
-    },
-    socialButtonText: {
         color: '#FFFFFF',
         fontSize: 16,
-        fontWeight: '500',
+        textAlign: 'center',
     },
-    appleButtonText: {
-        color: '#000000',
-    },
+    registerLink: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '600',
+        textAlign: 'center',
+    }
 });
 
 export default LoginFornecedor;

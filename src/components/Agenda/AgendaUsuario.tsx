@@ -13,7 +13,7 @@ import { ModalAvaliacao } from '../ModalAvaliacao';
 import axios from 'axios';
 import { API_URL } from '../../constants/ApiUrl';
 import { useStatusNotifications } from '../../hooks/useStatusNotifications';
-import { getStatusColor, getStatusBackground, getStatusLabel } from '../../utils/statusConfig';
+import { getStatusColor, getStatusBackgroundColor, getStatusLabel } from '../../utils/statusConfig';
 import { Loading } from '../Loading';
 
 type NavigationProp = CompositeNavigationProp<
@@ -34,7 +34,7 @@ export const AgendaUsuario = () => {
         setAgendamentos(prevAgendamentos => 
             prevAgendamentos.map(agendamento => 
                 agendamento.id_servico === update.id_servico
-                    ? { ...agendamento, status: update.novo_status as StatusType }
+                    ? { ...agendamento, status: update.novo_status as HistoricoAgendamento['status'] }
                     : agendamento
             )
         );
@@ -119,12 +119,12 @@ export const AgendaUsuario = () => {
         setIsAvaliacaoOpen(true);
     };
 
-    const statusDisponiveis: (StatusType | 'todos')[] = [
-        'todos',
+    const statusOptions = [
         'pendente',
+        'confirmado',
         'Em Andamento',
-        'Aguardando pagamento',
-        'concluido',
+        'Aguardando Pagamento',
+        'concluído',
         'cancelado',
         'Recusado'
     ];
@@ -154,7 +154,7 @@ export const AgendaUsuario = () => {
                     style={styles.filtroContainer}
                     contentContainerStyle={styles.filtroContent}
                 >
-                    {statusDisponiveis.map((status) => (
+                    {statusOptions.map((status) => (
                         <TouchableOpacity
                             key={status}
                             style={[
@@ -162,19 +162,19 @@ export const AgendaUsuario = () => {
                                 filtroAtivo === status && styles.filtroBotaoAtivo,
                                 { 
                                     backgroundColor: filtroAtivo === status 
-                                        ? getStatusBackground(status)
+                                        ? getStatusBackgroundColor(status as StatusType)
                                         : '#FFFFFF',
-                                    borderColor: getStatusColor(status)
+                                    borderColor: getStatusColor(status as StatusType)
                                 }
                             ]}
-                            onPress={() => setFiltroAtivo(status)}
+                            onPress={() => setFiltroAtivo(status as StatusType | 'todos')}
                         >
                             <Text style={[
                                 styles.filtroTexto,
                                 filtroAtivo === status && styles.filtroTextoAtivo,
-                                { color: getStatusColor(status) }
+                                { color: getStatusColor(status as StatusType) }
                             ]}>
-                                {getStatusLabel(status)}
+                                {getStatusLabel(status as StatusType | 'todos')}
                             </Text>
                         </TouchableOpacity>
                     ))}

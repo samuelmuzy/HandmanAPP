@@ -27,7 +27,7 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
 }) => {
     const navigation = useNavigation<NavigationProp>();
     const placeholderImage = require('../../assets/agenda.png');
-    const statusConfig = getStatusConfig(solicitacao.servico.status);
+    const statusConfig = getStatusConfig(solicitacao.servico.status as StatusType);
 
     const handleCardPress = () => {
         navigation.navigate('FornecedorStack', {
@@ -111,7 +111,7 @@ export const CardAgendamentoFornecedor: React.FC<CardAgendamentoFornecedorProps>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.button, styles.completeButton]}
-                                onPress={() => onPressAtualizarStatus('Aguardando pagamento')}
+                                onPress={() => onPressAtualizarStatus('Aguardando Pagamento')}
                             >
                                 <Text style={styles.buttonText}>Finalizar Serviço</Text>
                             </TouchableOpacity>

@@ -11,7 +11,6 @@ export const checkInternetConnection = async (): Promise<boolean> => {
 };
 
 export const handleApiError = (error: any) => {
-  
   return {
     success: false,
     message: error.response.data.error || 'Erro ao processar requisição',

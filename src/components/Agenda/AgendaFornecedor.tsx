@@ -14,7 +14,7 @@ import { FornecedorStackParamList } from '../../navigation/FornecedorStackNaviga
 import { io, Socket } from 'socket.io-client';
 import * as Notifications from 'expo-notifications';
 import { Solicitacao, StatusType } from '../../model/Agendamento';
-import { getStatusColor, getStatusBackground, getStatusLabel } from '../../utils/statusConfig';
+import { getStatusColor, getStatusBackgroundColor, getStatusLabel } from '../../utils/statusConfig';
 import { Loading } from '../Loading';
 
 type NavigationProp = CompositeNavigationProp<
@@ -179,12 +179,12 @@ export const AgendaFornecedor = () => {
         fetchSolicitacoes();
     }, [token]);
 
-    const statusDisponiveis: (StatusType | 'todos')[] = [
-        'todos',
+    const statusOptions = [
         'pendente',
+        'confirmado',
         'Em Andamento',
-        'Aguardando pagamento',
-        'concluido',
+        'Aguardando Pagamento',
+        'concluído',
         'cancelado',
         'Recusado'
     ];
@@ -213,7 +213,7 @@ export const AgendaFornecedor = () => {
                     style={styles.filtroContainer}
                     contentContainerStyle={styles.filtroContent}
                 >
-                    {statusDisponiveis.map((status) => (
+                    {statusOptions.map((status) => (
                         <TouchableOpacity
                             key={status}
                             style={[
@@ -221,19 +221,19 @@ export const AgendaFornecedor = () => {
                                 filtroAtivo === status && styles.filtroBotaoAtivo,
                                 { 
                                     backgroundColor: filtroAtivo === status 
-                                        ? getStatusBackground(status)
+                                        ? getStatusBackgroundColor(status as StatusType)
                                         : '#FFFFFF',
-                                    borderColor: getStatusColor(status)
+                                    borderColor: getStatusColor(status as StatusType)
                                 }
                             ]}
-                            onPress={() => setFiltroAtivo(status)}
+                            onPress={() => setFiltroAtivo(status as StatusType | 'todos')}
                         >
                             <Text style={[
                                 styles.filtroTexto,
                                 filtroAtivo === status && styles.filtroTextoAtivo,
-                                { color: getStatusColor(status) }
+                                { color: getStatusColor(status as StatusType) }
                             ]}>
-                                {getStatusLabel(status)}
+                                {getStatusLabel(status as StatusType | 'todos')}
                             </Text>
                         </TouchableOpacity>
                     ))}

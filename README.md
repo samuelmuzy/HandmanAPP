@@ -29,7 +29,7 @@ Este projeto foi construído utilizando:
 
 ## 🧪 Como rodar localmente
 
-1. Clone o repositório:
+Clone o repositório:
 
 git clone https://github.com/seu-usuario/handyman-mobile.git
 cd handyman-mobile

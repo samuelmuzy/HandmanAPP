@@ -31,17 +31,15 @@ Este projeto foi construído utilizando:
 
 1. Clone o repositório:
 
-```bash
 git clone https://github.com/seu-usuario/handyman-mobile.git
 cd handyman-mobile
+
 Instale as dependências:
-
 npm install
-Inicie o projeto com Expo:
 
+Inicie o projeto com Expo:
 npx expo start
 Escaneie o QR Code com o Expo Go no celular para testar o app.
-´´´
 
 ## 📚 Sobre o projeto
 Este projeto foi desenvolvido como parte de uma iniciativa acadêmica, com o intuito de aplicar conhecimentos em desenvolvimento mobile moderno, utilizando ferramentas amplamente utilizadas no mercado, como React Native e Expo.

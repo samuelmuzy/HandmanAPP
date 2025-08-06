@@ -1,11 +1,67 @@
-# Sample Snack app
+# 📱 Handyman Mobile
 
-Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!
+**Handyman Mobile** é a versão para dispositivos móveis do projeto acadêmico **Handyman**, desenvolvido com **React Native**, **TypeScript** e **Expo Go**. O objetivo é facilitar a conexão entre **clientes** e **prestadores de serviços manuais** como eletricistas, encanadores, pintores, entre outros — tudo isso direto do celular.
 
-When you're ready to see everything that Expo provides (or if you want to use your own editor) you can **Download** your project and use it with [expo cli](https://docs.expo.dev/get-started/installation/#expo-cli)).
+## 📲 Teste o app
 
-All projects created in Snack are publicly available, so you can easily share the link to this project via link, or embed it on a web page with the `<>` button.
+Você pode testar o aplicativo escaneando o QR Code com o aplicativo **Expo Go**, disponível na Play Store e App Store:
 
-If you're having problems, you can tweet to us [@expo](https://twitter.com/expo) or ask in our [forums](https://forums.expo.dev/c/expo-dev-tools/61) or [Discord](https://chat.expo.dev/).
+🔗 [Instalar Expo Go](https://expo.dev/client)
 
-Snack is Open Source. You can find the code on the [GitHub repo](https://github.com/expo/snack).
+## 🚀 Tecnologias utilizadas
+
+Este projeto foi construído utilizando:
+
+- 📱 [React Native](https://reactnative.dev/)
+- 🟦 [TypeScript](https://www.typescriptlang.org/)
+- ⚙️ [Expo](https://expo.dev/)
+- 🧩 [React Navigation](https://reactnavigation.org/)
+- 🔒 AsyncStorage para autenticação
+
+## 📌 Funcionalidades
+
+- Autenticação de usuários (login e cadastro)
+- Diferenciação entre cliente e prestador
+- Listagem e visualização de serviços
+- Agendamento de serviços
+- Visualização de perfil do prestador
+- Histórico de serviços agendados
+
+## 🧪 Como rodar localmente
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/handyman-mobile.git
+cd handyman-mobile
+Instale as dependências:
+
+npm install
+Inicie o projeto com Expo:
+
+npx expo start
+Escaneie o QR Code com o Expo Go no celular para testar o app.
+
+## 📚 Sobre o projeto
+Este projeto foi desenvolvido como parte de uma iniciativa acadêmica, com o intuito de aplicar conhecimentos em desenvolvimento mobile moderno, utilizando ferramentas amplamente utilizadas no mercado, como React Native e Expo.
+
+## 👥 Autores
+Samuel Muzy Fernandes
+
+Gabriel Setta
+
+Gabriel Bianquine
+
+Blendow Mendes
+
+João Paulo
+
+Victor Ribeiro Amorim
+
+João Antônio de Souza Neto
+
+🤝 Contribuição
+Contribuições são sempre bem-vindas!
+Sinta-se à vontade para abrir issues ou pull requests com sugestões de melhorias ou correções.
+
+🛠️ Conectando quem precisa com quem sabe fazer.
